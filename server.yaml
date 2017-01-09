@@ -1,0 +1,7 @@
+eureka:
+  url: http://localhost:8761/eureka
+  appname: goapp
+
+server:
+  port: 9999
+  hostname: localhost
