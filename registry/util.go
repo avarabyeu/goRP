@@ -34,7 +34,7 @@ func shutdownHook(hook func() error) {
 
 	go func() {
 		// Start an anonymous func running in a goroutine
-		<-c // that will block until a message is recieved on
+		<-c // that will block until a message is received on
 		e := hook()
 		if nil != e {
 			log.Println("Shutdown hook error: ", e)
