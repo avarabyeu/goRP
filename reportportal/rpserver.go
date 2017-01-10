@@ -5,8 +5,8 @@ import (
 	"log"
 	"strconv"
 	"net/http"
-	"github.com/avarabyeu/gorp-commons/registry"
-	"github.com/avarabyeu/gorp-commons/conf"
+	"github.com/avarabyeu/goRP/registry"
+	"github.com/avarabyeu/goRP/conf"
 )
 
 type RpServer struct {

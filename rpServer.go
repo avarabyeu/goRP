@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/avarabyeu/gorp-commons/reportportal"
-	"github.com/avarabyeu/gorp-commons/conf"
+	"github.com/avarabyeu/goRP/reportportal"
+	"github.com/avarabyeu/goRP/conf"
 )
 
 type Person struct {

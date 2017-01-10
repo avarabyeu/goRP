@@ -2,7 +2,7 @@ package registry
 
 import (
 	"log"
-	"github.com/avarabyeu/gorp-commons/conf"
+	"github.com/avarabyeu/goRP/conf"
 	"github.com/hashicorp/consul/api"
 	"strconv"
 	"fmt"

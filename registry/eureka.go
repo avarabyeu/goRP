@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 	"strconv"
-	"github.com/avarabyeu/gorp-commons/conf"
+	"github.com/avarabyeu/goRP/conf"
 )
 
 const PROTOCOL = "http://"

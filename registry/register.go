@@ -20,7 +20,6 @@ func Register(discovery ServiceDiscovery) {
 	if nil != err {
 		log.Fatal(err)
 	}
-	log.Print("Registered!")
 
 	shutdownHook(func() error {
 		log.Println("try to deregister")
