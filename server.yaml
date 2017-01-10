@@ -1,7 +1,17 @@
 eureka:
   url: http://localhost:8761/eureka
   appname: goapp
+  pollInterval : 5
+consul:
+  address: localhost:8500
+  scheme: http
+  appname: goapp
+  pollInterval : 5
+  tags:
+    - one
+    - two
+    - three
 
 server:
   port: 9999
-  hostname: localhost
+  hostname: 10.200.10.1

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/avarabyeu/gorp-commons/reportportal"
+	"github.com/avarabyeu/gorp-commons/conf"
 )
 
 type Person struct {
@@ -13,7 +14,7 @@ type Person struct {
 
 func main() {
 
-	rpConf := reportportal.LoadConfig("server.yaml")
+	rpConf := conf.LoadConfig("server.yaml")
 	rp := reportportal.New(rpConf)
 
 	rp.AddRoute(func(router *gin.Engine) {

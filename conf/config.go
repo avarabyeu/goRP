@@ -1,4 +1,4 @@
-package reportportal
+package conf
 
 import (
 	"github.com/spf13/viper"
@@ -11,13 +11,24 @@ type ServerConfig struct {
 }
 
 type EurekaConfig struct {
-	Url string
-	AppName   string
+	Url          string
+	AppName      string
+	PollInterval int
+}
+
+type ConsulConfig struct {
+	Address      string
+	Scheme       string
+	Token        string
+	AppName      string
+	PollInterval int
+	Tags         []string
 }
 
 type RpConfig struct {
 	Server ServerConfig
 	Eureka EurekaConfig
+	Consul ConsulConfig
 }
 
 func LoadConfig(file string) *RpConfig {

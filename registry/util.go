@@ -1,4 +1,4 @@
-package reportportal
+package registry
 
 import (
 	"time"
