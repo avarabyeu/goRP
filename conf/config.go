@@ -32,7 +32,7 @@ type RpConfig struct {
 }
 
 func LoadConfig(file string) *RpConfig {
-	var config = viper.New();
+	var config = viper.New()
 
 	config.SetConfigType("yaml")
 	config.SetConfigFile(file)

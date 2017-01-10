@@ -1,17 +1,17 @@
 package registry
 
 import (
-	"time"
-	"log"
 	"fmt"
+	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
-	"net"
+	"time"
 )
 
 func retry(attempts int, timeout time.Duration, callback func() error) (err error) {
-	for i := 0; i <= attempts - 1; i++ {
+	for i := 0; i <= attempts-1; i++ {
 		err = callback()
 		if err == nil {
 			return nil
@@ -25,14 +25,14 @@ func retry(attempts int, timeout time.Duration, callback func() error) (err erro
 }
 
 func shutdownHook(hook func() error) {
-	c := make(chan os.Signal, 1)          // Create a channel accepting os.Signal
+	c := make(chan os.Signal, 1) // Create a channel accepting os.Signal
 	// Bind a given os.Signal to the channel we just created
-	signal.Notify(c, os.Interrupt)        // Register os.Interrupt
-	signal.Notify(c, syscall.SIGTERM)     // Register syscall.SIGTERM
+	signal.Notify(c, os.Interrupt)    // Register os.Interrupt
+	signal.Notify(c, syscall.SIGTERM) // Register syscall.SIGTERM
 
 	go func() {
 		// Start an anonymous func running in a goroutine
-		<-c                           // that will block until a message is recieved on
+		<-c // that will block until a message is recieved on
 		e := hook()
 		if nil != e {
 			log.Println("Shutdown hook error: ", e)

@@ -1,15 +1,15 @@
 package main
 
 import (
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/avarabyeu/goRP/reportportal"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/avarabyeu/goRP/reportportal"
-	"github.com/avarabyeu/goRP/conf"
 )
 
 type Person struct {
 	Name string `json:"name"`
-	Age  int `json:"age"`
+	Age  int    `json:"age"`
 }
 
 func main() {
@@ -26,5 +26,3 @@ func main() {
 	rp.StartServer()
 
 }
-
-

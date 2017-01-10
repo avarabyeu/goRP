@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	RETRY_TIMEOUT time.Duration = time.Second * 5
-	RETRY_ATTEMPTS int = 3
+	RETRY_TIMEOUT  time.Duration = time.Second * 5
+	RETRY_ATTEMPTS int           = 3
 )
 
 type ServiceDiscovery interface {
@@ -32,7 +32,7 @@ func Deregister(discovery ServiceDiscovery) error {
 	return tryDeregister(discovery)
 }
 
-func tryRegister(discovery ServiceDiscovery) (error) {
+func tryRegister(discovery ServiceDiscovery) error {
 	return retry(RETRY_ATTEMPTS, RETRY_TIMEOUT, func() error {
 		e := discovery.Register()
 		if nil != e {
@@ -44,11 +44,8 @@ func tryRegister(discovery ServiceDiscovery) (error) {
 	})
 }
 
-func tryDeregister(discovery ServiceDiscovery) (error) {
+func tryDeregister(discovery ServiceDiscovery) error {
 	return retry(RETRY_ATTEMPTS, RETRY_TIMEOUT, func() error {
 		return discovery.Deregister()
 	})
 }
-
-
-

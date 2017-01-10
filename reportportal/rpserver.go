@@ -1,12 +1,12 @@
 package reportportal
 
 import (
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/avarabyeu/goRP/registry"
 	"github.com/gin-gonic/gin"
 	"log"
-	"strconv"
 	"net/http"
-	"github.com/avarabyeu/goRP/registry"
-	"github.com/avarabyeu/goRP/conf"
+	"strconv"
 )
 
 type RpServer struct {
@@ -19,12 +19,12 @@ func New(conf *conf.RpConfig) *RpServer {
 	gin.SetMode(gin.ReleaseMode)
 	rp := &RpServer{
 		router: gin.Default(),
-		conf: conf,
-		sd : registry.NewConsul(conf),
+		conf:   conf,
+		sd:     registry.NewConsul(conf),
 	}
 
 	rp.router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]string{"status": "UP" })
+		c.JSON(http.StatusOK, map[string]string{"status": "UP"})
 	})
 	return rp
 }
@@ -39,5 +39,3 @@ func (rp *RpServer) StartServer() {
 	registry.Register(rp.sd)
 	log.Fatal(rp.router.Run(":" + strconv.Itoa(rp.conf.Server.Port)))
 }
-
-

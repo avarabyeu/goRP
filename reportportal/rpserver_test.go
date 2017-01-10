@@ -1,14 +1,14 @@
 package reportportal
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/avarabyeu/goRP/conf"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type Person struct {
 	Name string `json:"name"`
-	Age  int `json:"age"`
+	Age  int    `json:"age"`
 }
 
 func ExampleRpServer() {
@@ -24,5 +24,3 @@ func ExampleRpServer() {
 	rp.StartServer()
 
 }
-
-

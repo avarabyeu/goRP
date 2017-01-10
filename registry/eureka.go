@@ -1,11 +1,11 @@
 package registry
 
 import (
+	"github.com/avarabyeu/goRP/conf"
 	"github.com/hudl/fargo"
 	"log"
-	"time"
 	"strconv"
-	"github.com/avarabyeu/goRP/conf"
+	"time"
 )
 
 const PROTOCOL = "http://"
@@ -20,23 +20,22 @@ func NewEureka(conf *conf.RpConfig) ServiceDiscovery {
 	eureka.PollInterval = time.Duration(conf.Eureka.PollInterval) * time.Second
 	baseUrl := PROTOCOL + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
 	var appInstance = &fargo.Instance{
-		App: conf.Eureka.AppName,
+		App:        conf.Eureka.AppName,
 		VipAddress: conf.Server.Hostname,
-		IPAddr: getLocalIP(),
-		HostName: conf.Server.Hostname,
-		Port: conf.Server.Port,
+		IPAddr:     getLocalIP(),
+		HostName:   conf.Server.Hostname,
+		Port:       conf.Server.Port,
 		DataCenterInfo: fargo.DataCenterInfo{
-			Name:"MyOwn",
+			Name: "MyOwn",
 		},
-		HomePageUrl:baseUrl + "/",
+		HomePageUrl:    baseUrl + "/",
 		HealthCheckUrl: baseUrl + "/health",
-		StatusPageUrl:baseUrl + "/info",
-		Status: fargo.UP,
-
+		StatusPageUrl:  baseUrl + "/info",
+		Status:         fargo.UP,
 	}
 	ec := &EurekaClient{
-		eureka: eureka,
-		appInstance : appInstance,
+		eureka:      eureka,
+		appInstance: appInstance,
 	}
 	return ec
 }
