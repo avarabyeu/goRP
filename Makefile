@@ -9,9 +9,11 @@ help:
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
+get-deps:
+    $(GO) get ./...
 
-test:
-	go test -v ./...
+test: get-deps
+	$(GO) test -v ./...
 
 checkstyle: test
 	./checkstyle.sh
