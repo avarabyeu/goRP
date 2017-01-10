@@ -3,13 +3,19 @@
 GO = go
 BINARY_DIR=bin
 BINARY=${BINARY_DIR}/goRP
+BUILD_DEPS:= github.com/golang/lint/golint \
+             github.com/client9/misspell/cmd/misspell
+
 
 help:
 	@echo "build      - go build"
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
-get-deps:
+get-build-deps:
+	$(GO) get -u $(BUILD_DEPS)
+
+get-deps: get-build-deps
 	$(GO) get ./...
 
 test: get-deps
