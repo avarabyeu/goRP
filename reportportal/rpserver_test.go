@@ -2,6 +2,7 @@ package reportportal
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/avarabyeu/goRP/conf"
 	"net/http"
 )
 
@@ -11,7 +12,7 @@ type Person struct {
 }
 
 func ExampleRpServer() {
-	rpConf := LoadConfig("../server.yaml")
+	rpConf := conf.LoadConfig("../server.yaml")
 	rp := New(rpConf)
 
 	rp.AddRoute(func(router *gin.Engine) {
