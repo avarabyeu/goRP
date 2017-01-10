@@ -5,17 +5,20 @@ import (
 	"log"
 )
 
+//ServerConfig represents Main service configuration
 type ServerConfig struct {
 	Hostname string
 	Port     int
 }
 
+//EurekaConfig represents Eureka Discovery service configuration
 type EurekaConfig struct {
-	Url          string
+	URL          string
 	AppName      string
 	PollInterval int
 }
 
+//ConsulConfig represents Consul Discovery service configuration
 type ConsulConfig struct {
 	Address      string
 	Scheme       string
@@ -25,12 +28,14 @@ type ConsulConfig struct {
 	Tags         []string
 }
 
+//RpConfig represents Composite of all app configs
 type RpConfig struct {
 	Server ServerConfig
 	Eureka EurekaConfig
 	Consul ConsulConfig
 }
 
+//LoadConfig loads configuration from provided file and serializes it into RpConfig struct
 func LoadConfig(file string) *RpConfig {
 	var config = viper.New()
 

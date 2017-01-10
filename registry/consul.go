@@ -8,11 +8,13 @@ import (
 	"strconv"
 )
 
-type ConsulClient struct {
+type consulClient struct {
 	c   *api.Client
 	reg *api.AgentServiceRegistration
 }
 
+//NewConsul creates new instance of Consul implementation of ServiceDiscovery
+//based on provided config
 func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 	c, err := api.NewClient(&api.Config{
 		Address: cfg.Consul.Address,
@@ -22,7 +24,7 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		log.Fatal("Cannot create Consul client!")
 	}
 
-	baseUrl := PROTOCOL + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
+	baseURL := protocol + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
 	registration := &api.AgentServiceRegistration{
 		ID:      fmt.Sprintf("%s-%s-%d", cfg.Consul.AppName, cfg.Server.Hostname, cfg.Server.Port),
 		Port:    cfg.Server.Port,
@@ -30,22 +32,24 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		Name:    cfg.Consul.AppName,
 		Tags:    cfg.Consul.Tags,
 		Check: &api.AgentServiceCheck{
-			HTTP:     baseUrl + "/health",
+			HTTP:     baseURL + "/health",
 			Interval: fmt.Sprintf("%ds", cfg.Consul.PollInterval),
 		},
 	}
-	return &ConsulClient{
+	return &consulClient{
 		c:   c,
 		reg: registration,
 	}
 
 }
 
-func (ec *ConsulClient) Register() error {
+//Register registers instance in Consul
+func (ec *consulClient) Register() error {
 	return ec.c.Agent().ServiceRegister(ec.reg)
 }
 
-func (ec *ConsulClient) Deregister() error {
+//Deregister de-registers instance in Consul
+func (ec *consulClient) Deregister() error {
 	e := ec.c.Agent().ServiceDeregister(ec.reg.ID)
 	if nil != e {
 		log.Print(e)

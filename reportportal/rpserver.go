@@ -9,12 +9,14 @@ import (
 	"strconv"
 )
 
+//RpServer represents ReportPortal micro-service instance
 type RpServer struct {
 	router *gin.Engine
 	conf   *conf.RpConfig
 	sd     registry.ServiceDiscovery
 }
 
+//New creates new instance of RpServer struct
 func New(conf *conf.RpConfig) *RpServer {
 	gin.SetMode(gin.ReleaseMode)
 	rp := &RpServer{
@@ -29,10 +31,12 @@ func New(conf *conf.RpConfig) *RpServer {
 	return rp
 }
 
+//AddRoute gives access to GIN router to add route and perform other modifications
 func (rp *RpServer) AddRoute(f func(router *gin.Engine)) {
 	f(rp.router)
 }
 
+//StartServer starts HTTP server
 func (rp *RpServer) StartServer() {
 
 	// listen and server on mentioned port

@@ -8,17 +8,16 @@ import (
 	"time"
 )
 
-const PROTOCOL = "http://"
-
-type EurekaClient struct {
+type eurekaClient struct {
 	eureka      fargo.EurekaConnection
 	appInstance *fargo.Instance
 }
 
+//NewEureka creates new instance of Eureka implementation of Service Discovery
 func NewEureka(conf *conf.RpConfig) ServiceDiscovery {
-	eureka := fargo.NewConn(conf.Eureka.Url)
+	eureka := fargo.NewConn(conf.Eureka.URL)
 	eureka.PollInterval = time.Duration(conf.Eureka.PollInterval) * time.Second
-	baseUrl := PROTOCOL + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
+	baseURL := protocol + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
 	var appInstance = &fargo.Instance{
 		App:        conf.Eureka.AppName,
 		VipAddress: conf.Server.Hostname,
@@ -28,19 +27,20 @@ func NewEureka(conf *conf.RpConfig) ServiceDiscovery {
 		DataCenterInfo: fargo.DataCenterInfo{
 			Name: "MyOwn",
 		},
-		HomePageUrl:    baseUrl + "/",
-		HealthCheckUrl: baseUrl + "/health",
-		StatusPageUrl:  baseUrl + "/info",
+		HomePageUrl:    baseURL + "/",
+		HealthCheckUrl: baseURL + "/health",
+		StatusPageUrl:  baseURL + "/info",
 		Status:         fargo.UP,
 	}
-	ec := &EurekaClient{
+	ec := &eurekaClient{
 		eureka:      eureka,
 		appInstance: appInstance,
 	}
 	return ec
 }
 
-func (ec *EurekaClient) Register() error {
+//Register registers instance in Eureka
+func (ec *eurekaClient) Register() error {
 	e := ec.eureka.RegisterInstance(ec.appInstance)
 	if nil == e {
 		heartBeat(ec)
@@ -48,11 +48,13 @@ func (ec *EurekaClient) Register() error {
 	return e
 }
 
-func (ec *EurekaClient) Deregister() error {
+//Deregister de-registers instance in Eureka
+func (ec *eurekaClient) Deregister() error {
 	return ec.eureka.DeregisterInstance(ec.appInstance)
 }
 
-func heartBeat(ec *EurekaClient) {
+//sends heartbeats to Eureka to notify it that service is still alive
+func heartBeat(ec *eurekaClient) {
 	go func() {
 		for {
 			err := ec.eureka.HeartBeatInstance(ec.appInstance)

@@ -6,15 +6,17 @@ import (
 )
 
 const (
-	RETRY_TIMEOUT  time.Duration = time.Second * 5
-	RETRY_ATTEMPTS int           = 3
+	retryTimeout  time.Duration = time.Second * 5
+	retryAttempts int           = 3
 )
 
+//ServiceDiscovery provides methods to interact with registry (service discovery) service
 type ServiceDiscovery interface {
 	Register() error
 	Deregister() error
 }
 
+//Register registers instance giving several tries
 func Register(discovery ServiceDiscovery) {
 	err := tryRegister(discovery)
 	if nil != err {
@@ -28,12 +30,13 @@ func Register(discovery ServiceDiscovery) {
 	})
 }
 
+//Deregister de-registers instance giving several tries
 func Deregister(discovery ServiceDiscovery) error {
 	return tryDeregister(discovery)
 }
 
 func tryRegister(discovery ServiceDiscovery) error {
-	return retry(RETRY_ATTEMPTS, RETRY_TIMEOUT, func() error {
+	return retry(retryAttempts, retryTimeout, func() error {
 		e := discovery.Register()
 		if nil != e {
 			log.Printf("Cannot register service: %s", e)
@@ -45,7 +48,7 @@ func tryRegister(discovery ServiceDiscovery) error {
 }
 
 func tryDeregister(discovery ServiceDiscovery) error {
-	return retry(RETRY_ATTEMPTS, RETRY_TIMEOUT, func() error {
+	return retry(retryAttempts, retryTimeout, func() error {
 		return discovery.Deregister()
 	})
 }

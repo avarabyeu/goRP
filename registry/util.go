@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const protocol = "http://"
+
 func retry(attempts int, timeout time.Duration, callback func() error) (err error) {
 	for i := 0; i <= attempts-1; i++ {
 		err = callback()

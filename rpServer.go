@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type Person struct {
+type person struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
@@ -19,7 +19,7 @@ func main() {
 
 	rp.AddRoute(func(router *gin.Engine) {
 		router.GET("/ping", func(c *gin.Context) {
-			c.JSON(http.StatusOK, Person{"av", 20})
+			c.JSON(http.StatusOK, person{"av", 20})
 		})
 	})
 
