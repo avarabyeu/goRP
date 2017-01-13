@@ -18,6 +18,7 @@ func main() {
 	rp := reportportal.New(rpConf)
 
 	rp.AddRoute(func(router *gin.Engine) {
+		router.Use(reportportal.RequireRole("USER", rpConf.AuthServerURL))
 		router.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, person{"av", 20})
 		})

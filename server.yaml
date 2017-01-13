@@ -15,3 +15,5 @@ consul:
 server:
   port: 9999
   hostname: 10.200.10.1
+
+authServerUrl: http://localhost:9997/uat/sso/me

@@ -30,9 +30,10 @@ type ConsulConfig struct {
 
 //RpConfig represents Composite of all app configs
 type RpConfig struct {
-	Server ServerConfig
-	Eureka EurekaConfig
-	Consul ConsulConfig
+	Server        ServerConfig
+	Eureka        EurekaConfig
+	Consul        ConsulConfig
+	AuthServerURL string
 }
 
 //LoadConfig loads configuration from provided file and serializes it into RpConfig struct
