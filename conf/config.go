@@ -1,8 +1,9 @@
 package conf
 
 import (
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
 //ServerConfig represents Main service configuration
@@ -44,7 +45,7 @@ func LoadConfig(file string) *RpConfig {
 	config.AutomaticEnv()
 	err := config.ReadInConfig()
 	if err != nil {
-		log.Fatal("No configuration file loaded - using defaults")
+		log.Println("No configuration file loaded - using defaults")
 	}
 
 	var rpConf RpConfig
