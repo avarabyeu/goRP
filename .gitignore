@@ -28,4 +28,4 @@ _testmain.go
 *.iml
 
 ## Binaries
-/bin
+/bin/
