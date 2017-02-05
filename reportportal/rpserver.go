@@ -47,6 +47,7 @@ func (rp *RpServer) StartServer() {
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(rp.conf.Server.Port), rp.mux))
 }
 
+//WriteJSON serializes body to provided writer
 func WriteJSON(w http.ResponseWriter, status int, body interface{}) error {
 	header := w.Header()
 	if val := header["Content-Type"]; len(val) == 0 {

@@ -1,7 +1,6 @@
 package reportportal
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -78,7 +77,7 @@ func RequireRole(role string, authServerURL string) func(http.Handler) http.Hand
 				return
 			}
 
-			rq = rq.WithContext(context.WithValue(rq.Context(), "user", info))
+			rq = rq.WithContext(setUser(rq.Context(), info))
 			next.ServeHTTP(w, rq)
 		}
 		return http.HandlerFunc(fn)
