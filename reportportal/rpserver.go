@@ -6,11 +6,10 @@ import (
 	"goji.io"
 	"goji.io/pat"
 
-	"net/http"
 	"encoding/json"
 	"log"
+	"net/http"
 	"strconv"
-
 )
 
 var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
@@ -25,9 +24,9 @@ type RpServer struct {
 //New creates new instance of RpServer struct
 func New(conf *conf.RpConfig) *RpServer {
 	rp := &RpServer{
-		mux:    goji.NewMux(),
-		conf:   conf,
-		sd:     registry.NewConsul(conf),
+		mux:  goji.NewMux(),
+		conf: conf,
+		sd:   registry.NewConsul(conf),
 	}
 
 	rp.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {

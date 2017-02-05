@@ -1,12 +1,12 @@
 package reportportal
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
-	"context"
 )
 
 //User represents logged-in user
@@ -51,7 +51,7 @@ var Authorities = map[string]int{
 }
 
 //RequireRole checks whether request auth represented by ReportPortal user with provided or higher role
-func RequireRole(role string, authServerURL string) (func(http.Handler) http.Handler) {
+func RequireRole(role string, authServerURL string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		authority := "ROLE_" + strings.ToUpper(role)
 		fn := func(w http.ResponseWriter, rq *http.Request) {

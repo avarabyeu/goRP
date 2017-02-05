@@ -2,9 +2,9 @@ package reportportal
 
 import (
 	"github.com/avarabyeu/goRP/conf"
-	"net/http"
 	"goji.io"
 	"goji.io/pat"
+	"net/http"
 )
 
 type Person struct {
