@@ -3,8 +3,12 @@ package main
 import (
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/avarabyeu/goRP/reportportal"
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"goji.io"
+	"goji.io/pat"
+	"github.com/gorilla/handlers"
+
+	"os"
 )
 
 type person struct {
@@ -17,11 +21,18 @@ func main() {
 	rpConf := conf.LoadConfig("server.yaml")
 	rp := reportportal.New(rpConf)
 
-	rp.AddRoute(func(router *gin.Engine) {
-		router.Use(reportportal.RequireRole("USER", rpConf.AuthServerURL))
-		router.GET("/ping", func(c *gin.Context) {
-			c.JSON(http.StatusOK, person{"av", 20})
+	rp.AddRoute(func(mux *goji.Mux) {
+		mux.Use(func(next http.Handler) http.Handler {
+			return handlers.LoggingHandler(os.Stdout, next)
 		})
+
+		mux.Use(reportportal.RequireRole("USER", rpConf.AuthServerURL))
+
+		me := func(w http.ResponseWriter, rq *http.Request) {
+			reportportal.WriteJSON(w, http.StatusOK, rq.Context().Value("user"))
+
+		}
+		mux.HandleFunc(pat.Get("/me"), me)
 	})
 
 	rp.StartServer()

@@ -3,43 +3,56 @@ package reportportal
 import (
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/avarabyeu/goRP/registry"
-	"github.com/gin-gonic/gin"
-	"log"
+	"goji.io"
+	"goji.io/pat"
+
 	"net/http"
+	"encoding/json"
+	"log"
 	"strconv"
+
 )
+
+var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
 
 //RpServer represents ReportPortal micro-service instance
 type RpServer struct {
-	router *gin.Engine
-	conf   *conf.RpConfig
-	sd     registry.ServiceDiscovery
+	mux  *goji.Mux
+	conf *conf.RpConfig
+	sd   registry.ServiceDiscovery
 }
 
 //New creates new instance of RpServer struct
 func New(conf *conf.RpConfig) *RpServer {
-	gin.SetMode(gin.ReleaseMode)
 	rp := &RpServer{
-		router: gin.Default(),
+		mux:    goji.NewMux(),
 		conf:   conf,
 		sd:     registry.NewConsul(conf),
 	}
 
-	rp.router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]string{"status": "UP"})
+	rp.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
+		WriteJSON(w, 200, map[string]string{"status": "UP"})
 	})
 	return rp
 }
 
 //AddRoute gives access to GIN router to add route and perform other modifications
-func (rp *RpServer) AddRoute(f func(router *gin.Engine)) {
-	f(rp.router)
+func (rp *RpServer) AddRoute(f func(router *goji.Mux)) {
+	f(rp.mux)
 }
 
 //StartServer starts HTTP server
 func (rp *RpServer) StartServer() {
-
 	// listen and server on mentioned port
-	registry.Register(rp.sd)
-	log.Fatal(rp.router.Run(":" + strconv.Itoa(rp.conf.Server.Port)))
+	//registry.Register(rp.sd)
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(rp.conf.Server.Port), rp.mux))
+}
+
+func WriteJSON(w http.ResponseWriter, status int, body interface{}) error {
+	header := w.Header()
+	if val := header["Content-Type"]; len(val) == 0 {
+		header["Content-Type"] = jsonContentTypeValue
+	}
+	w.WriteHeader(status)
+	return json.NewEncoder(w).Encode(body)
 }

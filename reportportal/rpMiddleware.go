@@ -3,15 +3,15 @@ package reportportal
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 	"time"
+	"context"
 )
 
 //User represents logged-in user
 type User struct {
-	Name        string
+	User        string
 	Authorities []string
 }
 
@@ -51,50 +51,53 @@ var Authorities = map[string]int{
 }
 
 //RequireRole checks whether request auth represented by ReportPortal user with provided or higher role
-func RequireRole(role string, authServerURL string) gin.HandlerFunc {
-	authority := "ROLE_" + strings.ToUpper(role)
-	return func(c *gin.Context) {
-		token, err := parseBearer(c.Request)
+func RequireRole(role string, authServerURL string) (func(http.Handler) http.Handler) {
+	return func(next http.Handler) http.Handler {
+		authority := "ROLE_" + strings.ToUpper(role)
+		fn := func(w http.ResponseWriter, rq *http.Request) {
+			token, err := parseBearer(rq)
 
-		if err != nil || token == "" {
-			notAuthorized(c)
-			return
-		}
-
-		info, err := getTokenInfo(token, authServerURL)
-		if err != nil {
-			authErr, ok := err.(*authError)
-			if !ok {
-				notAuthorized(c)
-			} else {
-				respondWithError(c, authErr.statusCode, authErr.errorDesc)
+			if err != nil || token == "" {
+				notAuthorized(w)
+				return
 			}
-			return
-		}
 
-		if !hasAuthority(authority, info.Authorities) {
-			notAuthorized(c)
-			return
-		}
+			info, err := getTokenInfo(token, authServerURL)
+			if err != nil {
+				authErr, ok := err.(*authError)
+				if !ok {
+					notAuthorized(w)
+				} else {
+					respondWithError(w, authErr.statusCode, authErr.errorDesc)
+				}
+				return
+			}
 
-		c.Next()
+			if !hasAuthority(authority, info.Authorities) {
+				notAuthorized(w)
+				return
+			}
+
+			rq = rq.WithContext(context.WithValue(rq.Context(), "user", info))
+			next.ServeHTTP(w, rq)
+		}
+		return http.HandlerFunc(fn)
 	}
 }
 
 //notAuthorized sends 401 error to the client
-func notAuthorized(c *gin.Context) {
-	respondWithErrorString(c, http.StatusUnauthorized, "Not Authorized")
+func notAuthorized(w http.ResponseWriter) {
+	respondWithErrorString(w, http.StatusUnauthorized, "Not Authorized")
 }
 
 //respondWithErrorString wraps error with JSON ans sends 401 to the client
-func respondWithErrorString(c *gin.Context, code int, message string) {
-	respondWithError(c, code, gin.H{"error": message})
+func respondWithErrorString(w http.ResponseWriter, code int, message string) {
+	respondWithError(w, code, map[string]string{"error": message})
 }
 
 //respondWithErrorString converts message JSON ans sends 401 to the client
-func respondWithError(c *gin.Context, code int, message interface{}) {
-	c.JSON(code, message)
-	c.Abort()
+func respondWithError(w http.ResponseWriter, code int, message interface{}) {
+	WriteJSON(w, code, message)
 }
 
 //parseBearer parses authorization header

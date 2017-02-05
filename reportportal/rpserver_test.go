@@ -2,8 +2,9 @@ package reportportal
 
 import (
 	"github.com/avarabyeu/goRP/conf"
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"goji.io"
+	"goji.io/pat"
 )
 
 type Person struct {
@@ -15,9 +16,9 @@ func ExampleRpServer() {
 	rpConf := conf.LoadConfig("../server.yaml")
 	rp := New(rpConf)
 
-	rp.AddRoute(func(router *gin.Engine) {
-		router.GET("/ping", func(c *gin.Context) {
-			c.JSON(http.StatusOK, Person{"av", 20})
+	rp.AddRoute(func(router *goji.Mux) {
+		router.HandleFunc(pat.Get("/ping"), func(w http.ResponseWriter, rq *http.Request) {
+			WriteJSON(w, http.StatusOK, Person{"av", 20})
 		})
 	})
 
