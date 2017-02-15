@@ -26,10 +26,10 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 
 	baseURL := protocol + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
 	registration := &api.AgentServiceRegistration{
-		ID:      fmt.Sprintf("%s-%s-%d", cfg.Consul.AppName, cfg.Server.Hostname, cfg.Server.Port),
+		ID:      fmt.Sprintf("%s-%s-%d", cfg.AppName, cfg.Server.Hostname, cfg.Server.Port),
 		Port:    cfg.Server.Port,
 		Address: getLocalIP(),
-		Name:    cfg.Consul.AppName,
+		Name:    cfg.AppName,
 		Tags:    cfg.Consul.Tags,
 		Check: &api.AgentServiceCheck{
 			HTTP:     baseURL + "/health",

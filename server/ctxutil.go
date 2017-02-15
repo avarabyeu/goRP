@@ -1,4 +1,4 @@
-package reportportal
+package server
 
 import "golang.org/x/net/context"
 

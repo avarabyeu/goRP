@@ -1,4 +1,4 @@
-package reportportal
+package server
 
 import (
 	"encoding/json"

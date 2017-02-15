@@ -1,4 +1,4 @@
-package reportportal
+package server
 
 import (
 	"github.com/avarabyeu/goRP/conf"
@@ -23,28 +23,28 @@ type RpServer struct {
 
 //New creates new instance of RpServer struct
 func New(conf *conf.RpConfig) *RpServer {
-	rp := &RpServer{
+	srv := &RpServer{
 		mux:  goji.NewMux(),
 		conf: conf,
 		sd:   registry.NewConsul(conf),
 	}
 
-	rp.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
+	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
 		WriteJSON(w, 200, map[string]string{"status": "UP"})
 	})
-	return rp
+	return srv
 }
 
 //AddRoute gives access to GIN router to add route and perform other modifications
-func (rp *RpServer) AddRoute(f func(router *goji.Mux)) {
-	f(rp.mux)
+func (srv *RpServer) AddRoute(f func(router *goji.Mux)) {
+	f(srv.mux)
 }
 
 //StartServer starts HTTP server
-func (rp *RpServer) StartServer() {
+func (srv *RpServer) StartServer() {
 	// listen and server on mentioned port
-	//registry.Register(rp.sd)
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(rp.conf.Server.Port), rp.mux))
+	registry.Register(srv.sd)
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(srv.conf.Server.Port), srv.mux))
 }
 
 //WriteJSON serializes body to provided writer

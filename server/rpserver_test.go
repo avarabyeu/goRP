@@ -1,4 +1,4 @@
-package reportportal
+package server
 
 import (
 	"github.com/avarabyeu/goRP/conf"
@@ -13,7 +13,7 @@ type Person struct {
 }
 
 func ExampleRpServer() {
-	rpConf := conf.LoadConfig("../server.yaml")
+	rpConf := conf.LoadConfig("../server.yaml", nil)
 	rp := New(rpConf)
 
 	rp.AddRoute(func(router *goji.Mux) {
