@@ -4,13 +4,13 @@ import (
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/avarabyeu/goRP/server"
 
-	"net/http"
+	"github.com/gorilla/handlers"
 	"goji.io"
 	"goji.io/pat"
-	"github.com/gorilla/handlers"
+	"net/http"
 
-	"os"
 	"log"
+	"os"
 )
 
 func main() {
