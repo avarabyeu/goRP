@@ -1,8 +1,8 @@
 package conf
 
 import (
-	"testing"
 	"os"
+	"testing"
 )
 
 func TestLoadConfig(t *testing.T) {

@@ -2,11 +2,11 @@ package server
 
 import (
 	"github.com/avarabyeu/goRP/conf"
+	"github.com/gorilla/handlers"
 	"goji.io"
 	"goji.io/pat"
 	"net/http"
 	"os"
-	"github.com/gorilla/handlers"
 )
 
 type Person struct {
