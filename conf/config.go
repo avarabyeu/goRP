@@ -50,8 +50,8 @@ type RpConfig struct {
 	rawConfig *viper.Viper
 }
 
-//Param reads parameter/property value from config (env,file,defaults)
-func (cfg *RpConfig) Param(key string) interface{} {
+//Get reads parameter/property value from config (env,file,defaults)
+func (cfg *RpConfig) Get(key string) interface{} {
 	return cfg.rawConfig.Get(key)
 }
 
@@ -89,8 +89,7 @@ func LoadConfig(file string, defaults map[string]interface{}) *RpConfig {
 
 func applyDefaults(vpr *viper.Viper) {
 	vpr.SetDefault("appname", "goRP")
-	vpr.SetDefault("AuthServerURL", "http://localhost:9998/sso/me")
-	vpr.SetDefault("registry", Consul)
+	//vpr.SetDefault("registry", Consul)
 
 	vpr.SetDefault("server.port", 9999)
 	vpr.SetDefault("server.hostname", nil)

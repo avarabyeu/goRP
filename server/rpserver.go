@@ -16,17 +16,26 @@ var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
 
 //RpServer represents ReportPortal micro-service instance
 type RpServer struct {
-	mux  *goji.Mux
-	conf *conf.RpConfig
-	sd   registry.ServiceDiscovery
+	mux *goji.Mux
+	cfg *conf.RpConfig
+	sd  registry.ServiceDiscovery
 }
 
 //New creates new instance of RpServer struct
-func New(conf *conf.RpConfig) *RpServer {
+func New(cfg *conf.RpConfig) *RpServer {
+
+	var sd registry.ServiceDiscovery
+	switch cfg.Registry {
+	case conf.Eureka:
+		sd = registry.NewEureka(cfg)
+	case conf.Consul:
+		sd = registry.NewConsul(cfg)
+	}
+
 	srv := &RpServer{
-		mux:  goji.NewMux(),
-		conf: conf,
-		sd:   registry.NewConsul(conf),
+		mux: goji.NewMux(),
+		cfg: cfg,
+		sd:  sd,
 	}
 
 	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
@@ -42,9 +51,12 @@ func (srv *RpServer) AddRoute(f func(router *goji.Mux)) {
 
 //StartServer starts HTTP server
 func (srv *RpServer) StartServer() {
+
+	if nil != srv.sd {
+		registry.Register(srv.sd)
+	}
 	// listen and server on mentioned port
-	registry.Register(srv.sd)
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(srv.conf.Server.Port), srv.mux))
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(srv.cfg.Server.Port), srv.mux))
 }
 
 //WriteJSON serializes body to provided writer

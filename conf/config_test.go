@@ -17,7 +17,7 @@ func TestLoadConfigWithParameters(t *testing.T) {
 	os.Setenv("RP_PARAMETERS.PARAM", "env_value")
 	rpConf := LoadConfig("", map[string]interface{}{"parameters.param": "default_value"})
 
-	if "env_value" != rpConf.Param("parameters.param") {
+	if "env_value" != rpConf.Get("parameters.param").(string) {
 		t.Error("Config parser fails")
 	}
 }
