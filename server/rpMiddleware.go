@@ -123,11 +123,11 @@ func getTokenInfo(token string, authServerURL string) (*User, error) {
 	rq.Header.Add(authorizationHeader, fmt.Sprintf("%s %s", bearerToken, token))
 	rq.Header.Add(contentTypeHeader, jsonContentType)
 	rs, e := netClient.Do(rq)
-	defer rs.Body.Close()
 
 	if nil != e {
 		return nil, e
 	}
+	defer rs.Body.Close()
 
 	if rs.StatusCode/100 > 2 {
 		uatErr := new(UserInfoErr)

@@ -62,7 +62,6 @@ func trimQuery(s string, sep string) string {
 	sepIndex := strings.Index(s, sep)
 	if -1 != sepIndex {
 		return s[:sepIndex]
-	} else {
-		return s
 	}
+	return s
 }

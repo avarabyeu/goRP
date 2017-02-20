@@ -26,8 +26,10 @@ test: get-deps
 #checkstyle: test
 #	./checkstyle.sh
 checkstyle:
+	@go vet ${GOPACKAGES}
+	@golint ${GODIRS_NOVENDOR}
+	@misspell ${GODIRS_NOVENDOR}
 	@gofmt -l ${GOFILES_NOVENDOR} | read && echo "Code differs from gofmt's style" 1>&2 && exit 1 || true
-	go vet ${GOPACKAGES}
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}

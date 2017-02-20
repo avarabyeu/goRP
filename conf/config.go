@@ -3,11 +3,11 @@ package conf
 import (
 	"log"
 
+	"fmt"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"path/filepath"
 	"strings"
-	"github.com/spf13/pflag"
-	"fmt"
 )
 
 //Registry represents type of used service discovery server

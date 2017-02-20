@@ -28,7 +28,7 @@ func ExampleRpServer() {
 
 }
 
-func ExampleAuthMiddleware() {
+func ExampleRpServer_StartServer() {
 
 	rpConf := conf.LoadConfig("../server.yaml",
 		map[string]interface{}{"AuthServerURL": "http://localhost:9998/sso/me"})
