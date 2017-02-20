@@ -13,7 +13,6 @@ func TestLoadConfig(t *testing.T) {
 }
 
 func TestLoadConfigWithParameters(t *testing.T) {
-	os.Setenv("RP_OK", "param1")
 	os.Setenv("RP_PARAMETERS.PARAM", "env_value")
 	rpConf := LoadConfig("", map[string]interface{}{"parameters.param": "default_value"})
 

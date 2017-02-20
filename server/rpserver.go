@@ -56,6 +56,7 @@ func (srv *RpServer) StartServer() {
 		registry.Register(srv.sd)
 	}
 	// listen and server on mentioned port
+	log.Printf("Starting on port %d", srv.cfg.Server.Port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(srv.cfg.Server.Port), srv.mux))
 }
 
