@@ -1,5 +1,8 @@
 .DEFAULT_GOAL := build
 
+COMMIT_HASH = `git rev-parse --short HEAD 2>/dev/null`
+BUILD_DATE = `date +%FT%T%z`
+
 GO = go
 BINARY_DIR=bin
 BINARY=${BINARY_DIR}/goRP
@@ -12,6 +15,10 @@ help:
 	@echo "build      - go build"
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
+
+vendor: ## Install govendor and sync Hugo's vendored dependencies
+	go get github.com/kardianos/govendor
+	govendor sync ${PACKAGE}
 
 get-build-deps:
 	$(GO) get $(BUILD_DEPS)
@@ -28,7 +35,7 @@ test: get-deps
 #	./checkstyle.sh
 
 checkstyle:
-	gometalinter --deadline 1m
+	gometalinter ${GODIRS_NOVENDOR} --deadline 1m
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
