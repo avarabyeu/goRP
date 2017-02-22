@@ -5,7 +5,6 @@ BUILD_DATE = `date +%FT%T%z`
 
 GO = go
 BINARY_DIR=bin
-BINARY=${BINARY_DIR}/goRP
 
 BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
@@ -28,16 +27,22 @@ get-build-deps:
 test: vendor
 	govendor test +local
 
-
 checkstyle test:
 	gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
 
+# Builds gorpRoot
+build-app-root: test checkstyle
+	$(GO) build -o ${BINARY_DIR}/gorpRoot ./gorpRoot
+
+# Builds gorpUI
+build-app-ui: test checkstyle
+	$(GO) build -o ${BINARY_DIR}/gorpUI ./gorpUI
+
 # Builds the project
-build: test checkstyle
-	$(GO) build -o ${BINARY}
+build: build-app-root build-app-ui
 
 clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi
