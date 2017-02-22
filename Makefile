@@ -16,29 +16,29 @@ help:
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
-vendor: ## Install govendor and sync Hugo's vendored dependencies
-	go get github.com/kardianos/govendor
-	govendor sync
-
 get-build-deps:
 	$(GO) get $(BUILD_DEPS)
 	gometalinter --install
 
+vendor: get-build-deps## Install govendor and sync Hugo's vendored dependencies
+	go get github.com/kardianos/govendor
+	govendor sync
+
 test: vendor
 	govendor test +local
 
-checkstyle test:
+checkstyle:
 	gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
 
 # Builds gorpRoot
-build-app-root: test checkstyle
+build-app-root: checkstyle test
 	$(GO) build -o ${BINARY_DIR}/gorpRoot ./gorpRoot
 
 # Builds gorpUI
-build-app-ui: test checkstyle
+build-app-ui: checkstyle test
 	$(GO) build -o ${BINARY_DIR}/gorpUI ./gorpUI
 
 # Builds the project
