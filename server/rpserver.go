@@ -18,7 +18,7 @@ var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
 type RpServer struct {
 	mux *goji.Mux
 	cfg *conf.RpConfig
-	sd  registry.ServiceDiscovery
+	Sd  registry.ServiceDiscovery
 }
 
 //New creates new instance of RpServer struct
@@ -35,11 +35,15 @@ func New(cfg *conf.RpConfig) *RpServer {
 	srv := &RpServer{
 		mux: goji.NewMux(),
 		cfg: cfg,
-		sd:  sd,
+		Sd:  sd,
 	}
 
 	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
 		WriteJSON(w, 200, map[string]string{"status": "UP"})
+	})
+	srv.mux.HandleFunc(pat.Get("/info"), func(w http.ResponseWriter, rq *http.Request) {
+		WriteJSON(w, 200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}})
+
 	})
 	return srv
 }
@@ -52,8 +56,8 @@ func (srv *RpServer) AddRoute(f func(router *goji.Mux)) {
 //StartServer starts HTTP server
 func (srv *RpServer) StartServer() {
 
-	if nil != srv.sd {
-		registry.Register(srv.sd)
+	if nil != srv.Sd {
+		registry.Register(srv.Sd)
 	}
 	// listen and server on mentioned port
 	log.Printf("Starting on port %d", srv.cfg.Server.Port)

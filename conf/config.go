@@ -112,7 +112,7 @@ func bindToFlags(vpr *viper.Viper) {
 func applyDefaults(vpr *viper.Viper) {
 	vpr.SetDefault("appname", "goRP")
 
-	//vpr.SetDefault("registry", Consul)
+	vpr.SetDefault("registry", Consul)
 
 	vpr.SetDefault("server.port", 9999)
 

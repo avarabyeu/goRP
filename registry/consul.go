@@ -56,3 +56,8 @@ func (ec *consulClient) Deregister() error {
 	}
 	return e
 }
+
+//DoWithClient does provided action using service discovery client
+func (ec *consulClient) DoWithClient(f func(client interface{}) (interface{}, error)) (interface{}, error) {
+	return f(ec.c)
+}

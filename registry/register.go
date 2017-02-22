@@ -14,6 +14,7 @@ const (
 type ServiceDiscovery interface {
 	Register() error
 	Deregister() error
+	DoWithClient(func(client interface{}) (interface{}, error)) (interface{}, error)
 }
 
 //Register registers instance giving several tries

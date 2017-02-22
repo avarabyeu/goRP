@@ -53,6 +53,11 @@ func (ec *eurekaClient) Deregister() error {
 	return ec.eureka.DeregisterInstance(ec.appInstance)
 }
 
+//DoWithClient does provided action using service discovery client
+func (ec *eurekaClient) DoWithClient(f func(client interface{}) (interface{}, error)) (interface{}, error) {
+	return f(ec.eureka)
+}
+
 //sends heartbeats to Eureka to notify it that service is still alive
 func heartBeat(ec *eurekaClient) {
 	go func() {

@@ -19,6 +19,7 @@ func main() {
 
 	currDir, _ := os.Getwd()
 	rpConf := conf.LoadConfig("", map[string]interface{}{"staticsPath": currDir})
+	rpConf.Consul.Tags = []string{"statusPageUrlPath=/info", "healthCheckUrlPath=/health"}
 	srv := server.New(rpConf)
 
 	srv.AddRoute(func(mux *goji.Mux) {
