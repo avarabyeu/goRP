@@ -3,8 +3,7 @@
 GO = go
 BINARY_DIR=bin
 BINARY=${BINARY_DIR}/goRP
-BUILD_DEPS:= github.com/golang/lint/golint \
-             github.com/client9/misspell/cmd/misspell
+BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
@@ -16,6 +15,8 @@ help:
 
 get-build-deps:
 	$(GO) get $(BUILD_DEPS)
+	gometalinter --install
+
 
 get-deps: get-build-deps
 	$(GO) get ./...
@@ -25,11 +26,9 @@ test: get-deps
 
 #checkstyle: test
 #	./checkstyle.sh
+
 checkstyle:
-	@go vet ${GOPACKAGES}
-	@golint ${GODIRS_NOVENDOR}
-	@misspell ${GODIRS_NOVENDOR}
-	@gofmt -l ${GOFILES_NOVENDOR} | read && echo "Code differs from gofmt's style" 1>&2 && exit 1 || true
+	gometalinter --deadline 1m
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}

@@ -17,7 +17,11 @@ import (
 
 func main() {
 
-	currDir, _ := os.Getwd()
+	currDir, e := os.Getwd()
+	if nil != e {
+		log.Fatalf("Cannot get workdir: %s", e.Error())
+	}
+
 	rpConf := conf.LoadConfig("", map[string]interface{}{"staticsPath": currDir})
 	rpConf.Consul.Tags = []string{"statusPageUrlPath=/info", "healthCheckUrlPath=/health"}
 	srv := server.New(rpConf)
