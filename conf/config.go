@@ -84,7 +84,10 @@ func LoadConfig(file string, defaults map[string]interface{}) *RpConfig {
 	bindToFlags(vpr)
 
 	var rpConf RpConfig
-	vpr.Unmarshal(&rpConf)
+	err = vpr.Unmarshal(&rpConf)
+	if err != nil {
+		log.Fatalf("Cannot unmarshal config: %s", err.Error())
+	}
 	rpConf.rawConfig = vpr
 
 	//vpr.Debug()

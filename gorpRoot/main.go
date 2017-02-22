@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/avarabyeu/goRP/server"
 	"fmt"
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/avarabyeu/goRP/registry"
+	"github.com/avarabyeu/goRP/server"
 	"github.com/dghubble/sling"
 	"github.com/hashicorp/consul/api"
 	"github.com/mitchellh/mapstructure"
@@ -13,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"github.com/avarabyeu/goRP/registry"
 )
 
 func main() {

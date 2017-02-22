@@ -6,6 +6,7 @@ BUILD_DATE = `date +%FT%T%z`
 GO = go
 BINARY_DIR=bin
 BINARY=${BINARY_DIR}/goRP
+
 BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
@@ -18,24 +19,18 @@ help:
 
 vendor: ## Install govendor and sync Hugo's vendored dependencies
 	go get github.com/kardianos/govendor
-	govendor sync ${PACKAGE}
+	govendor sync
 
 get-build-deps:
 	$(GO) get $(BUILD_DEPS)
 	gometalinter --install
 
+test: vendor
+	govendor test +local
 
-get-deps: get-build-deps
-	$(GO) get ./...
 
-test: get-deps
-	$(GO) test -v ${GODIRS_NOVENDOR}
-
-#checkstyle: test
-#	./checkstyle.sh
-
-checkstyle:
-	gometalinter ${GODIRS_NOVENDOR} --deadline 1m
+checkstyle test:
+	gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
