@@ -27,7 +27,7 @@ vendor: get-build-deps## Install govendor and sync Hugo's vendored dependencies
 test: vendor
 	govendor test +local
 
-checkstyle:
+checkstyle: get-build-deps
 	gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
 
 fmt:
