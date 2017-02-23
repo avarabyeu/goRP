@@ -16,13 +16,14 @@ help:
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
-get-build-deps:
-	$(GO) get $(BUILD_DEPS)
-	gometalinter --install
 
-vendor: get-build-deps## Install govendor and sync Hugo's vendored dependencies
+vendor: ## Install govendor and sync Hugo's vendored dependencies
 	go get github.com/kardianos/govendor
 	govendor sync
+
+get-build-deps: vendor
+	$(GO) get $(BUILD_DEPS)
+	gometalinter --install
 
 test: vendor
 	govendor test +local
