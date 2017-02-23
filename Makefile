@@ -10,12 +10,12 @@ BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
+.PHONY: vendor
 
 help:
 	@echo "build      - go build"
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
-
 
 vendor: ## Install govendor and sync Hugo's vendored dependencies
 	go get github.com/kardianos/govendor
@@ -29,7 +29,7 @@ test: vendor
 	govendor test +local
 
 checkstyle: get-build-deps
-	gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
+	GO_VENDOR=1 gometalinter --vendor ./... --deadline 1m --disable=gas --disable=errcheck
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
