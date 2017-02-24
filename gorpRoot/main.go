@@ -12,23 +12,47 @@ import (
 	"goji.io/pat"
 	"log"
 	"net/http"
-	"os"
 	"strings"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
 
-	currDir, _ := os.Getwd()
-	rpConf := conf.LoadConfig("", map[string]interface{}{"staticsPath": currDir})
+	rpConf := conf.LoadConfig("", map[string]interface{}{})
+	rpConf.AppName = "gorproot"
+	rpConf.Consul.Tags = rpConf.Consul.Tags + ",statusPageUrlPath=/info,healthCheckUrlPath=/health"
+
 	srv := server.New(rpConf)
 
 	srv.AddRoute(func(router *goji.Mux) {
+		router.Use(func(next http.Handler) http.Handler {
+			return handlers.LoggingHandler(os.Stdout, next)
+		})
+
 		router.HandleFunc(pat.Get("/composite/info"), func(w http.ResponseWriter, r *http.Request) {
 			server.WriteJSON(w, 200, aggregateInfo(getNodesInfo(srv.Sd)))
 		})
 		router.HandleFunc(pat.Get("/composite/health"), func(w http.ResponseWriter, r *http.Request) {
 			server.WriteJSON(w, 200, aggregateHealth(getNodesInfo(srv.Sd)))
 		})
+		router.HandleFunc(pat.Get("/composite/extensions"), func(w http.ResponseWriter, r *http.Request) {
+			server.WriteJSON(w, 200, map[string]string{})
+		})
+		router.HandleFunc(pat.Get("/"), func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/ui/", 301)
+		})
+
+
+		u, e := url.Parse("http://" + rpConf.Consul.Address)
+		if e != nil {
+			log.Fatal("Cannot parse consul URL")
+		}
+		proxy := httputil.NewSingleHostReverseProxy(u)
+		router.Handle(pat.Get("/consul/*"), http.StripPrefix("/consul/", proxy))
+		router.Handle(pat.Get("/v1/*"), proxy)
 	})
 	srv.StartServer()
 }

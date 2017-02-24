@@ -7,10 +7,7 @@ consul:
   scheme: http
   appname: goapp
   pollInterval : 5
-  tags:
-    - one
-    - two
-    - three
+  tags: one,two,three
 
 server:
   port: 9997

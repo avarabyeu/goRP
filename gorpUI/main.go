@@ -11,8 +11,8 @@ import (
 
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
+	"path/filepath"
 )
 
 func main() {
@@ -23,14 +23,16 @@ func main() {
 	}
 
 	rpConf := conf.LoadConfig("", map[string]interface{}{"staticsPath": currDir})
-	rpConf.Consul.Tags = []string{"statusPageUrlPath=/info", "healthCheckUrlPath=/health"}
-	srv := server.New(rpConf)
+	rpConf.Consul.Tags = rpConf.Consul.Tags + ",statusPageUrlPath=/info,healthCheckUrlPath=/health"
 
-	srv.AddRoute(func(mux *goji.Mux) {
-		mux.Use(func(next http.Handler) http.Handler {
+	rpConf.AppName = "gorpui"
+
+	srv := server.New(rpConf)
+	srv.AddRoute(func(router *goji.Mux) {
+		router.Use(func(next http.Handler) http.Handler {
 			return handlers.LoggingHandler(os.Stdout, next)
 		})
-		mux.Use(func(next http.Handler) http.Handler {
+		router.Use(func(next http.Handler) http.Handler {
 			return handlers.CompressHandler(next)
 		})
 
@@ -40,11 +42,11 @@ func main() {
 			log.Fatalf("Dir %s not found", dir)
 		}
 
-		mux.Use(func(next http.Handler) http.Handler {
+		router.Use(func(next http.Handler) http.Handler {
 			return handlers.LoggingHandler(os.Stdout, next)
 		})
 
-		mux.Handle(pat.Get("/*"), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		router.Handle(pat.Get("/*"), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			//trim query params
 			ext := filepath.Ext(trimQuery(r.URL.String(), "?"))
 
@@ -53,7 +55,7 @@ func main() {
 				w.Header().Add("Cache-Control", "no-cache")
 			}
 
-			http.FileServer(http.Dir(dir))
+			http.FileServer(http.Dir(dir)).ServeHTTP(w, r)
 		}))
 
 	})

@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"path/filepath"
 	"strings"
+	"os"
 )
 
 //Registry represents type of used service discovery server
@@ -38,7 +39,7 @@ type ConsulConfig struct {
 	Scheme       string
 	Token        string
 	PollInterval int
-	Tags         []string
+	Tags         string
 }
 
 //RpConfig represents Composite of all app configs
@@ -113,13 +114,18 @@ func bindToFlags(vpr *viper.Viper) {
 }
 
 func applyDefaults(vpr *viper.Viper) {
+
 	vpr.SetDefault("appname", "goRP")
 
 	vpr.SetDefault("registry", Consul)
 
-	vpr.SetDefault("server.port", 9999)
+	vpr.SetDefault("server.port", 8080)
 
-	vpr.SetDefault("server.hostname", nil)
+	defaultHostname := os.Getenv("HOSTNAME")
+	if "" == defaultHostname {
+		defaultHostname = "localhost"
+	}
+	vpr.SetDefault("server.hostname", defaultHostname)
 
 	vpr.SetDefault("eureka.url", "http://localhost:8761/eureka")
 	vpr.SetDefault("eureka.appname", "goRP")
@@ -128,6 +134,6 @@ func applyDefaults(vpr *viper.Viper) {
 	vpr.SetDefault("consul.address", "localhost:8500")
 	vpr.SetDefault("consul.scheme", "http")
 	vpr.SetDefault("consul.pollInterval", 5)
-	vpr.SetDefault("consul.tags", nil)
+	vpr.SetDefault("consul.tags", "")
 
 }

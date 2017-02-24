@@ -23,14 +23,14 @@ func TestLoadConfigWithParameters(t *testing.T) {
 
 func TestLoadConfigUnexisted(t *testing.T) {
 	rpConf := LoadConfig("server.yaml", nil)
-	if "" != rpConf.Server.Hostname {
+	if 8080 != rpConf.Server.Port {
 		t.Error("Should return empty string for default config")
 	}
 }
 
 func TestLoadConfigIncorrectFormat(t *testing.T) {
 	rpConf := LoadConfig("config_test.go", nil)
-	if "" != rpConf.Server.Hostname {
+	if 8080 != rpConf.Server.Port {
 		t.Error("Should return empty string for default config")
 	}
 }

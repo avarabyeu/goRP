@@ -10,7 +10,7 @@ BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
-.PHONY: vendor
+.PHONY: vendor test build
 
 help:
 	@echo "build      - go build"
@@ -29,21 +29,26 @@ test: vendor
 	govendor test +local
 
 checkstyle: get-build-deps
-	gometalinter --vendor ./... --deadline 5m --disable=gas --disable=errcheck
+	gometalinter --vendor ./... --fast --disable=gas --disable=errcheck --disable=gotype #--deadline 5m
 
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
 
 # Builds gorpRoot
 build-app-root: checkstyle test
-	$(GO) build -o ${BINARY_DIR}/gorpRoot ./gorpRoot
+	CGO_ENABLED=0 GOOS=linux $(GO) build -o ${BINARY_DIR}/gorpRoot ./gorpRoot
 
 # Builds gorpUI
 build-app-ui: checkstyle test
-	$(GO) build -o ${BINARY_DIR}/gorpUI ./gorpUI
+	CGO_ENABLED=0 GOOS=linux $(GO) build -o ${BINARY_DIR}/gorpUI ./gorpUI
 
 # Builds the project
 build: build-app-root build-app-ui
+
+# Builds containers
+docker: build
+	docker build -t gorproot -f gorpRoot/Dockerfile .
+	docker build -t gorpui -f gorpUI/Dockerfile .
 
 clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi
