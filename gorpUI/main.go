@@ -23,7 +23,6 @@ func main() {
 	}
 
 	rpConf := conf.LoadConfig("", map[string]interface{}{"staticsPath": currDir})
-	rpConf.Consul.Tags = rpConf.Consul.Tags + ",statusPageUrlPath=/info,healthCheckUrlPath=/health"
 
 	rpConf.AppName = "gorpui"
 

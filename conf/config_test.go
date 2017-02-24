@@ -21,7 +21,7 @@ func TestLoadConfigWithParameters(t *testing.T) {
 	}
 }
 
-func TestLoadConfigUnexisted(t *testing.T) {
+func TestLoadConfigNonExisting(t *testing.T) {
 	rpConf := LoadConfig("server.yaml", nil)
 	if 8080 != rpConf.Server.Port {
 		t.Error("Should return empty string for default config")

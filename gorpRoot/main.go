@@ -23,7 +23,6 @@ func main() {
 
 	rpConf := conf.LoadConfig("", map[string]interface{}{})
 	rpConf.AppName = "gorproot"
-	rpConf.Consul.Tags = rpConf.Consul.Tags + ",statusPageUrlPath=/info,healthCheckUrlPath=/health"
 
 	srv := server.New(rpConf)
 
@@ -44,7 +43,6 @@ func main() {
 		router.HandleFunc(pat.Get("/"), func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/ui/", 301)
 		})
-
 
 		u, e := url.Parse("http://" + rpConf.Consul.Address)
 		if e != nil {

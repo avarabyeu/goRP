@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	"log"
 	"strconv"
-	"strings"
 )
 
 type consulClient struct {
@@ -31,7 +30,7 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		Port:    cfg.Server.Port,
 		Address: getLocalIP(),
 		Name:    cfg.AppName,
-		Tags:    strings.Split(cfg.Consul.Tags, ","),
+		Tags:    cfg.Consul.Tags,
 		Check: &api.AgentServiceCheck{
 			HTTP:     baseURL + "/health",
 			Interval: fmt.Sprintf("%ds", cfg.Consul.PollInterval),

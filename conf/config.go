@@ -39,7 +39,7 @@ type ConsulConfig struct {
 	Scheme       string
 	Token        string
 	PollInterval int
-	Tags         string
+	Tags         []string
 }
 
 //RpConfig represents Composite of all app configs
@@ -134,6 +134,6 @@ func applyDefaults(vpr *viper.Viper) {
 	vpr.SetDefault("consul.address", "localhost:8500")
 	vpr.SetDefault("consul.scheme", "http")
 	vpr.SetDefault("consul.pollInterval", 5)
-	vpr.SetDefault("consul.tags", "")
+	vpr.SetDefault("consul.tags", []string{})
 
 }
