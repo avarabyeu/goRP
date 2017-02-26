@@ -7,7 +7,6 @@ import (
 	"github.com/avarabyeu/goRP/server"
 	"github.com/dghubble/sling"
 	"github.com/hashicorp/consul/api"
-	"github.com/mitchellh/mapstructure"
 	"goji.io"
 	"goji.io/pat"
 	"log"
@@ -17,6 +16,7 @@ import (
 	"net/url"
 	"os"
 	"github.com/gorilla/handlers"
+	"github.com/avarabyeu/goRP/common"
 )
 
 func main() {
@@ -32,16 +32,16 @@ func main() {
 		})
 
 		router.HandleFunc(pat.Get("/composite/info"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, 200, aggregateInfo(getNodesInfo(srv.Sd)))
+			server.WriteJSON(w, http.StatusOK, aggregateInfo(getNodesInfo(srv.Sd, true)))
 		})
 		router.HandleFunc(pat.Get("/composite/health"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, 200, aggregateHealth(getNodesInfo(srv.Sd)))
+			server.WriteJSON(w, http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)))
 		})
 		router.HandleFunc(pat.Get("/composite/extensions"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, 200, map[string]string{})
+			server.WriteJSON(w, http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)))
 		})
-		router.HandleFunc(pat.Get("/"), func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/ui/", 301)
+		router.HandleFunc(pat.New("/"), func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/ui/", http.StatusMovedPermanently)
 		})
 
 		u, e := url.Parse("http://" + rpConf.Consul.Address)
@@ -64,13 +64,13 @@ func parseKVTag(tags []string, tagsMap map[string]string) {
 	}
 }
 
-func aggregateHealth(nodeInfos map[string]*nodeInfo) map[string]interface{} {
-	var aggregated = make(map[string]interface{}, len(nodeInfos))
-	for node, info := range nodeInfos {
+func aggregateHealth(nodesInfo map[string]*nodeInfo) map[string]interface{} {
+	var aggregated = make(map[string]interface{}, len(nodesInfo))
+	for node, info := range nodesInfo {
 		var rs map[string]interface{}
 
-		if "" != info.HealthCheckURLPath {
-			_, e := sling.New().Base(info.BaseURL).Get(info.HealthCheckURLPath).Receive(&rs, &rs)
+		if "" != info.getHealthCheckURL() {
+			_, e := sling.New().Base(info.BaseURL).Get(info.getHealthCheckURL()).Receive(&rs, &rs)
 			if nil != e {
 				rs = make(map[string]interface{}, 1)
 				rs["status"] = "DOWN"
@@ -85,11 +85,11 @@ func aggregateHealth(nodeInfos map[string]*nodeInfo) map[string]interface{} {
 	return aggregated
 }
 
-func aggregateInfo(nodeInfos map[string]*nodeInfo) map[string]interface{} {
-	var aggregated = make(map[string]interface{}, len(nodeInfos))
-	for node, info := range nodeInfos {
+func aggregateInfo(nodesInfo map[string]*nodeInfo) map[string]interface{} {
+	var aggregated = make(map[string]interface{}, len(nodesInfo))
+	for node, info := range nodesInfo {
 		var rs map[string]interface{}
-		_, e := sling.New().Base(info.BaseURL).Get(info.StatusPageURLPath).ReceiveSuccess(&rs)
+		_, e := sling.New().Base(info.BaseURL).Get(info.getStatusPageURL()).ReceiveSuccess(&rs)
 		if nil != e {
 			log.Println(e)
 			continue
@@ -99,7 +99,17 @@ func aggregateInfo(nodeInfos map[string]*nodeInfo) map[string]interface{} {
 	return aggregated
 }
 
-func getNodesInfo(discovery registry.ServiceDiscovery) map[string]*nodeInfo {
+func getExtensions(nodesInfo map[string]*nodeInfo) []string {
+	extensions := make(map[string]interface{})
+	for _, info := range nodesInfo {
+		if "" != info.Tags["extension"] {
+			extensions[info.Tags["extension"]] = struct{}{}
+		}
+	}
+	return common.KeySet(extensions)
+}
+
+func getNodesInfo(discovery registry.ServiceDiscovery, passing bool) map[string]*nodeInfo {
 	nodesInfo, _ := discovery.DoWithClient(func(client interface{}) (interface{}, error) {
 		services, _, e := client.(*api.Client).Catalog().Services(&api.QueryOptions{})
 		if nil != e {
@@ -107,7 +117,7 @@ func getNodesInfo(discovery registry.ServiceDiscovery) map[string]*nodeInfo {
 		}
 		nodesInfo := make(map[string]*nodeInfo, len(services))
 		for k := range services {
-			instances, _, e := client.(*api.Client).Health().Service(k, "", true, &api.QueryOptions{})
+			instances, _, e := client.(*api.Client).Health().Service(k, "", passing, &api.QueryOptions{})
 			if nil != e {
 				return nil, e
 			}
@@ -116,8 +126,8 @@ func getNodesInfo(discovery registry.ServiceDiscovery) map[string]*nodeInfo {
 				parseKVTag(inst.Service.Tags, tagsMap)
 
 				var ni nodeInfo
-				mapstructure.Decode(tagsMap, &ni)
 				ni.BaseURL = fmt.Sprintf("http://%s:%d/", inst.Service.Address, inst.Service.Port)
+				ni.Tags = tagsMap
 				nodesInfo[k] = &ni
 			}
 
@@ -129,7 +139,13 @@ func getNodesInfo(discovery registry.ServiceDiscovery) map[string]*nodeInfo {
 }
 
 type nodeInfo struct {
-	BaseURL            string
-	StatusPageURLPath  string
-	HealthCheckURLPath string
+	BaseURL string
+	Tags    map[string]string
+}
+
+func (ni *nodeInfo) getStatusPageURL() string {
+	return ni.Tags["StatusPageURLPath"]
+}
+func (ni *nodeInfo) getHealthCheckURL() string {
+	return ni.Tags["HealthCheckURLPath"]
 }

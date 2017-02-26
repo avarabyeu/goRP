@@ -3,6 +3,7 @@ package registry
 import (
 	"log"
 	"time"
+	"github.com/avarabyeu/goRP/common"
 )
 
 const (
@@ -24,7 +25,7 @@ func Register(discovery ServiceDiscovery) {
 		log.Fatal(err)
 	}
 
-	shutdownHook(func() error {
+	common.ShutdownHook(func() error {
 		log.Println("try to deregister")
 		return Deregister(discovery)
 
@@ -37,7 +38,7 @@ func Deregister(discovery ServiceDiscovery) error {
 }
 
 func tryRegister(discovery ServiceDiscovery) error {
-	return retry(retryAttempts, retryTimeout, func() error {
+	return common.Retry(retryAttempts, retryTimeout, func() error {
 		e := discovery.Register()
 		if nil != e {
 			log.Printf("Cannot register service: %s", e)
@@ -49,7 +50,7 @@ func tryRegister(discovery ServiceDiscovery) error {
 }
 
 func tryDeregister(discovery ServiceDiscovery) error {
-	return retry(retryAttempts, retryTimeout, func() error {
+	return common.Retry(retryAttempts, retryTimeout, func() error {
 		return discovery.Deregister()
 	})
 }

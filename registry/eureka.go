@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 	"time"
+	"github.com/avarabyeu/goRP/common"
 )
 
 type eurekaClient struct {
@@ -17,11 +18,11 @@ type eurekaClient struct {
 func NewEureka(conf *conf.RpConfig) ServiceDiscovery {
 	eureka := fargo.NewConn(conf.Eureka.URL)
 	eureka.PollInterval = time.Duration(conf.Eureka.PollInterval) * time.Second
-	baseURL := protocol + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
+	baseURL := common.HTTP + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
 	var appInstance = &fargo.Instance{
 		App:        conf.AppName,
 		VipAddress: conf.Server.Hostname,
-		IPAddr:     getLocalIP(),
+		IPAddr:     common.GetLocalIP(),
 		HostName:   conf.Server.Hostname,
 		Port:       conf.Server.Port,
 		DataCenterInfo: fargo.DataCenterInfo{

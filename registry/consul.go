@@ -3,6 +3,7 @@ package registry
 import (
 	"fmt"
 	"github.com/avarabyeu/goRP/conf"
+	"github.com/avarabyeu/goRP/common"
 	"github.com/hashicorp/consul/api"
 	"log"
 	"strconv"
@@ -24,11 +25,11 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		log.Fatal("Cannot create Consul client!")
 	}
 
-	baseURL := protocol + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
+	baseURL := common.HTTP + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
 	registration := &api.AgentServiceRegistration{
 		ID:      fmt.Sprintf("%s-%s-%d", cfg.AppName, cfg.Server.Hostname, cfg.Server.Port),
 		Port:    cfg.Server.Port,
-		Address: getLocalIP(),
+		Address: common.GetLocalIP(),
 		Name:    cfg.AppName,
 		Tags:    cfg.Consul.Tags,
 		Check: &api.AgentServiceCheck{
