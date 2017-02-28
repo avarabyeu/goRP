@@ -1,12 +1,13 @@
 package registry
 
 import (
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/hudl/fargo"
 	"log"
 	"strconv"
 	"time"
+
 	"github.com/avarabyeu/goRP/common"
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/hudl/fargo"
 )
 
 type eurekaClient struct {

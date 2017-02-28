@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"strings"
+
+	"github.com/avarabyeu/goRP/common"
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/avarabyeu/goRP/registry"
 	"github.com/avarabyeu/goRP/server"
 	"github.com/dghubble/sling"
-	"github.com/hashicorp/consul/api"
-	"goji.io"
-	"goji.io/pat"
-	"log"
-	"net/http"
-	"strings"
-	"net/http/httputil"
-	"net/url"
-	"os"
 	"github.com/gorilla/handlers"
-	"github.com/avarabyeu/goRP/common"
+	"github.com/hashicorp/consul/api"
+	"goji.io/pat"
 )
 
 func main() {

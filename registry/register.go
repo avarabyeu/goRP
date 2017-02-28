@@ -3,6 +3,7 @@ package registry
 import (
 	"log"
 	"time"
+
 	"github.com/avarabyeu/goRP/common"
 )
 
