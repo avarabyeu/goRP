@@ -32,7 +32,7 @@ checkstyle: get-build-deps
 	gometalinter --vendor ./... --fast --disable=gas --disable=errcheck --disable=gotype #--deadline 5m
 
 fmt:
-	gofmt -l -w ${GOFILES_NOVENDOR}
+	gofmt -l -w -s ${GOFILES_NOVENDOR}
 
 # Builds gorpRoot
 build-app-root: checkstyle test
