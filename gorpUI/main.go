@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/handlers"
+	"goji.io"
 	"goji.io/pat"
 
 	"log"
