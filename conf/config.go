@@ -4,11 +4,12 @@ import (
 	"log"
 
 	"fmt"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"os"
 	"path/filepath"
 	"strings"
-	"os"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 //Registry represents type of used service discovery server

@@ -1,11 +1,11 @@
 package common
 
 import (
-	"testing"
-	"reflect"
-	"time"
 	"errors"
 	"log"
+	"reflect"
+	"testing"
+	"time"
 )
 
 func TestKeySet(t *testing.T) {

@@ -2,11 +2,12 @@ package registry
 
 import (
 	"fmt"
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/avarabyeu/goRP/common"
-	"github.com/hashicorp/consul/api"
 	"log"
 	"strconv"
+
+	"github.com/avarabyeu/goRP/common"
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/hashicorp/consul/api"
 )
 
 type consulClient struct {
