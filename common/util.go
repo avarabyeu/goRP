@@ -13,7 +13,7 @@ import (
 //HTTP is protocol prefix constant
 const HTTP = "http://"
 
-//Retry executed callback func until it executes successully
+//Retry executed callback func until it executes successfully
 func Retry(attempts int, timeout time.Duration, callback func() error) (err error) {
 	for i := 0; i <= attempts-1; i++ {
 		err = callback()

@@ -16,8 +16,8 @@ import (
 	"github.com/dghubble/sling"
 	"github.com/gorilla/handlers"
 	"github.com/hashicorp/consul/api"
-	"goji.io/pat"
 	"goji.io"
+	"goji.io/pat"
 )
 
 func main() {
