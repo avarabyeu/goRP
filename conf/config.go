@@ -3,9 +3,13 @@ package conf
 import (
 	"log"
 
-	"github.com/spf13/viper"
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 //Registry represents type of used service discovery server
@@ -50,8 +54,8 @@ type RpConfig struct {
 	rawConfig *viper.Viper
 }
 
-//Param reads parameter/property value from config (env,file,defaults)
-func (cfg *RpConfig) Param(key string) interface{} {
+//Get reads parameter/property value from config (env,file,defaults)
+func (cfg *RpConfig) Get(key string) interface{} {
 	return cfg.rawConfig.Get(key)
 }
 
@@ -79,21 +83,50 @@ func LoadConfig(file string, defaults map[string]interface{}) *RpConfig {
 		log.Println("No configuration file loaded - using defaults")
 	}
 
+	bindToFlags(vpr)
+
 	var rpConf RpConfig
-	vpr.Unmarshal(&rpConf)
+	err = vpr.Unmarshal(&rpConf)
+	if err != nil {
+		log.Fatalf("Cannot unmarshal config: %s", err.Error())
+	}
 	rpConf.rawConfig = vpr
 
 	//vpr.Debug()
 	return &rpConf
 }
 
+func bindToFlags(vpr *viper.Viper) {
+	if !pflag.Parsed() {
+		for _, key := range vpr.AllKeys() {
+			pflag.String(key, vpr.GetString(key), fmt.Sprintf("Property: %s", key))
+		}
+
+		pflag.Parse()
+
+		pflag.VisitAll(func(flg *pflag.Flag) {
+			if "" != flg.Value.String() {
+				vpr.BindPFlag(flg.Name, flg)
+			}
+		})
+
+	}
+
+}
+
 func applyDefaults(vpr *viper.Viper) {
+
 	vpr.SetDefault("appname", "goRP")
-	vpr.SetDefault("AuthServerURL", "http://localhost:9998/sso/me")
+
 	vpr.SetDefault("registry", Consul)
 
-	vpr.SetDefault("server.port", 9999)
-	vpr.SetDefault("server.hostname", nil)
+	vpr.SetDefault("server.port", 8080)
+
+	defaultHostname := os.Getenv("HOSTNAME")
+	if "" == defaultHostname {
+		defaultHostname = "localhost"
+	}
+	vpr.SetDefault("server.hostname", defaultHostname)
 
 	vpr.SetDefault("eureka.url", "http://localhost:8761/eureka")
 	vpr.SetDefault("eureka.appname", "goRP")
@@ -102,6 +135,6 @@ func applyDefaults(vpr *viper.Viper) {
 	vpr.SetDefault("consul.address", "localhost:8500")
 	vpr.SetDefault("consul.scheme", "http")
 	vpr.SetDefault("consul.pollInterval", 5)
-	vpr.SetDefault("consul.tags", nil)
+	vpr.SetDefault("consul.tags", []string{})
 
 }

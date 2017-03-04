@@ -1,4 +1,4 @@
-package registry
+package common
 
 import (
 	"fmt"
@@ -10,9 +10,11 @@ import (
 	"time"
 )
 
-const protocol = "http://"
+//HTTP is protocol prefix constant
+const HTTP = "http://"
 
-func retry(attempts int, timeout time.Duration, callback func() error) (err error) {
+//Retry executed callback func until it executes successfully
+func Retry(attempts int, timeout time.Duration, callback func() error) (err error) {
 	for i := 0; i <= attempts-1; i++ {
 		err = callback()
 		if err == nil {
@@ -26,7 +28,8 @@ func retry(attempts int, timeout time.Duration, callback func() error) (err erro
 	return fmt.Errorf("after %d attempts, last error: %s", attempts, err)
 }
 
-func shutdownHook(hook func() error) {
+//ShutdownHook adds function to be performed on app shutdown
+func ShutdownHook(hook func() error) {
 	c := make(chan os.Signal, 1) // Create a channel accepting os.Signal
 	// Bind a given os.Signal to the channel we just created
 	signal.Notify(c, os.Interrupt)    // Register os.Interrupt
@@ -44,7 +47,8 @@ func shutdownHook(hook func() error) {
 	}()
 }
 
-func getLocalIP() string {
+//GetLocalIP returns first non-loopback IP address
+func GetLocalIP() string {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return ""
@@ -58,4 +62,15 @@ func getLocalIP() string {
 		}
 	}
 	return ""
+}
+
+//KeySet returns array of map keys
+func KeySet(m map[string]interface{}) []string {
+	keys := make([]string, len(m))
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	return keys
 }

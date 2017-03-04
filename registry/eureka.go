@@ -1,11 +1,13 @@
 package registry
 
 import (
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/hudl/fargo"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/avarabyeu/goRP/common"
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/hudl/fargo"
 )
 
 type eurekaClient struct {
@@ -17,11 +19,11 @@ type eurekaClient struct {
 func NewEureka(conf *conf.RpConfig) ServiceDiscovery {
 	eureka := fargo.NewConn(conf.Eureka.URL)
 	eureka.PollInterval = time.Duration(conf.Eureka.PollInterval) * time.Second
-	baseURL := protocol + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
+	baseURL := common.HTTP + conf.Server.Hostname + ":" + strconv.Itoa(conf.Server.Port)
 	var appInstance = &fargo.Instance{
 		App:        conf.AppName,
 		VipAddress: conf.Server.Hostname,
-		IPAddr:     getLocalIP(),
+		IPAddr:     common.GetLocalIP(),
 		HostName:   conf.Server.Hostname,
 		Port:       conf.Server.Port,
 		DataCenterInfo: fargo.DataCenterInfo{
@@ -51,6 +53,11 @@ func (ec *eurekaClient) Register() error {
 //Deregister de-registers instance in Eureka
 func (ec *eurekaClient) Deregister() error {
 	return ec.eureka.DeregisterInstance(ec.appInstance)
+}
+
+//DoWithClient does provided action using service discovery client
+func (ec *eurekaClient) DoWithClient(f func(client interface{}) (interface{}, error)) (interface{}, error) {
+	return f(ec.eureka)
 }
 
 //sends heartbeats to Eureka to notify it that service is still alive

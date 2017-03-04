@@ -1,8 +1,8 @@
 package conf
 
 import (
-	"testing"
 	"os"
+	"testing"
 )
 
 func TestLoadConfig(t *testing.T) {
@@ -13,25 +13,24 @@ func TestLoadConfig(t *testing.T) {
 }
 
 func TestLoadConfigWithParameters(t *testing.T) {
-	os.Setenv("RP_OK", "param1")
 	os.Setenv("RP_PARAMETERS.PARAM", "env_value")
 	rpConf := LoadConfig("", map[string]interface{}{"parameters.param": "default_value"})
 
-	if "env_value" != rpConf.Param("parameters.param") {
+	if "env_value" != rpConf.Get("parameters.param").(string) {
 		t.Error("Config parser fails")
 	}
 }
 
-func TestLoadConfigUnexisted(t *testing.T) {
+func TestLoadConfigNonExisting(t *testing.T) {
 	rpConf := LoadConfig("server.yaml", nil)
-	if "" != rpConf.Server.Hostname {
+	if 8080 != rpConf.Server.Port {
 		t.Error("Should return empty string for default config")
 	}
 }
 
 func TestLoadConfigIncorrectFormat(t *testing.T) {
 	rpConf := LoadConfig("config_test.go", nil)
-	if "" != rpConf.Server.Hostname {
+	if 8080 != rpConf.Server.Port {
 		t.Error("Should return empty string for default config")
 	}
 }

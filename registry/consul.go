@@ -2,10 +2,12 @@ package registry
 
 import (
 	"fmt"
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/hashicorp/consul/api"
 	"log"
 	"strconv"
+
+	"github.com/avarabyeu/goRP/common"
+	"github.com/avarabyeu/goRP/conf"
+	"github.com/hashicorp/consul/api"
 )
 
 type consulClient struct {
@@ -24,11 +26,11 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		log.Fatal("Cannot create Consul client!")
 	}
 
-	baseURL := protocol + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
+	baseURL := common.HTTP + cfg.Server.Hostname + ":" + strconv.Itoa(cfg.Server.Port)
 	registration := &api.AgentServiceRegistration{
 		ID:      fmt.Sprintf("%s-%s-%d", cfg.AppName, cfg.Server.Hostname, cfg.Server.Port),
 		Port:    cfg.Server.Port,
-		Address: getLocalIP(),
+		Address: common.GetLocalIP(),
 		Name:    cfg.AppName,
 		Tags:    cfg.Consul.Tags,
 		Check: &api.AgentServiceCheck{
@@ -55,4 +57,9 @@ func (ec *consulClient) Deregister() error {
 		log.Print(e)
 	}
 	return e
+}
+
+//DoWithClient does provided action using service discovery client
+func (ec *consulClient) DoWithClient(f func(client interface{}) (interface{}, error)) (interface{}, error) {
+	return f(ec.c)
 }
