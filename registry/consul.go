@@ -8,6 +8,7 @@ import (
 	"github.com/avarabyeu/goRP/common"
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/hashicorp/consul/api"
+	"strings"
 )
 
 type consulClient struct {
@@ -32,7 +33,7 @@ func NewConsul(cfg *conf.RpConfig) ServiceDiscovery {
 		Port:    cfg.Server.Port,
 		Address: common.GetLocalIP(),
 		Name:    cfg.AppName,
-		Tags:    cfg.Consul.Tags,
+		Tags:    strings.Split(cfg.Consul.Tags, ","),
 		Check: &api.AgentServiceCheck{
 			HTTP:     baseURL + "/health",
 			Interval: fmt.Sprintf("%ds", cfg.Consul.PollInterval),

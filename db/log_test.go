@@ -1,29 +1,30 @@
-package main
+package db
 
 import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	//"log"
+	"testing"
 	"fmt"
-	"github.com/avarabyeu/goRP/rplog"
-
+	"log"
 )
 
-func main1() {
-	session, err := mgo.Dial("localhost:27017")
+func TTestLog(t *testing.T) {
+	session, err := mgo.Dial("")
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
 
-	var logs []rplog.Log
-	session.Clone().DB("server").C("log").Find(nil).All(&logs)
-	fmt.Println("Results All: ", logs)
+	var logRepo = NewLogRepo(session, "reportportal")
+	logs, _ := logRepo.FindAll()
+	for l := range logs {
+		log.Println(fmt.Sprint(l))
 
+	}
 
 	// Optional. Switch the session to a monotonic behavior.
-	session.SetMode(mgo.Monotonic, true)
 	//
 	//var all []bson.M
 	//
