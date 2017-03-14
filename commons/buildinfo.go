@@ -1,4 +1,4 @@
-package common
+package commons
 
 var (
 	// Branch contains the current Git revision. Use make to build to make
@@ -12,9 +12,10 @@ var (
 	Version string
 )
 
+//Build is global BuildInfo var
 var Build *BuildInfo
 
-// HugoInfo contains information about the current Hugo environment
+// BuildInfo contains information about the current Hugo environment
 type BuildInfo struct {
 	Version   string `json:"version,omitempty"`
 	Branch    string `json:"branch,omitempty"`

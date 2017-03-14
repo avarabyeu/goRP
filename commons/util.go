@@ -1,4 +1,4 @@
-package common
+package commons
 
 import (
 	"fmt"
@@ -32,8 +32,7 @@ func Retry(attempts int, timeout time.Duration, callback func() error) (err erro
 func ShutdownHook(hook func() error) {
 	c := make(chan os.Signal, 1) // Create a channel accepting os.Signal
 	// Bind a given os.Signal to the channel we just created
-	signal.Notify(c, os.Interrupt)    // Register os.Interrupt
-	signal.Notify(c, syscall.SIGTERM) // Register syscall.SIGTERM
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)    // Register os.Interrupt, syscall.SIGTERM
 
 	go func() {
 		// Start an anonymous func running in a goroutine

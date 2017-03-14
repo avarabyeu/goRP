@@ -1,4 +1,4 @@
-package common
+package commons
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 	"time"
+	"sort"
 )
 
 func TestKeySet(t *testing.T) {
@@ -15,6 +16,10 @@ func TestKeySet(t *testing.T) {
 	}
 
 	actual := KeySet(mp)
+
+	//make sure they are sorted before validation
+	sort.Strings(actual)
+
 	expected := []string{"one", "two"}
 
 	if !reflect.DeepEqual(expected, actual) {

@@ -6,13 +6,11 @@ import (
 	"goji.io"
 	"goji.io/pat"
 
-	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
+	"github.com/avarabyeu/goRP/commons"
 )
-
-var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
 
 //RpServer represents ReportPortal micro-service instance
 type RpServer struct {
@@ -40,10 +38,10 @@ func New(cfg *conf.RpConfig) *RpServer {
 	}
 
 	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
-		WriteJSON(w, 200, map[string]string{"status": "UP"})
+		commons.WriteJSON(200, map[string]string{"status": "UP"}, w)
 	})
 	srv.mux.HandleFunc(pat.Get("/info"), func(w http.ResponseWriter, rq *http.Request) {
-		WriteJSON(w, 200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}})
+		commons.WriteJSON(200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}}, w)
 
 	})
 	return srv
@@ -63,14 +61,4 @@ func (srv *RpServer) StartServer() {
 	// listen and server on mentioned port
 	log.Printf("Starting on port %d", srv.cfg.Server.Port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(srv.cfg.Server.Port), srv.mux))
-}
-
-//WriteJSON serializes body to provided writer
-func WriteJSON(w http.ResponseWriter, status int, body interface{}) error {
-	header := w.Header()
-	if val := header["Content-Type"]; len(val) == 0 {
-		header["Content-Type"] = jsonContentTypeValue
-	}
-	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(body)
 }

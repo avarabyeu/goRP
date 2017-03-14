@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/avarabyeu/goRP/common"
+	"github.com/avarabyeu/goRP/commons"
 	"github.com/avarabyeu/goRP/conf"
 	"github.com/avarabyeu/goRP/registry"
 	"github.com/avarabyeu/goRP/server"
@@ -33,13 +33,13 @@ func main() {
 		})
 
 		router.HandleFunc(pat.Get("/composite/info"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, http.StatusOK, aggregateInfo(getNodesInfo(srv.Sd, true)))
+			commons.WriteJSON(http.StatusOK, aggregateInfo(getNodesInfo(srv.Sd, true)), w)
 		})
 		router.HandleFunc(pat.Get("/composite/health"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)))
+			commons.WriteJSON(http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)), w)
 		})
 		router.HandleFunc(pat.Get("/composite/extensions"), func(w http.ResponseWriter, r *http.Request) {
-			server.WriteJSON(w, http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)))
+			commons.WriteJSON(http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)), w)
 		})
 		router.HandleFunc(pat.New("/"), func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/ui/", http.StatusMovedPermanently)
@@ -107,7 +107,7 @@ func getExtensions(nodesInfo map[string]*nodeInfo) []string {
 			extensions[info.Tags["extension"]] = struct{}{}
 		}
 	}
-	return common.KeySet(extensions)
+	return commons.KeySet(extensions)
 }
 
 func getNodesInfo(discovery registry.ServiceDiscovery, passing bool) map[string]*nodeInfo {
