@@ -6,10 +6,10 @@ import (
 	"goji.io"
 	"goji.io/pat"
 
+	"github.com/avarabyeu/goRP/commons"
 	"log"
 	"net/http"
 	"strconv"
-	"github.com/avarabyeu/goRP/commons"
 )
 
 //RpServer represents ReportPortal micro-service instance

@@ -1,8 +1,8 @@
 package commons
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
 var jsonContentTypeValue = []string{"application/json; charset=utf-8"}

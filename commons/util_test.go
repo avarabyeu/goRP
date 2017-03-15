@@ -4,9 +4,9 @@ import (
 	"errors"
 	"log"
 	"reflect"
+	"sort"
 	"testing"
 	"time"
-	"sort"
 )
 
 func TestKeySet(t *testing.T) {

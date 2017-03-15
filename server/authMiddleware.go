@@ -3,10 +3,10 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/avarabyeu/goRP/commons"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/avarabyeu/goRP/commons"
 )
 
 //User represents logged-in user
