@@ -7,6 +7,7 @@ import (
 	"goji.io/pat"
 	"net/http"
 	"os"
+	"github.com/avarabyeu/goRP/commons"
 )
 
 type Person struct {
@@ -20,7 +21,7 @@ func ExampleRpServer() {
 
 	rp.AddRoute(func(router *goji.Mux) {
 		router.HandleFunc(pat.Get("/ping"), func(w http.ResponseWriter, rq *http.Request) {
-			WriteJSON(http.StatusOK, Person{"av", 20}, w)
+			commons.WriteJSON(http.StatusOK, Person{"av", 20}, w)
 		})
 	})
 
@@ -44,7 +45,7 @@ func ExampleRpServer_StartServer() {
 		secured.Use(RequireRole("USER", rpConf.Get("AuthServerURL").(string)))
 
 		me := func(w http.ResponseWriter, rq *http.Request) {
-			WriteJSON(http.StatusOK, rq.Context().Value("user"), w)
+			commons.WriteJSON(http.StatusOK, rq.Context().Value("user"), w)
 
 		}
 		secured.HandleFunc(pat.Get("/me"), me)

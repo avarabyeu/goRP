@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"github.com/avarabyeu/goRP/commons"
 )
 
 //RpServer represents ReportPortal micro-service instance
@@ -37,10 +38,10 @@ func New(cfg *conf.RpConfig) *RpServer {
 	}
 
 	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
-		WriteJSON(200, map[string]string{"status": "UP"}, w)
+		commons.WriteJSON(200, map[string]string{"status": "UP"}, w)
 	})
 	srv.mux.HandleFunc(pat.Get("/info"), func(w http.ResponseWriter, rq *http.Request) {
-		WriteJSON(200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}}, w)
+		commons.WriteJSON(200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}}, w)
 
 	})
 	return srv
