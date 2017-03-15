@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"github.com/avarabyeu/goRP/commons"
 )
 
 //User represents logged-in user
@@ -97,7 +96,7 @@ func respondWithErrorString(w http.ResponseWriter, code int, message string) {
 
 //respondWithErrorString converts message JSON ans sends 401 to the client
 func respondWithError(w http.ResponseWriter, code int, message interface{}) {
-	commons.WriteJSON(code, message, w)
+	WriteJSON(code, message, w)
 }
 
 //parseBearer parses authorization header

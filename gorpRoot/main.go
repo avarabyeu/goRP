@@ -33,13 +33,13 @@ func main() {
 		})
 
 		router.HandleFunc(pat.Get("/composite/info"), func(w http.ResponseWriter, r *http.Request) {
-			commons.WriteJSON(http.StatusOK, aggregateInfo(getNodesInfo(srv.Sd, true)), w)
+			server.WriteJSON(http.StatusOK, aggregateInfo(getNodesInfo(srv.Sd, true)), w)
 		})
 		router.HandleFunc(pat.Get("/composite/health"), func(w http.ResponseWriter, r *http.Request) {
-			commons.WriteJSON(http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)), w)
+			server.WriteJSON(http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)), w)
 		})
 		router.HandleFunc(pat.Get("/composite/extensions"), func(w http.ResponseWriter, r *http.Request) {
-			commons.WriteJSON(http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)), w)
+			server.WriteJSON(http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)), w)
 		})
 		router.HandleFunc(pat.New("/"), func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/ui/", http.StatusMovedPermanently)

@@ -1,4 +1,4 @@
-package commons
+package server
 
 import (
 	"net/http"
