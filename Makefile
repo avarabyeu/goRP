@@ -29,7 +29,7 @@ test: vendor
 	govendor test +local
 
 checkstyle: get-build-deps
-	gometalinter --vendor ./... --fast --disable=gas --disable=errcheck --disable=gotype #--deadline 5m
+	gometalinter --vendor ./... --fast --disable=gas --disable=errcheck --disable=gotype --deadline 10m
 
 fmt:
 	gofmt -l -w -s ${GOFILES_NOVENDOR}
