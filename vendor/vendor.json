@@ -203,12 +203,6 @@
 			"revisionTime": "2016-11-14T00:05:42Z"
 		},
 		{
-			"checksumSHA1": "WjH6BtYreucaiAqweH8EVTuzfq4=",
-			"path": "goji.io/internal",
-			"revision": "0d89ff54b2c18c9c4ba530e32496aef902d3c6cd",
-			"revisionTime": "2016-11-14T00:05:42Z"
-		},
-		{
 			"checksumSHA1": "j/mjzYLjgCcJlqCmnZIqYVKWTTY=",
 			"path": "goji.io/middleware",
 			"revision": "0d89ff54b2c18c9c4ba530e32496aef902d3c6cd",
