@@ -9,7 +9,7 @@ import (
 func NoHandlerFound(h func(w http.ResponseWriter, rq *http.Request)) (func(http.Handler) http.Handler) {
 	return func(next http.Handler) http.Handler {
 		mv := func(w http.ResponseWriter, rq *http.Request) {
-			if nil == middleware.Pattern(rq.Context()) {
+			if nil == middleware.Handler(rq.Context()) {
 				//not found
 				h(w, rq)
 			} else {
