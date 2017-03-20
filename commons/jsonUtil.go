@@ -33,6 +33,6 @@ func WriteJSONP(status int, body interface{}, callback string, w http.ResponseWr
 	}
 
 	w.WriteHeader(status)
-	_, err = w.Write([]byte(fmt.Sprintf("%s(%s)", callback, jsonArr)))
+	_, err = w.Write([]byte(fmt.Sprintf("%s(%s);", callback, jsonArr)))
 	return err
 }

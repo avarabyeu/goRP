@@ -38,9 +38,6 @@ func main() {
 		router.HandleFunc(pat.Get("/composite/health"), func(w http.ResponseWriter, r *http.Request) {
 			commons.WriteJSON(http.StatusOK, aggregateHealth(getNodesInfo(srv.Sd, false)), w)
 		})
-		router.HandleFunc(pat.Get("/composite/extensions"), func(w http.ResponseWriter, r *http.Request) {
-			commons.WriteJSON(http.StatusOK, getExtensions(getNodesInfo(srv.Sd, true)), w)
-		})
 		router.HandleFunc(pat.New("/"), func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/ui/", http.StatusMovedPermanently)
 		})
@@ -98,16 +95,6 @@ func aggregateInfo(nodesInfo map[string]*nodeInfo) map[string]interface{} {
 		aggregated[node] = rs
 	}
 	return aggregated
-}
-
-func getExtensions(nodesInfo map[string]*nodeInfo) []string {
-	extensions := make(map[string]interface{})
-	for _, info := range nodesInfo {
-		if "" != info.Tags["extension"] {
-			extensions[info.Tags["extension"]] = struct{}{}
-		}
-	}
-	return commons.KeySet(extensions)
 }
 
 func getNodesInfo(discovery registry.ServiceDiscovery, passing bool) map[string]*nodeInfo {
