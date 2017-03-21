@@ -2,8 +2,8 @@ package commons
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 )
 
 const contentTypeHeader string = "Content-Type"
