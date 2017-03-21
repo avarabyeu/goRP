@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-const CONTENT_TYPE_HEADER string = "Content-Type"
+const contentTypeHeader string = "Content-Type"
 
 var jsonContentTypeValue = []string{"application/json; charset=utf-8"}
 var jsContentTypeValue = []string{"application/javascript; charset=utf-8"}
@@ -14,8 +14,8 @@ var jsContentTypeValue = []string{"application/javascript; charset=utf-8"}
 //WriteJSON serializes body to provided writer
 func WriteJSON(status int, body interface{}, w http.ResponseWriter) error {
 	header := w.Header()
-	if val := header[CONTENT_TYPE_HEADER]; len(val) == 0 {
-		header[CONTENT_TYPE_HEADER] = jsonContentTypeValue
+	if val := header[contentTypeHeader]; len(val) == 0 {
+		header[contentTypeHeader] = jsonContentTypeValue
 	}
 	w.WriteHeader(status)
 	return json.NewEncoder(w).Encode(body)
@@ -24,8 +24,8 @@ func WriteJSON(status int, body interface{}, w http.ResponseWriter) error {
 //WriteJSONP serializes body as JSONP
 func WriteJSONP(status int, body interface{}, callback string, w http.ResponseWriter) error {
 	header := w.Header()
-	if val := header[CONTENT_TYPE_HEADER]; len(val) == 0 {
-		header[CONTENT_TYPE_HEADER] = jsContentTypeValue
+	if val := header[contentTypeHeader]; len(val) == 0 {
+		header[contentTypeHeader] = jsContentTypeValue
 	}
 	jsonArr, err := json.Marshal(body)
 	if nil != err {
