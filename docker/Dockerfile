@@ -20,9 +20,9 @@ RUN apt-get update && \
 
 RUN sed 's/^daemonize yes/daemonize no/' -i /etc/redis/redis.conf
 
-ENV CONSUL_VERSION=0.7.5
-ENV FABIO_VERSION=1.3.8
-ENV CONSUL_ARCHIVE_FILENAME=consul_${CONSUL_VERSION}_linux_amd64.zip
+ENV CONSUL_VERSION="0.7.5"
+ENV FABIO_VERSION="1.4"
+ENV CONSUL_ARCHIVE_FILENAME="consul_${CONSUL_VERSION}_linux_amd64.zip"
 
 RUN wget https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ARCHIVE_FILENAME && \
     unzip $CONSUL_ARCHIVE_FILENAME -d /usr/local/bin/ && \
@@ -31,12 +31,11 @@ RUN wget https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ARCHIVE_F
     chmod +x /usr/local/bin/fabio
 
 ## OK. We're all set. Let's install RP binaries
-ENV REPO_URL=https://dl.bintray.com/epam/reportportal/com/epam/reportportal
-ENV SERVICE_API_VERSION=2.7.1
-ENV SERVICE_UI_VERSION=2.7.0
-ENV SERVICE_AUTHORIZATION_VERSION=2.7.0
-ENV SERVICE_REGISTRY_VERSION=2.6.0
-ENV SERVICE_GATEWAY_VERSION=2.6.0
+ENV REPO_URL="https://dl.bintray.com/epam/reportportal/com/epam/reportportal"
+ENV SERVICE_API_VERSION="3.0.0-BETA-4"
+ENV SERVICE_UI_VERSION="3.0.0-BETA-3"
+ENV SERVICE_AUTHORIZATION_VERSION="3.0.0-BETA-4"
+ENV SERVICE_REGISTRY_VERSION="3.0.0-BETA-1"
 
 VOLUME /tmp
 

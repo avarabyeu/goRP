@@ -27,7 +27,7 @@ func New(cfg *conf.RpConfig) *RpServer {
 	case conf.Eureka:
 		sd = registry.NewEureka(cfg)
 	case conf.Consul:
-		cfg.Consul.Tags = cfg.Consul.Tags + " statusPageUrlPath=/info" + " " + "healthCheckUrlPath=/health"
+		cfg.Consul.Tags = cfg.Consul.Tags + ",statusPageUrlPath=/info" + "," + "healthCheckUrlPath=/health"
 		sd = registry.NewConsul(cfg)
 	}
 

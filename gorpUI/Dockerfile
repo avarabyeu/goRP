@@ -7,9 +7,8 @@ RUN apk --update --no-cache add unzip wget ca-certificates && \
 
 
 ## OK. We're all set. Let's grap RP's UI statics
-ENV REPO_URL=https://dl.bintray.com/epam/reportportal/com/epam/reportportal
-ENV SERVICE_API_VERSION=2.7.1
-ENV SERVICE_UI_VERSION=2.7.0
+ENV REPO_URL="https://dl.bintray.com/epam/reportportal/com/epam/reportportal"
+ENV SERVICE_UI_VERSION="3.0.0-BETA-3"
 
 RUN wget -O /tmp/service-ui.jar $REPO_URL/service-ui/$SERVICE_UI_VERSION/service-ui-$SERVICE_UI_VERSION.jar && \
     unzip /tmp/service-ui.jar -d /tmp/reportportal && \

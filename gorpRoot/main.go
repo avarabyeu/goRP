@@ -92,7 +92,10 @@ func aggregateInfo(nodesInfo map[string]*nodeInfo) map[string]interface{} {
 			log.Println(e)
 			continue
 		}
-		aggregated[node] = rs
+		if nil != rs {
+			aggregated[node] = rs
+		}
+
 	}
 	return aggregated
 }
@@ -132,8 +135,8 @@ type nodeInfo struct {
 }
 
 func (ni *nodeInfo) getStatusPageURL() string {
-	return ni.Tags["StatusPageURLPath"]
+	return ni.Tags["statusPageUrlPath"]
 }
 func (ni *nodeInfo) getHealthCheckURL() string {
-	return ni.Tags["HealthCheckURLPath"]
+	return ni.Tags["healthCheckUrlPath"]
 }
