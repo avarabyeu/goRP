@@ -22,6 +22,8 @@ type RpServer struct {
 //New creates new instance of RpServer struct
 func New(cfg *conf.RpConfig) *RpServer {
 
+	log.Println(commons.Build)
+
 	var sd registry.ServiceDiscovery
 	switch cfg.Registry {
 	case conf.Eureka:
@@ -40,8 +42,10 @@ func New(cfg *conf.RpConfig) *RpServer {
 	srv.mux.HandleFunc(pat.Get("/health"), func(w http.ResponseWriter, rq *http.Request) {
 		commons.WriteJSON(200, map[string]string{"status": "UP"}, w)
 	})
+
+	commons.Build.Name = cfg.AppName
 	srv.mux.HandleFunc(pat.Get("/info"), func(w http.ResponseWriter, rq *http.Request) {
-		commons.WriteJSON(200, map[string]interface{}{"build": map[string]string{"name": cfg.AppName}}, w)
+		commons.WriteJSON(200, commons.Build, w)
 
 	})
 	return srv

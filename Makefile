@@ -9,6 +9,8 @@ BINARY_DIR=bin
 BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+PACKAGE_COMMONS=github.com/avarabyeu/goRP
+BUILD_INFO_LDFLAGS=-ldflags "-X ${PACKAGE_COMMONS}/commons.Branch=${COMMIT_HASH} -X ${PACKAGE_COMMONS}/commons.BuildDate=${BUILD_DATE} -X ${PACKAGE_COMMONS}/commons.Version=${v}"
 
 .PHONY: vendor test build
 
@@ -36,11 +38,11 @@ fmt:
 
 # Builds gorpRoot
 build-app-root: checkstyle test
-	CGO_ENABLED=0 GOOS=linux $(GO) build -o ${BINARY_DIR}/gorpRoot ./gorpRoot
+	CGO_ENABLED=0 GOOS=linux $(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorpRoot ./gorpRoot
 
 # Builds gorpUI
 build-app-ui: checkstyle test
-	CGO_ENABLED=0 GOOS=linux $(GO) build -o ${BINARY_DIR}/gorpUI ./gorpUI
+	CGO_ENABLED=0 GOOS=linux $(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorpUI ./gorpUI
 
 # Builds the project
 build: build-app-root build-app-ui

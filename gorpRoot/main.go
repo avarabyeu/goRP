@@ -119,7 +119,7 @@ func getNodesInfo(discovery registry.ServiceDiscovery, passing bool) map[string]
 				var ni nodeInfo
 				ni.BaseURL = fmt.Sprintf("http://%s:%d/", inst.Service.Address, inst.Service.Port)
 				ni.Tags = tagsMap
-				nodesInfo[k] = &ni
+				nodesInfo[strings.ToUpper(k)] = &ni
 			}
 
 		}

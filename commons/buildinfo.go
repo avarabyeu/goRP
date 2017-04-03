@@ -20,6 +20,7 @@ type BuildInfo struct {
 	Version   string `json:"version,omitempty"`
 	Branch    string `json:"branch,omitempty"`
 	BuildDate string `json:"build_date,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 func init() {
