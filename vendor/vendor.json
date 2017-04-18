@@ -21,6 +21,12 @@
 			"revisionTime": "2016-12-18T11:07:05Z"
 		},
 		{
+			"checksumSHA1": "40Ns85VYa4smQPcewZ7SOdfLnKU=",
+			"path": "github.com/fatih/structs",
+			"revision": "a720dfa8df582c51dee1b36feabb906bde1588bd",
+			"revisionTime": "2017-01-03T08:10:50Z"
+		},
+		{
 			"checksumSHA1": "n25vuAkZbpXDMGrutoefN+b4g+M=",
 			"path": "github.com/franela/goreq",
 			"revision": "fc08df6ca2d4a0d1a5ae24739aa268863943e723",
@@ -31,6 +37,12 @@
 			"path": "github.com/fsnotify/fsnotify",
 			"revision": "a904159b9206978bb6d53fcc7a769e5cd726c737",
 			"revisionTime": "2016-11-02T19:13:10Z"
+		},
+		{
+			"checksumSHA1": "Bdv3B/DmBMfxjvo9zZN6va01S7Y=",
+			"path": "github.com/google/go-github/github",
+			"revision": "d683a1c6198d75c6be7a7ab5e2f9834cb6408834",
+			"revisionTime": "2017-03-21T16:33:37Z"
 		},
 		{
 			"checksumSHA1": "yyAzHoiVLu+xywYI2BDyRq6sOqE=",
@@ -161,6 +173,30 @@
 			"revisionTime": "2017-02-09T21:38:35Z"
 		},
 		{
+			"checksumSHA1": "zLvkFlsU0x31KeXgML1t3blkKvQ=",
+			"path": "github.com/reportportal/commons-go/commons",
+			"revision": "0a18475d00b1455c93b1c26804d215992543bc4b",
+			"revisionTime": "2017-04-14T14:54:56Z"
+		},
+		{
+			"checksumSHA1": "E1vO8LqyLDrak7JVVdqpRdAx9QM=",
+			"path": "github.com/reportportal/commons-go/conf",
+			"revision": "0a18475d00b1455c93b1c26804d215992543bc4b",
+			"revisionTime": "2017-04-14T14:54:56Z"
+		},
+		{
+			"checksumSHA1": "512NQU4tZckfQFq2rDV3Ljz8E6g=",
+			"path": "github.com/reportportal/commons-go/registry",
+			"revision": "0a18475d00b1455c93b1c26804d215992543bc4b",
+			"revisionTime": "2017-04-14T14:54:56Z"
+		},
+		{
+			"checksumSHA1": "VfmgUN9XIr4goE32r+w6uUwq0o4=",
+			"path": "github.com/reportportal/commons-go/server",
+			"revision": "0a18475d00b1455c93b1c26804d215992543bc4b",
+			"revisionTime": "2017-04-14T14:54:56Z"
+		},
+		{
 			"checksumSHA1": "lBehULzb2/kIK3wZ0gz2yNmHq9s=",
 			"path": "github.com/spf13/afero",
 			"revision": "72b31426848c6ef12a7a8e216708cb0d1530f074",
@@ -195,6 +231,12 @@
 			"path": "github.com/spf13/viper",
 			"revision": "5ed0fc31f7f453625df314d8e66b9791e8d13003",
 			"revisionTime": "2016-12-13T09:38:49Z"
+		},
+		{
+			"checksumSHA1": "TBQ7N1SqhQnOJI7CcpVLnkAIBwo=",
+			"path": "github.com/trivago/tgo/tcontainer",
+			"revision": "3d078fff5db57fdec33a874973b0a8cf7fdf4598",
+			"revisionTime": "2017-03-22T09:59:44Z"
 		},
 		{
 			"checksumSHA1": "OvrNwcBO+xO4FZ7eMbazho1C3t0=",

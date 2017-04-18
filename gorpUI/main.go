@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/avarabyeu/goRP/conf"
-	"github.com/avarabyeu/goRP/server"
+	"github.com/reportportal/commons-go/conf"
+	"github.com/reportportal/commons-go/server"
 
 	"net/http"
 
