@@ -19,7 +19,7 @@ help:
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
-vendor: ## Install govendor and sync Hugo's vendored dependencies
+vendor: ## Install govendor and sync vendored dependencies
 	go get github.com/kardianos/govendor
 	govendor sync
 
