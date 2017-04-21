@@ -2,7 +2,6 @@ FROM alpine:3.5
 
 MAINTAINER Andrei Varabyeu <andrei_varabyeu@epam.com>
 
-ENV JAVA_VERSION 8u111
 ENV JAVA_ALPINE_VERSION 8.121.13-r0
 
 RUN apk add --update --no-cache openjdk8-jre="$JAVA_ALPINE_VERSION" \
@@ -14,7 +13,7 @@ RUN sed 's/^daemonize yes/daemonize no/' -i /etc/redis.conf
 
 VOLUME /tmp
 
-ENV CONSUL_VERSION="0.8.0"
+ENV CONSUL_VERSION="0.8.1"
 ENV FABIO_VERSION="1.4.2"
 ENV CONSUL_ARCHIVE_FILENAME="consul_${CONSUL_VERSION}_linux_amd64.zip"
 
@@ -26,11 +25,11 @@ RUN wget https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ARCHIVE_F
 
 ## OK. We're all set. Let's install RP binaries
 ENV REPO_URL="https://dl.bintray.com/epam/reportportal/com/epam/reportportal"
-ENV SERVICE_API_VERSION="3.0.0-RC1"
-ENV SERVICE_UI_VERSION="3.0.0-RC1"
-ENV SERVICE_JIRA_VERSION="3.0.0-RC1"
-ENV SERVICE_RALLY_VERSION="3.0.0-RC1"
-ENV SERVICE_AUTHORIZATION_VERSION="3.0.0-RC1"
+ENV SERVICE_API_VERSION="3.0.0"
+ENV SERVICE_UI_VERSION="3.0.0"
+ENV SERVICE_JIRA_VERSION="3.0.0"
+ENV SERVICE_RALLY_VERSION="3.0.0"
+ENV SERVICE_AUTHORIZATION_VERSION="3.0.0"
 
 RUN mkdir /reportportal
 
