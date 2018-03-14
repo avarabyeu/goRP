@@ -1,56 +1,48 @@
 .DEFAULT_GOAL := build
 
-COMMIT_HASH = `git rev-parse --short HEAD 2>/dev/null`
 BUILD_DATE = `date +%FT%T%z`
 
 GO = go
 BINARY_DIR=bin
 
-BUILD_DEPS:= github.com/alecthomas/gometalinter
 GODIRS_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
-PACKAGE_COMMONS=github.com/avarabyeu/goRP
-BUILD_INFO_LDFLAGS=-ldflags "-X ${PACKAGE_COMMONS}/commons.Branch=${COMMIT_HASH} -X ${PACKAGE_COMMONS}/commons.BuildDate=${BUILD_DATE} -X ${PACKAGE_COMMONS}/commons.Version=${v}"
+BUILD_INFO_LDFLAGS=-ldflags "-extldflags '"-static"' -X main.buildDate=${BUILD_DATE} -X main.version=${v}"
 
-.PHONY: vendor test build
+.PHONY: test build
 
 help:
 	@echo "build      - go build"
 	@echo "test       - go test"
 	@echo "checkstyle - gofmt+golint+misspell"
 
-vendor: ## Install govendor and sync vendored dependencies
-	go get github.com/kardianos/govendor
-	govendor sync
-
-get-build-deps: vendor
-	$(GO) get $(BUILD_DEPS)
+init-deps:
+	$(GO) get github.com/alecthomas/gometalinter
 	gometalinter --install
 
-test: vendor
-	govendor test +local
+vendor:
+	dep ensure --vendor-only
 
-checkstyle: get-build-deps
-	gometalinter --vendor ./... --fast --disable=gas --disable=errcheck --disable=gotype --deadline 10m
+test:
+	$(GO) test ${GODIRS_NOVENDOR}
+
+checkstyle:
+	gometalinter --vendor ./... --fast --deadline 10m
 
 fmt:
 	gofmt -l -w -s ${GOFILES_NOVENDOR}
 
-# Builds gorpRoot
-build-app-root: checkstyle test
-	CGO_ENABLED=0 GOOS=linux $(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorpRoot ./gorpRoot
-
-# Builds gorpUI
-build-app-ui: checkstyle test
-	CGO_ENABLED=0 GOOS=linux $(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorpUI ./gorpUI
-
-# Builds the project
-build: build-app-root build-app-ui
-
-# Builds containers
-docker: build
-	docker build -t gorproot -f gorpRoot/Dockerfile .
-	docker build -t gorpui -f gorpUI/Dockerfile .
+#build: checkstyle test
+build:
+	$(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorp ./
 
 clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi
+	if [ -d 'build' ] ; then rm -r 'build' ; fi
+
+#tag:
+#	git tag -a v${v} -m "creating tag ${v}"
+#	git push origin "refs/tags/${v}"
+#
+#release:
+#	goreleaser release
