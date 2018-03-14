@@ -38,10 +38,7 @@ func main() {
 			Usage: "ReportPortal Server Name",
 		},
 	}
-
-	app.Commands = []cli.Command{
-		launchesCommand,
-	}
+	app.Commands = rootCommands
 
 	err := app.Run(os.Args)
 	if nil != err {
@@ -77,6 +74,10 @@ func requiredFlag(f string, c *cli.Context) (string, error) {
 }
 
 var (
+	rootCommands = []cli.Command{
+		launchesCommand,
+	}
+
 	launchesCommand = cli.Command{
 		Name:  "launch",
 		Usage: "Operations over launches",
@@ -100,32 +101,32 @@ var (
 				EnvVar: "Filter",
 			},
 		},
-
-		Action: func(c *cli.Context) error {
-			rpClient, err := buildClient(c)
-			if nil != err {
-				return err
-			}
-
-			var launches *gorp.LaunchPage
-
-			if filters := c.StringSlice("filter"); nil != filters && len(filters) > 0 {
-				filter := strings.Join(filters, "&")
-				fmt.Println(filter)
-				launches, err = rpClient.GetLaunchesByFilterString(filter)
-			} else if filterName := c.String("filter-name"); "" != filterName {
-				launches, err = rpClient.GetLaunchesByFilterName(filterName)
-			} else {
-				launches, err = rpClient.GetLaunches()
-			}
-			if nil != err {
-				return err
-			}
-
-			for _, launch := range launches.Content {
-				fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
-			}
-			return nil
-		},
+		Action: listLaunches,
 	}
 )
+
+func listLaunches(c *cli.Context) error {
+	rpClient, err := buildClient(c)
+	if nil != err {
+		return err
+	}
+
+	var launches *gorp.LaunchPage
+
+	if filters := c.StringSlice("filter"); nil != filters && len(filters) > 0 {
+		filter := strings.Join(filters, "&")
+		launches, err = rpClient.GetLaunchesByFilterString(filter)
+	} else if filterName := c.String("filter-name"); "" != filterName {
+		launches, err = rpClient.GetLaunchesByFilterName(filterName)
+	} else {
+		launches, err = rpClient.GetLaunches()
+	}
+	if nil != err {
+		return err
+	}
+
+	for _, launch := range launches.Content {
+		fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
+	}
+	return nil
+}
