@@ -17,7 +17,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	$(if $(shell which dep1 2>/dev/null),$(echo "Dep is already installed..."),$(shell curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh))
+	$(if $(shell which dep1 2>/dev/null),$(echo "Dep is already installed..."),$(shell go get -u github.com/golang/dep/cmd/dep))
 	$(GO) get github.com/alecthomas/gometalinter
 	gometalinter --install
 
