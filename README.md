@@ -3,25 +3,22 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/avarabyeu/goRP)](https://goreportcard.com/report/github.com/avarabyeu/goRP)
 
 # goRP
-Lightweight repack of ReportPortal
+Golang Client and CLI Utility for [ReportPortal](https://reportportal.io)
 
-### Notable changes
+## Installation
 
-##### Lightweight. Three java-based components were replaced with golang alternatives
-1. Service Registry: [Eureka](https://github.com/Netflix/eureka) replaced with [Consul](https://www.consul.io/)
-2. Gateway: [Zuul](https://github.com/Netflix/zuul) replaced with [fabio](https://github.com/eBay/fabio)   
-3. Added golang-based root service that replaces logic of ReportPortal's service-gateway component
-3. UI Service: Java-based replaced with golang-based alternative
+## Usage
+```
+gorp [global options] command [command options] [arguments...]   
 
-##### Common modules:
-1. commons. General-purpose utilities
-2. conf. Utilities for service configuration
-3. registry. Consul and Eureka clients to register/deregister services
-4. server. Utilities for configuring and bootstrapping REST services
+COMMANDS:
+     launches, l  latest launches
+     help, h      Shows a list of commands or help for one command
 
-### Installation
-##### All-in-one pack:
-All ReportPortal/goRP components without mongodb.
-
-##### All-in-one pack:
-Consists of all components and mongodb inside one container
+GLOBAL OPTIONS:
+   -u value, --uuid value     Access Token [$GORP_UUID]
+   -p value, --project value  ReportPortal Project Name [$GORP_PROJECT]
+   --host value               ReportPortal Server Name
+   --help, -h                 show help
+   --version, -v              print the version
+```
