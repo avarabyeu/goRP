@@ -4,7 +4,7 @@ go:
   - 1.10
 
 before_script:
-  - make vendor
+  - make init-deps vendor
 
 script:
   - make build
