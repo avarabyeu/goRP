@@ -17,6 +17,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
+	$(if $(shell which dep1 2>/dev/null),$(echo "Dep is already installed..."),$(shell curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh))
 	$(GO) get github.com/alecthomas/gometalinter
 	gometalinter --install
 
@@ -24,7 +25,7 @@ vendor:
 	dep ensure --vendor-only
 
 test:
-	$(GO) test ${GODIRS_NOVENDOR}
+	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 checkstyle:
 	gometalinter --vendor ./... --fast --deadline 10m

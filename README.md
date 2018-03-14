@@ -12,8 +12,8 @@ Golang Client and CLI Utility for [ReportPortal](https://reportportal.io)
 gorp [global options] command [command options] [arguments...]   
 
 COMMANDS:
-     launches, l  latest launches
-     help, h      Shows a list of commands or help for one command
+     launch   Operations over launches
+     help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    -u value, --uuid value     Access Token [$GORP_UUID]
@@ -21,4 +21,23 @@ GLOBAL OPTIONS:
    --host value               ReportPortal Server Name
    --help, -h                 show help
    --version, -v              print the version
+```
+
+### Launch command
+```
+USAGE:
+   goRP launch command [command options] [arguments...]
+
+COMMANDS:
+     list  List launches
+```
+
+#### List Launches
+```
+USAGE:
+   goRP launch list [command options] [arguments...]
+
+OPTIONS:
+   --fn value, --filter-name value  Filter Name [$FILTER_NAME]
+   -f value, --filter value         Filter [$Filter]
 ```

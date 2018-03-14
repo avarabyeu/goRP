@@ -37,6 +37,41 @@ type (
 		Statistics          *Statistics `json:"statistics,omitempty"`
 	}
 
+	//FilterResource - GET Filter response model
+	FilterResource struct {
+		ID              string                `json:"id"`
+		Name            string                `json:"name"`
+		Type            string                `json:"type"`
+		Owner           string                `json:"owner"`
+		Entities        []*FilterEntity       `json:"entities"`
+		SelectionParams *FilterSelectionParam `json:"selection_parameters,omitempty"`
+	}
+
+	//FilterEntity - One piece of filter
+	FilterEntity struct {
+		Field     string `json:"filtering_field"`
+		Condition string `json:"condition"`
+		Value     string `json:"value"`
+	}
+
+	//FilterPage - GET Filter response model
+	FilterPage struct {
+		Content []*FilterResource
+		Response
+	}
+
+	//FilterSelectionParam - Describes filter ordering
+	FilterSelectionParam struct {
+		PageNumber int            `json:"page_number"`
+		Orders     []*FilterOrder `json:"orders,omitempty"`
+	}
+
+	//FilterOrder - Describes ordering
+	FilterOrder struct {
+		SortingColumn string `json:"sorting_column"`
+		Asc           bool   `json:"is_asc"`
+	}
+
 	//LaunchPage - GET Launch response model
 	LaunchPage struct {
 		Content []*LaunchResource

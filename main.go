@@ -6,6 +6,7 @@ import (
 	"gopkg.in/urfave/cli.v1"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
@@ -73,27 +74,56 @@ func requiredFlag(f string, c *cli.Context) (string, error) {
 		return "", cli.NewExitError(fmt.Sprintf("%s is not set", f), 1)
 	}
 	return fVal, nil
-
 }
 
 var (
 	launchesCommand = cli.Command{
-		Name:    "launches",
-		Aliases: []string{"l"},
-		Usage:   "latest launches",
+		Name:  "launch",
+		Usage: "Operations over launches",
+		Subcommands: cli.Commands{
+			listLaunchesCommand,
+		},
+	}
+
+	listLaunchesCommand = cli.Command{
+		Name:  "list",
+		Usage: "List launches",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:   "fn, filter-name",
+				Usage:  "Filter Name",
+				EnvVar: "FILTER_NAME",
+			},
+			cli.StringSliceFlag{
+				Name:   "f, filter",
+				Usage:  "Filter",
+				EnvVar: "Filter",
+			},
+		},
+
 		Action: func(c *cli.Context) error {
 			rpClient, err := buildClient(c)
 			if nil != err {
 				return err
 			}
 
-			launches, err := rpClient.GetLaunches()
+			var launches *gorp.LaunchPage
+
+			if filters := c.StringSlice("filter"); nil != filters && len(filters) > 0 {
+				filter := strings.Join(filters, "&")
+				fmt.Println(filter)
+				launches, err = rpClient.GetLaunchesByFilterString(filter)
+			} else if filterName := c.String("filter-name"); "" != filterName {
+				launches, err = rpClient.GetLaunchesByFilterName(filterName)
+			} else {
+				launches, err = rpClient.GetLaunches()
+			}
 			if nil != err {
 				return err
 			}
 
 			for _, launch := range launches.Content {
-				fmt.Printf("%d %s \"%s\"\n", launch.Number, launch.ID, launch.Name)
+				fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 			}
 			return nil
 		},
