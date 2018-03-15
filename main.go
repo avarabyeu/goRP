@@ -1,11 +1,16 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/avarabyeu/goRP/gorp"
+	"github.com/manifoldco/promptui"
 	"gopkg.in/urfave/cli.v1"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"strings"
 )
 
@@ -47,43 +52,30 @@ func main() {
 
 }
 
-func buildClient(c *cli.Context) (*gorp.Client, error) {
-	uuid, err := requiredFlag("uuid", c)
-	if nil != err {
-		return nil, err
-	}
-	proj, err := requiredFlag("project", c)
-	if nil != err {
-		return nil, err
-	}
-	host, err := requiredFlag("host", c)
-	if nil != err {
-		return nil, err
-	}
-
-	return gorp.NewClient(host, proj, uuid), nil
-
-}
-
-func requiredFlag(f string, c *cli.Context) (string, error) {
-	fVal := c.GlobalString(f)
-	if "" == fVal {
-		return "", cli.NewExitError(fmt.Sprintf("%s is not set", f), 1)
-	}
-	return fVal, nil
+type config struct {
+	UUID    string
+	Project string
+	Host    string
 }
 
 var (
 	rootCommands = []cli.Command{
-		launchesCommand,
+		launchCommand,
+		initCommand,
 	}
 
-	launchesCommand = cli.Command{
+	launchCommand = cli.Command{
 		Name:  "launch",
 		Usage: "Operations over launches",
 		Subcommands: cli.Commands{
 			listLaunchesCommand,
 		},
+	}
+
+	initCommand = cli.Command{
+		Name:   "init",
+		Usage:  "Initializes configuration cache",
+		Action: initConfiguration,
 	}
 
 	listLaunchesCommand = cli.Command{
@@ -129,4 +121,137 @@ func listLaunches(c *cli.Context) error {
 		fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 	}
 	return nil
+}
+
+func initConfiguration(c *cli.Context) error {
+
+	if configFilePresent() {
+		prompt := promptui.Select{
+			Label: "GoRP is already configured. Replace existing configuration?",
+			Items: []string{"No", "Yes"},
+		}
+		num, _, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+		//do not replace. go away
+		if 0 == num {
+			return nil
+		}
+	}
+	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0644)
+	if nil != err {
+		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
+	}
+	defer f.Close()
+
+	prompt := promptui.Prompt{
+		Label: "ReportPortal hostname",
+	}
+	host, err := prompt.Run()
+	if err != nil {
+		return err
+	}
+
+	prompt = promptui.Prompt{
+		Label: "UUID",
+	}
+	uuid, err := prompt.Run()
+	if err != nil {
+		return err
+	}
+
+	prompt = promptui.Prompt{
+		Label: "Default Project",
+	}
+	project, err := prompt.Run()
+	if err != nil {
+		return err
+	}
+
+	err = json.NewEncoder(f).Encode(&config{
+		Project: project,
+		Host:    host,
+		UUID:    uuid,
+	})
+	if nil != err {
+		return cli.NewExitError(fmt.Sprintf("Cannot read config file. %s", err), 1)
+	}
+
+	fmt.Println("Configuration has been successfully saved!")
+	return nil
+}
+
+func configFilePresent() bool {
+	_, err := os.Stat(getConfigFile())
+	return !os.IsNotExist(err)
+}
+
+func getConfigFile() string {
+	return filepath.Join(getHomeDir(), ".gorp")
+}
+func getHomeDir() string {
+	if h := os.Getenv("HOME"); "" != h {
+		return h
+	}
+	curUser, err := user.Current()
+	if err != nil {
+		// well, sheesh
+		return "."
+	}
+
+	return curUser.HomeDir
+}
+
+func getConfig(c *cli.Context) (*config, error) {
+	cfg := &config{}
+	if configFilePresent() {
+		f, err := os.Open(getConfigFile())
+		if nil != err {
+			return nil, err
+		}
+		err = json.NewDecoder(f).Decode(cfg)
+		if nil != err {
+			return nil, err
+		}
+	}
+	if v := c.GlobalString("uuid"); "" != v {
+		cfg.UUID = v
+	}
+	if v := c.GlobalString("project"); "" != v {
+		cfg.Project = v
+	}
+	if v := c.GlobalString("host"); "" != v {
+		cfg.Host = v
+	}
+
+	if err := validateConfig(cfg); nil != err {
+		return nil, err
+	}
+
+	return cfg, nil
+}
+
+func validateConfig(cfg *config) error {
+	if "" == cfg.UUID {
+		return errors.New("uuid is not set")
+	}
+
+	if "" == cfg.Project {
+		return errors.New("project is not set")
+	}
+
+	if "" == cfg.Host {
+		return errors.New("host is not set")
+	}
+	return nil
+}
+
+func buildClient(ctx *cli.Context) (*gorp.Client, error) {
+	cfg, err := getConfig(ctx)
+	if nil != err {
+		return nil, err
+	}
+	return gorp.NewClient(cfg.Host, cfg.Project, cfg.UUID), nil
+
 }

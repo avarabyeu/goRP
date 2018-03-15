@@ -3,8 +3,8 @@ package gorp
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
 )
 
 var _ = Describe("ReportPortal Client", func() {
