@@ -3,7 +3,6 @@ package gorp
 import (
 	"fmt"
 	"gopkg.in/resty.v1"
-	"strconv"
 )
 
 //Client is ReportPortal REST API Client
@@ -18,6 +17,7 @@ type Client struct {
 //uuid - User Token (see user profile page)
 func NewClient(host, project, uuid string) *Client {
 	http := resty.New().
+		//SetDebug(true).
 		SetHostURL(host).
 		SetAuthToken(uuid).
 		OnAfterResponse(func(client *resty.Client, rs *resty.Response) error {
@@ -96,32 +96,13 @@ func (c *Client) GetFiltersByName(name string) (*FilterPage, error) {
 	return &filter, err
 }
 
-//ConvertToFilterParams converts RP internal filter representation to query string
-func ConvertToFilterParams(filter *FilterResource) map[string]string {
-	params := map[string]string{}
-	for _, f := range filter.Entities {
-		params[fmt.Sprintf("filter.%s.%s", f.Condition, f.Field)] = f.Value
-	}
-
-	if nil != filter.SelectionParams {
-		if 0 != filter.SelectionParams.PageNumber {
-			params["page.page"] = strconv.Itoa(filter.SelectionParams.PageNumber)
-		}
-		if nil != filter.SelectionParams.Orders {
-			for _, order := range filter.SelectionParams.Orders {
-				params["page.sort"] = fmt.Sprintf("%s,%s", order.SortingColumn, directionToStr(order.Asc))
-			}
-		}
-
-	}
-
-	return params
-}
-
-func directionToStr(asc bool) string {
-	if asc {
-		return "ASC"
-	}
-	return "DESC"
-
+//MergeLaunches merge two launches
+func (c *Client) MergeLaunches(rq *MergeLaunchesRQ) (*LaunchResource, error) {
+	var rs LaunchResource
+	_, err := c.http.R().
+		SetPathParams(map[string]string{"project": c.project}).
+		SetBody(rq).
+		SetResult(&rs).
+		Post("/api/v1/{project}/launch/merge")
+	return &rs, err
 }

@@ -23,6 +23,18 @@ var _ = Describe("UnixTime", func() {
 
 		Expect(unitTime.Time).To(Equal(d))
 	})
+	It("Should correctly serialize unix time", func() {
+		const jsonStr = `1512114179000`
+		const expTime = "2017-12-01T07:42:59+00:00"
+
+		d, _ := time.Parse(time.RFC3339, expTime)
+		//d = d.In(time.Local).Truncate(1 * time.Minute)
+		bytes, err := json.Marshal(&Timestamp{d})
+		Expect(err).ShouldNot(HaveOccurred())
+
+		Expect(string(bytes)).Should(Equal(jsonStr))
+	})
+
 	It("Should return error on incorrect unix time", func() {
 		const jsonStr = `"hello-world"`
 

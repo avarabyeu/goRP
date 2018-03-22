@@ -37,6 +37,9 @@ fmt:
 build:
 	$(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorp ./
 
+cross-build:
+	gox ${BUILD_INFO_LDFLAGS} -arch="amd64 386" -os="linux windows darwin" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}"
+
 clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi
 	if [ -d 'build' ] ; then rm -r 'build' ; fi

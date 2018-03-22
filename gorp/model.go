@@ -99,6 +99,22 @@ type (
 	Timestamp struct {
 		time.Time
 	}
+
+	//MergeType is type of merge: BASIC or DEEP
+	MergeType string
+
+	//MergeLaunchesRQ payload representation
+	MergeLaunchesRQ struct {
+		Description             string    `json:"description,omitempty"`
+		StartTime               Timestamp `json:"start_time,omitempty"`
+		EndTime                 Timestamp `json:"end_time,omitempty"`
+		ExtendSuitesDescription bool      `json:"extendSuitesDescription,omitempty"`
+		Launches                []string  `json:"launches"`
+		MergeType               MergeType `json:"merge_type,omitempty"`
+		Mode                    string    `json:"mode,omitempty"`
+		Tags                    []string  `json:"tags,omitempty"`
+		Name                    string    `json:"name,omitempty"`
+	}
 )
 
 //UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
@@ -112,8 +128,15 @@ func (rt *Timestamp) UnmarshalJSON(b []byte) (err error) {
 	return nil
 }
 
+//UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
+func (rt *Timestamp) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
+}
+
 //LaunchMode constants
 const (
 	LaunchModeDefault = "DEFAULT"
 	LaunchModeDebug   = "DEBUG"
+	MergeTypeBasic    = "BASIC"
+	MergeTypeDeep     = "DEEP"
 )

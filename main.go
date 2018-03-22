@@ -12,6 +12,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 var (
@@ -62,13 +63,42 @@ var (
 	rootCommands = []cli.Command{
 		launchCommand,
 		initCommand,
+		mergeCommand,
 	}
 
 	launchCommand = cli.Command{
-		Name:  "launch",
-		Usage: "Operations over launches",
-		Subcommands: cli.Commands{
-			listLaunchesCommand,
+		Name:        "launch",
+		Usage:       "Operations over launches",
+		Subcommands: cli.Commands{listLaunchesCommand},
+	}
+
+	mergeCommand = cli.Command{
+		Name:   "merge",
+		Usage:  "Merge Launches",
+		Action: mergeLaunches,
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:   "f, filter",
+				Usage:  "Launches Filter",
+				EnvVar: "MERGE_LAUNCH_FILTER",
+			},
+			cli.StringSliceFlag{
+				Name:   "ids",
+				Usage:  "Launch IDS to Merge",
+				EnvVar: "MERGE_LAUNCH_IDS",
+			},
+
+			cli.StringFlag{
+				Name:   "n, name",
+				Usage:  "New Launch Name",
+				EnvVar: "MERGE_LAUNCH_NAME",
+			},
+			cli.StringFlag{
+				Name:   "t, type",
+				Usage:  "Merge Type",
+				EnvVar: "MERGE_TYPE",
+				Value:  "DEEP",
+			},
 		},
 	}
 
@@ -97,6 +127,50 @@ var (
 	}
 )
 
+func mergeLaunches(c *cli.Context) error {
+	rpClient, err := buildClient(c)
+	if nil != err {
+		return err
+	}
+
+	ids, err := getMergeIDs(c, rpClient)
+	if nil != err {
+		return err
+	}
+	rq := &gorp.MergeLaunchesRQ{
+		Name:      c.String("name"),
+		MergeType: gorp.MergeType(c.String("type")),
+		Launches:  ids,
+		StartTime: gorp.Timestamp{time.Now().Add(-10 * time.Hour)},
+		EndTime:   gorp.Timestamp{time.Now().Add(-1 * time.Minute)},
+	}
+	launchResource, err := rpClient.MergeLaunches(rq)
+	if nil != err {
+		return err
+	}
+	fmt.Println(launchResource.ID)
+	return nil
+}
+func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
+	if ids := c.StringSlice("ids"); nil != ids && len(ids) > 0 {
+		return ids, nil
+	}
+
+	filter := c.String("filter")
+	if "" == filter {
+		return nil, errors.New("no either IDs or filter provided")
+	}
+	launchesByFilterName, err := rpClient.GetLaunchesByFilterName(filter)
+	if nil != err {
+		return nil, err
+	}
+	ids := make([]string, len(launchesByFilterName.Content))
+	for i, l := range launchesByFilterName.Content {
+		ids[i] = l.ID
+	}
+	return ids, nil
+}
+
 func listLaunches(c *cli.Context) error {
 	rpClient, err := buildClient(c)
 	if nil != err {
@@ -123,7 +197,7 @@ func listLaunches(c *cli.Context) error {
 	return nil
 }
 
-func initConfiguration(c *cli.Context) error {
+func initConfiguration() error {
 
 	if configFilePresent() {
 		prompt := promptui.Select{
