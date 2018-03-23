@@ -44,9 +44,9 @@ clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi
 	if [ -d 'build' ] ; then rm -r 'build' ; fi
 
-#tag:
-#	git tag -a v${v} -m "creating tag ${v}"
-#	git push origin "refs/tags/${v}"
-#
-#release:
-#	goreleaser release
+tag:
+	git tag -a v${v} -m "creating tag ${v}"
+	git push origin "refs/tags/${v}"
+
+release: tag
+	goreleaser release
