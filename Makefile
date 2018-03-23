@@ -48,5 +48,6 @@ tag:
 	git tag -a v${v} -m "creating tag ${v}"
 	git push origin "refs/tags/v${v}"
 
-release: tag
+release:
+	rm -rf dist
 	goreleaser release
