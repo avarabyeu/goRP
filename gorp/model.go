@@ -128,7 +128,7 @@ func (rt *Timestamp) UnmarshalJSON(b []byte) (err error) {
 	return nil
 }
 
-//UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
+//MarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
 func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
 }
