@@ -8,3 +8,8 @@ builds:
       - linux
     goarch:
       - amd64
+archive:
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
