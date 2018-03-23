@@ -197,7 +197,7 @@ func listLaunches(c *cli.Context) error {
 	return nil
 }
 
-func initConfiguration() error {
+func initConfiguration(c *cli.Context) error {
 
 	if configFilePresent() {
 		prompt := promptui.Select{
