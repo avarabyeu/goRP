@@ -46,7 +46,7 @@ clean:
 
 tag:
 	git tag -a v${v} -m "creating tag ${v}"
-	git push origin "refs/tags/${v}"
+	git push origin "refs/tags/v${v}"
 
 release: tag
 	goreleaser release
