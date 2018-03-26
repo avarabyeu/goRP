@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"net/url"
 )
 
 var (
@@ -200,16 +201,15 @@ func listLaunches(c *cli.Context) error {
 func initConfiguration(c *cli.Context) error {
 
 	if configFilePresent() {
-		prompt := promptui.Select{
+		prompt := promptui.Prompt{
 			Label: "GoRP is already configured. Replace existing configuration?",
-			Items: []string{"No", "Yes"},
 		}
-		num, _, err := prompt.Run()
+		answer, err := prompt.Run()
 		if err != nil {
 			return err
 		}
 		//do not replace. go away
-		if 0 == num {
+		if !answerYes(answer) {
 			return nil
 		}
 	}
@@ -220,7 +220,11 @@ func initConfiguration(c *cli.Context) error {
 	defer f.Close()
 
 	prompt := promptui.Prompt{
-		Label: "ReportPortal hostname",
+		Label: "Enter ReportPortal hostname",
+		Validate: func(host string) error {
+			_, err := url.Parse(host)
+			return err
+		},
 	}
 	host, err := prompt.Run()
 	if err != nil {
@@ -327,5 +331,9 @@ func buildClient(ctx *cli.Context) (*gorp.Client, error) {
 		return nil, err
 	}
 	return gorp.NewClient(cfg.Host, cfg.Project, cfg.UUID), nil
+}
 
+func answerYes(answer string) bool {
+	lower := strings.ToLower(answer)
+	return "y" == lower || "yes" == lower
 }
