@@ -142,8 +142,8 @@
 [[projects]]
   name = "gopkg.in/resty.v1"
   packages = ["."]
-  revision = "65798e030a35b911602b4d1d743d6f50ac93b665"
-  version = "v1.3"
+  revision = "fccc498aed22c31ff3768bcac00795f94149a21d"
+  version = "v1.7.0"
 
 [[projects]]
   name = "gopkg.in/urfave/cli.v1"
@@ -160,6 +160,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "562150e53641a21034a89dd6f0a15c52c15e685fc39c8407ffe5790b72241a1b"
+  inputs-digest = "46e1ba23140f406ce17a9ae876ec304382e2b26117d3ba358571e0deb53a65ba"
   solver-name = "gps-cdcl"
   solver-version = 1

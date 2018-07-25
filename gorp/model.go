@@ -115,6 +115,25 @@ type (
 		Tags                    []string  `json:"tags,omitempty"`
 		Name                    string    `json:"name,omitempty"`
 	}
+
+	StartRQ struct {
+		Name        string    `json:"name,omitempty"`
+		Description string    `json:"description,omitempty"`
+		Tags        []string  `json:"tags,omitempty"`
+		StartTime   time.Time `json:"start_time,omitempty"`
+	}
+
+	StartLaunchRQ struct {
+		StartRQ
+		StartTime time.Time `json:"start_time,omitempty"`
+	}
+
+	FinishExecutionRQ struct {
+		EndTime     time.Time `json:"end_time,omitempty"`
+		Status      string    `json:"status,omitempty"`
+		Description string    `json:"description,omitempty"`
+		Tags        []string  `json:"tags,omitempty"`
+	}
 )
 
 //UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
