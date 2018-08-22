@@ -33,6 +33,11 @@
   name = "gopkg.in/resty.v1"
   version = "1.7.0"
 
+# Apply workaround from https://github.com/golang/dep/issues/1799
+[[override]]
+  name = "gopkg.in/fsnotify.v1"
+  source = "https://github.com/fsnotify/fsnotify.git"
+
 [[constraint]]
   name = "gopkg.in/urfave/cli.v1"
   version = "1.20.0"

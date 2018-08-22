@@ -17,6 +17,7 @@ type config struct {
 }
 
 var (
+	//RootCommand is CLI entry point
 	RootCommand = []cli.Command{
 		launchCommand,
 		initCommand,
@@ -45,7 +46,7 @@ func initConfiguration(c *cli.Context) error {
 			return nil
 		}
 	}
-	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0600)
 	if nil != err {
 		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
@@ -54,8 +55,8 @@ func initConfiguration(c *cli.Context) error {
 	prompt := promptui.Prompt{
 		Label: "Enter ReportPortal hostname",
 		Validate: func(host string) error {
-			_, err := url.Parse(host)
-			return err
+			_, parseErr := url.Parse(host)
+			return parseErr
 		},
 	}
 	host, err := prompt.Run()

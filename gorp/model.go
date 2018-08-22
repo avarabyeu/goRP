@@ -116,6 +116,7 @@ type (
 		Name                    string    `json:"name,omitempty"`
 	}
 
+	//StartRQ payload representation
 	StartRQ struct {
 		Name        string    `json:"name,omitempty"`
 		Description string    `json:"description,omitempty"`
@@ -123,11 +124,13 @@ type (
 		StartTime   time.Time `json:"start_time,omitempty"`
 	}
 
+	//StartLaunchRQ payload representation
 	StartLaunchRQ struct {
 		StartRQ
 		StartTime time.Time `json:"start_time,omitempty"`
 	}
 
+	//FinishExecutionRQ payload representation
 	FinishExecutionRQ struct {
 		EndTime     time.Time `json:"end_time,omitempty"`
 		Status      string    `json:"status,omitempty"`
