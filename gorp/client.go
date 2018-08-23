@@ -32,6 +32,29 @@ func NewClient(host, project, uuid string) *Client {
 	}
 }
 
+//StartLaunch starts new launch in RP
+func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
+	var rs EntryCreatedRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{"project": c.project}).
+		SetResult(&rs).
+		Post("/api/v1/{project}/launch")
+	return &rs, err
+}
+
+//FinishLaunch finishes launch in RP
+func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, error) {
+	var rs MsgRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{
+			"project":  c.project,
+			"launchId": id,
+		}).
+		SetResult(&rs).
+		Post("/api/v1/{project}/launch/{launchId}/finish")
+	return &rs, err
+}
+
 //GetLaunches retrieves latest launches
 func (c *Client) GetLaunches() (*LaunchPage, error) {
 	var launches LaunchPage

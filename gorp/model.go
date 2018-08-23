@@ -137,6 +137,21 @@ type (
 		Description string    `json:"description,omitempty"`
 		Tags        []string  `json:"tags,omitempty"`
 	}
+
+	//EntryCreatedRS payload
+	EntryCreatedRS struct {
+		ID string `json:"id,omitempty"`
+	}
+
+	//StartLaunchRS payload
+	StartLaunchRS struct {
+		ID string `json:"id,omitempty"`
+	}
+
+	//MsgRS successful operation response payload
+	MsgRS struct {
+		Msg string `json:"msg,omitempty"`
+	}
 )
 
 //UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
