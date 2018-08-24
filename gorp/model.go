@@ -129,6 +129,21 @@ type (
 		StartRQ
 	}
 
+	//FinishTestRQ payload representation
+	FinishTestRQ struct {
+		FinishExecutionRQ
+		Retry bool `json:"retry,omitempty"`
+	}
+
+	//StartTestRQ payload representation
+	StartTestRQ struct {
+		StartRQ
+		Parameters []string `json:"parameters,omitempty"`
+		UniqueID   string   `json:"unique_id,omitempty"`
+		LaunchID   string   `json:"launch_id,omitempty"`
+		Type       string   `json:"type,omitempty"`
+	}
+
 	//FinishExecutionRQ payload representation
 	FinishExecutionRQ struct {
 		EndTime     Timestamp `json:"end_time,omitempty"`

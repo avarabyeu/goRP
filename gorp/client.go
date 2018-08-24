@@ -57,6 +57,44 @@ func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, err
 	return &rs, err
 }
 
+//StartTest starts new test in RP
+func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
+	var rs EntryCreatedRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{"project": c.project}).
+		SetBody(item).
+		SetResult(&rs).
+		Post("/api/v1/{project}/item/")
+	return &rs, err
+}
+
+//StartTest starts new test in RP
+func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreatedRS, error) {
+	var rs EntryCreatedRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{
+			"project": c.project,
+		}).
+		SetBody(item).
+		SetResult(&rs).
+		Post("/api/v1/{project}/item/{itemId}")
+	return &rs, err
+}
+
+//FinishTest finishes test in RP
+func (c *Client) FinishTest(id string, launch *FinishTestRQ) (*MsgRS, error) {
+	var rs MsgRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{
+			"project": c.project,
+			"itemId":  id,
+		}).
+		SetBody(launch).
+		SetResult(&rs).
+		Put("/api/v1/{project}/item/{itemId}")
+	return &rs, err
+}
+
 //GetLaunches retrieves latest launches
 func (c *Client) GetLaunches() (*LaunchPage, error) {
 	var launches LaunchPage
