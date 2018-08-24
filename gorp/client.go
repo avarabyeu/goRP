@@ -53,7 +53,7 @@ func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, err
 		}).
 		SetBody(launch).
 		SetResult(&rs).
-		Post("/api/v1/{project}/launch/{launchId}/finish")
+		Put("/api/v1/{project}/launch/{launchId}/finish")
 	return &rs, err
 }
 
