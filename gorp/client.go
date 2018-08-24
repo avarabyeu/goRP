@@ -37,6 +37,7 @@ func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{"project": c.project}).
+		SetBody(launch).
 		SetResult(&rs).
 		Post("/api/v1/{project}/launch")
 	return &rs, err
@@ -50,6 +51,7 @@ func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, err
 			"project":  c.project,
 			"launchId": id,
 		}).
+		SetBody(launch).
 		SetResult(&rs).
 		Post("/api/v1/{project}/launch/{launchId}/finish")
 	return &rs, err
