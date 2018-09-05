@@ -3,6 +3,7 @@ package gorp
 import (
 	"fmt"
 	"gopkg.in/resty.v1"
+	"time"
 )
 
 //Client is ReportPortal REST API Client
@@ -57,6 +58,25 @@ func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, err
 	return &rs, err
 }
 
+//StopLaunch forces finishing launch
+func (c *Client) StopLaunch(id string) (*MsgRS, error) {
+	var rs MsgRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{
+			"project":  c.project,
+			"launchId": id,
+		}).
+		SetBody(map[string]interface{}{"entities": map[string]*FinishExecutionRQ{
+			id: {
+				EndTime: Timestamp{Time: time.Now()},
+				Status:  "STOPPED",
+			},
+		}}).
+		SetResult(&rs).
+		Put("/api/v1/{project}/launch/{launchId}/finish")
+	return &rs, err
+}
+
 //StartTest starts new test in RP
 func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
@@ -68,7 +88,7 @@ func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
 	return &rs, err
 }
 
-//StartTest starts new test in RP
+//StartChildTest starts new test in RP
 func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().

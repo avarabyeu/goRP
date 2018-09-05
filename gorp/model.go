@@ -184,10 +184,14 @@ func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
 }
 
-//LaunchMode constants
+//Client constants
 const (
 	LaunchModeDefault = "DEFAULT"
 	LaunchModeDebug   = "DEBUG"
 	MergeTypeBasic    = "BASIC"
 	MergeTypeDeep     = "DEEP"
+
+	StatusStopped = "STOPPED"
+	StatusPassed  = "PASSED"
+	StatusFailed  = "FAILED"
 )
