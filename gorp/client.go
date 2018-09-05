@@ -66,14 +66,12 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 			"project":  c.project,
 			"launchId": id,
 		}).
-		SetBody(map[string]interface{}{"entities": map[string]*FinishExecutionRQ{
-			id: {
-				EndTime: Timestamp{Time: time.Now()},
-				Status:  "STOPPED",
-			},
-		}}).
+		SetBody(&FinishExecutionRQ{
+			EndTime: Timestamp{Time: time.Now()},
+			Status:  StatusStopped,
+		}).
 		SetResult(&rs).
-		Put("/api/v1/{project}/launch/{launchId}/finish")
+		Put("/api/v1/{project}/launch/{launchId}/stop")
 	return &rs, err
 }
 
