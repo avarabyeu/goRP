@@ -92,6 +92,7 @@ func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreated
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project": c.project,
+			"itemId":  parent,
 		}).
 		SetBody(item).
 		SetResult(&rs).
