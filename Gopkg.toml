@@ -53,3 +53,15 @@
 [[constraint]]
   name = "github.com/manifoldco/promptui"
   branch = "master"
+
+[[constraint]]
+  name = "go.uber.org/fx"
+  version = "1.8.0"
+
+[[constraint]]
+  name = "github.com/go-chi/chi"
+  version = "3.3.3"
+
+[[constraint]]
+  name = "github.com/sirupsen/logrus"
+  version = "1.2.0"
