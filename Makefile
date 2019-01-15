@@ -17,7 +17,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	$(GO) get github.com/alecthomas/gometalinter
+	curl -L https://git.io/vp6lP | sh
 	gometalinter --install
 
 vendor:
