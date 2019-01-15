@@ -18,7 +18,7 @@ help:
 
 init-deps:
 	curl -L https://git.io/vp6lP | sh
-	gometalinter --install
+#	gometalinter --install
 
 vendor:
 	dep ensure --vendor-only
