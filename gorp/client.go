@@ -114,6 +114,19 @@ func (c *Client) FinishTest(id string, launch *FinishTestRQ) (*MsgRS, error) {
 	return &rs, err
 }
 
+//SaveLog attaches log in RP
+func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
+	var rs EntryCreatedRS
+	_, err := c.http.R().
+		SetPathParams(map[string]string{
+			"project": c.project,
+		}).
+		SetBody(log).
+		SetResult(&rs).
+		Post("/api/v1/{project}/log")
+	return &rs, err
+}
+
 //GetLaunches retrieves latest launches
 func (c *Client) GetLaunches() (*LaunchPage, error) {
 	var launches LaunchPage
