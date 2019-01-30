@@ -17,6 +17,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
+	# installs gometalinter
 	curl -L https://git.io/vp6lP | sh
 #	gometalinter --install
 
