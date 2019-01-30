@@ -7,7 +7,7 @@ env:
   - GO111MODULE=on
 
 before_script:
-  - make init-deps vendor
+  - make init-deps
 
 script:
   - make build

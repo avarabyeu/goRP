@@ -20,8 +20,8 @@ init-deps:
 	curl -L https://git.io/vp6lP | sh
 #	gometalinter --install
 
-vendor:
-	dep ensure --vendor-only
+#vendor:
+#	dep ensure --vendor-only
 
 test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
