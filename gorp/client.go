@@ -1,6 +1,7 @@
 package gorp
 
 import (
+	"bytes"
 	"fmt"
 	"gopkg.in/resty.v1"
 	"time"
@@ -35,10 +36,20 @@ func NewClient(host, project, uuid string) *Client {
 
 //StartLaunch starts new launch in RP
 func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
+	return c.startLaunch(launch)
+}
+
+//StartLaunchRaw starts new launch in RP with body in form of bytes buffer
+func (c *Client) StartLaunchRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
+	return c.startLaunch(body)
+}
+
+//StartLaunch starts new launch in RP
+func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{"project": c.project}).
-		SetBody(launch).
+		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v1/{project}/launch")
 	return &rs, err
@@ -46,13 +57,23 @@ func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
 
 //FinishLaunch finishes launch in RP
 func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, error) {
+	return c.finishLaunch(id, launch)
+}
+
+//FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
+func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
+	return c.finishLaunch(id, body)
+}
+
+//FinishLaunch finishes launch in RP
+func (c *Client) finishLaunch(id string, body interface{}) (*MsgRS, error) {
 	var rs MsgRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project":  c.project,
 			"launchId": id,
 		}).
-		SetBody(launch).
+		SetBody(body).
 		SetResult(&rs).
 		Put("/api/v1/{project}/launch/{launchId}/finish")
 	return &rs, err

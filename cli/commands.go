@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/avarabyeu/goRP/gorp"
 	"github.com/manifoldco/promptui"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/urfave/cli.v1"
 	"net/url"
 	"os"
@@ -50,7 +51,11 @@ func initConfiguration(c *cli.Context) error {
 	if nil != err {
 		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Error(closeErr)
+		}
+	}()
 
 	prompt := promptui.Prompt{
 		Label: "Enter ReportPortal hostname",

@@ -1,0 +1,25 @@
+settings:
+server:
+  status: true
+  open: false
+  host: localhost
+  port: 5001
+schema:
+  - name: agent
+    path: agent
+    commands:
+      install:
+        status: false
+      build:
+        status: false
+      run:
+        status: true
+#        method: dlv debug -l=localhost:35173 --headless=true --api-version=2 --backend=default
+    watcher:
+      paths:
+        - /
+      ignore_paths:
+        - vendor
+      extensions:
+        - go
+
