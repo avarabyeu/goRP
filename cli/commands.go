@@ -3,12 +3,13 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"os"
+
 	"github.com/avarabyeu/goRP/gorp"
 	"github.com/manifoldco/promptui"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/urfave/cli.v1"
-	"net/url"
-	"os"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 type config struct {
@@ -18,7 +19,7 @@ type config struct {
 }
 
 var (
-	//RootCommand is CLI entry point
+	// RootCommand is CLI entry point
 	RootCommand = []cli.Command{
 		launchCommand,
 		initCommand,
@@ -48,7 +49,7 @@ func initConfiguration(c *cli.Context) error {
 		}
 	}
 	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0600)
-	if nil != err {
+	if err != nil {
 		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
 	defer func() {
@@ -90,7 +91,7 @@ func initConfiguration(c *cli.Context) error {
 		Host:    host,
 		UUID:    uuid,
 	})
-	if nil != err {
+	if err != nil {
 		return cli.NewExitError(fmt.Sprintf("Cannot read config file. %s", err), 1)
 	}
 
@@ -102,25 +103,25 @@ func getConfig(c *cli.Context) (*config, error) {
 	cfg := &config{}
 	if configFilePresent() {
 		f, err := os.Open(getConfigFile())
-		if nil != err {
+		if err != nil {
 			return nil, err
 		}
 		err = json.NewDecoder(f).Decode(cfg)
-		if nil != err {
+		if err != nil {
 			return nil, err
 		}
 	}
-	if v := c.GlobalString("uuid"); "" != v {
+	if v := c.GlobalString("uuid"); v != "" {
 		cfg.UUID = v
 	}
-	if v := c.GlobalString("project"); "" != v {
+	if v := c.GlobalString("project"); v != "" {
 		cfg.Project = v
 	}
-	if v := c.GlobalString("host"); "" != v {
+	if v := c.GlobalString("host"); v != "" {
 		cfg.Host = v
 	}
 
-	if err := validateConfig(cfg); nil != err {
+	if err := validateConfig(cfg); err != nil {
 		return nil, err
 	}
 
@@ -129,7 +130,7 @@ func getConfig(c *cli.Context) (*config, error) {
 
 func buildClient(ctx *cli.Context) (*gorp.Client, error) {
 	cfg, err := getConfig(ctx)
-	if nil != err {
+	if err != nil {
 		return nil, err
 	}
 	return gorp.NewClient(cfg.Host, cfg.Project, cfg.UUID), nil

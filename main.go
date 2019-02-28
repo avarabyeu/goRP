@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	rp "github.com/avarabyeu/goRP/cli"
-	"gopkg.in/urfave/cli.v1"
 	"log"
 	"os"
+
+	rp "github.com/avarabyeu/goRP/cli"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
@@ -40,7 +41,7 @@ func main() {
 	app.Commands = rp.RootCommand
 
 	err := app.Run(os.Args)
-	if nil != err {
+	if err != nil {
 		log.Fatal(err)
 	}
 

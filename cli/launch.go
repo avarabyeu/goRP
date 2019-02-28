@@ -3,10 +3,11 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"github.com/avarabyeu/goRP/gorp"
-	"gopkg.in/urfave/cli.v1"
 	"strings"
 	"time"
+
+	"github.com/avarabyeu/goRP/gorp"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
@@ -67,12 +68,12 @@ var (
 
 func mergeLaunches(c *cli.Context) error {
 	rpClient, err := buildClient(c)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
 	ids, err := getMergeIDs(c, rpClient)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 	rq := &gorp.MergeLaunchesRQ{
@@ -83,7 +84,7 @@ func mergeLaunches(c *cli.Context) error {
 		EndTime:   gorp.Timestamp{Time: time.Now().Add(-1 * time.Minute)},
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 	fmt.Println(launchResource.ID)
@@ -92,21 +93,21 @@ func mergeLaunches(c *cli.Context) error {
 
 func listLaunches(c *cli.Context) error {
 	rpClient, err := buildClient(c)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
 	var launches *gorp.LaunchPage
 
-	if filters := c.StringSlice("filter"); nil != filters && len(filters) > 0 {
+	if filters := c.StringSlice("filter"); len(filters) > 0 {
 		filter := strings.Join(filters, "&")
 		launches, err = rpClient.GetLaunchesByFilterString(filter)
-	} else if filterName := c.String("filter-name"); "" != filterName {
+	} else if filterName := c.String("filter-name"); filterName != "" {
 		launches, err = rpClient.GetLaunchesByFilterName(filterName)
 	} else {
 		launches, err = rpClient.GetLaunches()
 	}
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
@@ -117,16 +118,16 @@ func listLaunches(c *cli.Context) error {
 }
 
 func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
-	if ids := c.StringSlice("ids"); nil != ids && len(ids) > 0 {
+	if ids := c.StringSlice("ids"); len(ids) > 0 {
 		return ids, nil
 	}
 
 	filter := c.String("filter")
-	if "" == filter {
+	if filter == "" {
 		return nil, errors.New("no either IDs or filter provided")
 	}
 	launchesByFilterName, err := rpClient.GetLaunchesByFilterName(filter)
-	if nil != err {
+	if err != nil {
 		return nil, err
 	}
 	ids := make([]string, len(launchesByFilterName.Content))

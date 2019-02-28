@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/avarabyeu/goRP/agent/handlers"
 	"github.com/caarlos0/env"
 	log "github.com/sirupsen/logrus"
 	"go.uber.org/fx"
-	"net/http"
 )
 
 type conf struct {
@@ -37,7 +38,7 @@ func newConf() (*conf, error) {
 }
 
 func newMux(cfg *conf) http.Handler {
-	//TODO to be done
+	// TODO to be done
 	return handlers.NewMux(cfg.BasePath, nil, nil)
 }
 
@@ -51,7 +52,7 @@ func initServer(lc fx.Lifecycle, handler http.Handler, cfg *conf) {
 			log.Infof("Starting HTTP server on port %d", cfg.Port)
 
 			go func() {
-				if err := server.ListenAndServe(); nil != err {
+				if err := server.ListenAndServe(); err != nil {
 					log.Fatal(err)
 				}
 			}()

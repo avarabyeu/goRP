@@ -2,8 +2,9 @@ package util
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 //Retry executes callback func until it executes successfully

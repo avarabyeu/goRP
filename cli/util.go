@@ -9,15 +9,15 @@ import (
 )
 
 func validateConfig(cfg *config) error {
-	if "" == cfg.UUID {
+	if cfg.UUID == "" {
 		return errors.New("uuid is not set")
 	}
 
-	if "" == cfg.Project {
+	if cfg.Project == "" {
 		return errors.New("project is not set")
 	}
 
-	if "" == cfg.Host {
+	if cfg.Host == "" {
 		return errors.New("host is not set")
 	}
 	return nil
@@ -25,7 +25,7 @@ func validateConfig(cfg *config) error {
 
 func answerYes(answer string) bool {
 	lower := strings.ToLower(answer)
-	return "y" == lower || "yes" == lower
+	return lower == "y" || lower == "yes"
 }
 
 func configFilePresent() bool {
@@ -37,7 +37,7 @@ func getConfigFile() string {
 	return filepath.Join(getHomeDir(), ".gorp")
 }
 func getHomeDir() string {
-	if h := os.Getenv("HOME"); "" != h {
+	if h := os.Getenv("HOME"); h != "" {
 		return h
 	}
 	curUser, err := user.Current()
