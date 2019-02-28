@@ -10,7 +10,7 @@ before_script:
   - make init-deps
 
 script:
-  - make build
+  - make checkstyle build
 
 after_success:
  - curl --request POST "https://goreportcard.com/checks" --data "repo=github.com/avarabyeu/goRP"
