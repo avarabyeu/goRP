@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
+	rp "github.com/avarabyeu/goRP/cli"
+	"gopkg.in/urfave/cli.v1"
 	"log"
 	"os"
-
-	rp "github.com/avarabyeu/goRP/cli"
-	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
@@ -15,6 +14,9 @@ var (
 )
 
 func main() {
+	log.SetFlags(0)
+	log.SetOutput(os.Stdout)
+
 	app := cli.NewApp()
 	app.Name = "goRP"
 	app.Usage = "ReportPortal CLI Client"
@@ -40,9 +42,15 @@ func main() {
 	}
 	app.Commands = rp.RootCommand
 
+	defer func() {
+		if r := recover(); r != nil {
+			log.Fatalf("error: %v", r)
+		}
+	}()
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		//nolint:gocritic
+		log.Fatal(err.Error())
 	}
 
 }

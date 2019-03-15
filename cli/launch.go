@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/avarabyeu/goRP/gorp"
-	cli "gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v1"
 )
 
 var (
 	launchCommand = cli.Command{
 		Name:        "launch",
 		Usage:       "Operations over launches",
-		Subcommands: cli.Commands{listLaunchesCommand},
+		Subcommands: cli.Commands{listLaunchesCommand, mergeCommand},
 	}
 
 	listLaunchesCommand = cli.Command{
@@ -44,6 +44,11 @@ var (
 				Name:   "f, filter",
 				Usage:  "Launches Filter",
 				EnvVar: "MERGE_LAUNCH_FILTER",
+			},
+			cli.StringFlag{
+				Name:   "fn, filter-name",
+				Usage:  "Filter Name",
+				EnvVar: "FILTER_NAME",
 			},
 			cli.StringSliceFlag{
 				Name:   "ids",
@@ -85,7 +90,7 @@ func mergeLaunches(c *cli.Context) error {
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to merge launches: %s", err.Error())
 	}
 	fmt.Println(launchResource.ID)
 	return nil
@@ -122,16 +127,25 @@ func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
 		return ids, nil
 	}
 
+	var launches *gorp.LaunchPage
+	var err error
+
 	filter := c.String("filter")
-	if filter == "" {
+	filterName := c.String("filter-name")
+	switch {
+	case filter != "":
+		launches, err = rpClient.GetLaunchesByFilterString(filter)
+	case filterName != "":
+		launches, err = rpClient.GetLaunchesByFilterName(filterName)
+	default:
 		return nil, errors.New("no either IDs or filter provided")
 	}
-	launchesByFilterName, err := rpClient.GetLaunchesByFilterName(filter)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to find launches by filter: %s", err.Error())
 	}
-	ids := make([]string, len(launchesByFilterName.Content))
-	for i, l := range launchesByFilterName.Content {
+
+	ids := make([]string, len(launches.Content))
+	for i, l := range launches.Content {
 		ids[i] = l.ID
 	}
 	return ids, nil

@@ -34,7 +34,7 @@ checkstyle:
 
 fmt:
 	gofmt -l -w -s ${GOFILES_NOVENDOR}
-	goimports -l -w .
+#	goimports -l -w .
 
 #build: checkstyle test
 build:

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	resty "gopkg.in/resty.v1"
+	"gopkg.in/resty.v1"
 )
 
 //Client is ReportPortal REST API Client
@@ -218,7 +218,7 @@ func (c *Client) GetLaunchesByFilterName(name string) (*LaunchPage, error) {
 		return nil, err
 	}
 
-	if filter.Page.Size < 1 {
+	if filter.Page.Size < 1 || len(filter.Content) == 0 {
 		return nil, fmt.Errorf("no filter %s found", name)
 	}
 

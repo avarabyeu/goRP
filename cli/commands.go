@@ -8,8 +8,7 @@ import (
 
 	"github.com/avarabyeu/goRP/gorp"
 	"github.com/manifoldco/promptui"
-	log "github.com/sirupsen/logrus"
-	cli "gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v1"
 )
 
 type config struct {
@@ -23,7 +22,6 @@ var (
 	RootCommand = []cli.Command{
 		launchCommand,
 		initCommand,
-		mergeCommand,
 	}
 
 	initCommand = cli.Command{
@@ -54,7 +52,7 @@ func initConfiguration(c *cli.Context) error {
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
-			log.Error(closeErr)
+			fmt.Println(closeErr)
 		}
 	}()
 
