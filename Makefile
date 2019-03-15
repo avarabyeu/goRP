@@ -30,7 +30,7 @@ test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 checkstyle:
-	bin/golangci-lint run --enable-all ./...
+	bin/golangci-lint run --enable-all --deadline 10m ./...
 
 fmt:
 	gofmt -l -w -s ${GOFILES_NOVENDOR}
