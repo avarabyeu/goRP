@@ -14,6 +14,9 @@ var (
 )
 
 func main() {
+	log.SetFlags(0)
+	log.SetOutput(os.Stdout)
+
 	app := cli.NewApp()
 	app.Name = "goRP"
 	app.Usage = "ReportPortal CLI Client"
@@ -39,9 +42,15 @@ func main() {
 	}
 	app.Commands = rp.RootCommand
 
+	defer func() {
+		if r := recover(); r != nil {
+			log.Fatalf("error: %v", r)
+		}
+	}()
 	err := app.Run(os.Args)
-	if nil != err {
-		log.Fatal(err)
+	if err != nil {
+		//nolint:gocritic
+		log.Fatal(err.Error())
 	}
 
 }

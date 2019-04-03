@@ -1,9 +1,11 @@
 package gorp
 
 import (
+	"bytes"
 	"fmt"
-	"gopkg.in/resty.v1"
 	"time"
+
+	"gopkg.in/resty.v1"
 )
 
 //Client is ReportPortal REST API Client
@@ -35,10 +37,20 @@ func NewClient(host, project, uuid string) *Client {
 
 //StartLaunch starts new launch in RP
 func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
+	return c.startLaunch(launch)
+}
+
+//StartLaunchRaw starts new launch in RP with body in form of bytes buffer
+func (c *Client) StartLaunchRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
+	return c.startLaunch(body)
+}
+
+//StartLaunch starts new launch in RP
+func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{"project": c.project}).
-		SetBody(launch).
+		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v1/{project}/launch")
 	return &rs, err
@@ -46,13 +58,23 @@ func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
 
 //FinishLaunch finishes launch in RP
 func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, error) {
+	return c.finishLaunch(id, launch)
+}
+
+//FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
+func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
+	return c.finishLaunch(id, body)
+}
+
+//FinishLaunch finishes launch in RP
+func (c *Client) finishLaunch(id string, body interface{}) (*MsgRS, error) {
 	var rs MsgRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project":  c.project,
 			"launchId": id,
 		}).
-		SetBody(launch).
+		SetBody(body).
 		SetResult(&rs).
 		Put("/api/v1/{project}/launch/{launchId}/finish")
 	return &rs, err
@@ -77,38 +99,68 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 
 //StartTest starts new test in RP
 func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
+	return c.startTest(item)
+}
+
+//StartTestRaw starts new test in RP accepting request body as array of bytes
+func (c *Client) StartTestRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
+	return c.startTest(body)
+}
+
+//startTest starts new test in RP
+func (c *Client) startTest(body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{"project": c.project}).
-		SetBody(item).
+		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v1/{project}/item/")
 	return &rs, err
 }
 
-//StartChildTest starts new test in RP
-func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreatedRS, error) {
+//startChildTest starts new test in RP
+func (c *Client) startChildTest(parent string, body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project": c.project,
 			"itemId":  parent,
 		}).
-		SetBody(item).
+		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v1/{project}/item/{itemId}")
 	return &rs, err
 }
 
+//StartChildTest starts new test in RP
+func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreatedRS, error) {
+	return c.startChildTest(parent, item)
+}
+
+//StartChildTestRaw starts new test in RP accepting request body as array of bytes
+func (c *Client) StartChildTestRaw(parent string, body *bytes.Buffer) (*EntryCreatedRS, error) {
+	return c.startChildTest(parent, body)
+}
+
 //FinishTest finishes test in RP
 func (c *Client) FinishTest(id string, launch *FinishTestRQ) (*MsgRS, error) {
+	return c.finishTest(id, launch)
+}
+
+//FinishTestRaw finishes test in RP accepting body as array of bytes
+func (c *Client) FinishTestRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
+	return c.finishTest(id, body)
+}
+
+//finishTest finishes test in RP
+func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 	var rs MsgRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project": c.project,
 			"itemId":  id,
 		}).
-		SetBody(launch).
+		SetBody(body).
 		SetResult(&rs).
 		Put("/api/v1/{project}/item/{itemId}")
 	return &rs, err
@@ -162,11 +214,11 @@ func (c *Client) GetLaunchesByFilterString(filter string) (*LaunchPage, error) {
 //GetLaunchesByFilterName retrieves launches by filter name
 func (c *Client) GetLaunchesByFilterName(name string) (*LaunchPage, error) {
 	filter, err := c.GetFiltersByName(name)
-	if nil != err {
+	if err != nil {
 		return nil, err
 	}
 
-	if filter.Page.Size < 1 {
+	if filter.Page.Size < 1 || len(filter.Content) == 0 {
 		return nil, fmt.Errorf("no filter %s found", name)
 	}
 

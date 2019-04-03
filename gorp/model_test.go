@@ -2,9 +2,10 @@ package gorp
 
 import (
 	"encoding/json"
+	"time"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"time"
 )
 
 var _ = Describe("UnixTime", func() {

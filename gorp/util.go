@@ -12,11 +12,11 @@ func ConvertToFilterParams(filter *FilterResource) map[string]string {
 		params[fmt.Sprintf("filter.%s.%s", f.Condition, f.Field)] = f.Value
 	}
 
-	if nil != filter.SelectionParams {
-		if 0 != filter.SelectionParams.PageNumber {
+	if filter.SelectionParams != nil {
+		if filter.SelectionParams.PageNumber != 0 {
 			params["page.page"] = strconv.Itoa(filter.SelectionParams.PageNumber)
 		}
-		if nil != filter.SelectionParams.Orders {
+		if filter.SelectionParams.Orders != nil {
 			for _, order := range filter.SelectionParams.Orders {
 				params["page.sort"] = fmt.Sprintf("%s,%s", order.SortingColumn, directionToStr(order.Asc))
 			}

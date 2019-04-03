@@ -3,17 +3,18 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"github.com/avarabyeu/goRP/gorp"
-	"gopkg.in/urfave/cli.v1"
 	"strings"
 	"time"
+
+	"github.com/avarabyeu/goRP/gorp"
+	"gopkg.in/urfave/cli.v1"
 )
 
 var (
 	launchCommand = cli.Command{
 		Name:        "launch",
 		Usage:       "Operations over launches",
-		Subcommands: cli.Commands{listLaunchesCommand},
+		Subcommands: cli.Commands{listLaunchesCommand, mergeCommand},
 	}
 
 	listLaunchesCommand = cli.Command{
@@ -44,6 +45,11 @@ var (
 				Usage:  "Launches Filter",
 				EnvVar: "MERGE_LAUNCH_FILTER",
 			},
+			cli.StringFlag{
+				Name:   "fn, filter-name",
+				Usage:  "Filter Name",
+				EnvVar: "FILTER_NAME",
+			},
 			cli.StringSliceFlag{
 				Name:   "ids",
 				Usage:  "Launch IDS to Merge",
@@ -67,12 +73,12 @@ var (
 
 func mergeLaunches(c *cli.Context) error {
 	rpClient, err := buildClient(c)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
 	ids, err := getMergeIDs(c, rpClient)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 	rq := &gorp.MergeLaunchesRQ{
@@ -83,8 +89,8 @@ func mergeLaunches(c *cli.Context) error {
 		EndTime:   gorp.Timestamp{Time: time.Now().Add(-1 * time.Minute)},
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
-	if nil != err {
-		return err
+	if err != nil {
+		return fmt.Errorf("unable to merge launches: %s", err.Error())
 	}
 	fmt.Println(launchResource.ID)
 	return nil
@@ -92,21 +98,21 @@ func mergeLaunches(c *cli.Context) error {
 
 func listLaunches(c *cli.Context) error {
 	rpClient, err := buildClient(c)
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
 	var launches *gorp.LaunchPage
 
-	if filters := c.StringSlice("filter"); nil != filters && len(filters) > 0 {
+	if filters := c.StringSlice("filter"); len(filters) > 0 {
 		filter := strings.Join(filters, "&")
 		launches, err = rpClient.GetLaunchesByFilterString(filter)
-	} else if filterName := c.String("filter-name"); "" != filterName {
+	} else if filterName := c.String("filter-name"); filterName != "" {
 		launches, err = rpClient.GetLaunchesByFilterName(filterName)
 	} else {
 		launches, err = rpClient.GetLaunches()
 	}
-	if nil != err {
+	if err != nil {
 		return err
 	}
 
@@ -117,20 +123,29 @@ func listLaunches(c *cli.Context) error {
 }
 
 func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
-	if ids := c.StringSlice("ids"); nil != ids && len(ids) > 0 {
+	if ids := c.StringSlice("ids"); len(ids) > 0 {
 		return ids, nil
 	}
 
+	var launches *gorp.LaunchPage
+	var err error
+
 	filter := c.String("filter")
-	if "" == filter {
+	filterName := c.String("filter-name")
+	switch {
+	case filter != "":
+		launches, err = rpClient.GetLaunchesByFilterString(filter)
+	case filterName != "":
+		launches, err = rpClient.GetLaunchesByFilterName(filterName)
+	default:
 		return nil, errors.New("no either IDs or filter provided")
 	}
-	launchesByFilterName, err := rpClient.GetLaunchesByFilterName(filter)
-	if nil != err {
-		return nil, err
+	if err != nil {
+		return nil, fmt.Errorf("unable to find launches by filter: %s", err.Error())
 	}
-	ids := make([]string, len(launchesByFilterName.Content))
-	for i, l := range launchesByFilterName.Content {
+
+	ids := make([]string, len(launches.Content))
+	for i, l := range launches.Content {
 		ids[i] = l.ID
 	}
 	return ids, nil

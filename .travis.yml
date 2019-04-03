@@ -1,13 +1,16 @@
 sudo: false
 language: go
 go:
-  - "1.10"
+  - "1.12.x"
+
+env:
+  - GO111MODULE=on
 
 before_script:
-  - make init-deps vendor
+  - make init-deps
 
 script:
-  - make build
+  - make checkstyle build
 
 after_success:
  - curl --request POST "https://goreportcard.com/checks" --data "repo=github.com/avarabyeu/goRP"

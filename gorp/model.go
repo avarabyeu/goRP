@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const defaultDateTimeFormat = "2006-01-02T15:04:05.999-0700"
+
 type (
 	//LaunchMode - DEFAULT/DEBUG
 	LaunchMode string
@@ -94,12 +96,6 @@ type (
 		} `json:"defects,omitempty"`
 	}
 
-	//Timestamp is a wrapper around Time to support
-	//Epoch milliseconds
-	Timestamp struct {
-		time.Time
-	}
-
 	//MergeType is type of merge: BASIC or DEEP
 	MergeType string
 
@@ -127,6 +123,7 @@ type (
 	//StartLaunchRQ payload representation
 	StartLaunchRQ struct {
 		StartRQ
+		Mode string `json:"mode"`
 	}
 
 	//FinishTestRQ payload representation
@@ -174,13 +171,25 @@ type (
 	MsgRS struct {
 		Msg string `json:"msg,omitempty"`
 	}
+
+	//Timestamp is a wrapper around Time to support
+	//Epoch milliseconds
+	Timestamp struct {
+		time.Time
+	}
 )
 
 //UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
-func (rt *Timestamp) UnmarshalJSON(b []byte) (err error) {
-	msInt, err := strconv.ParseInt(strings.Trim(string(b), "\""), 10, 64)
+func (rt *Timestamp) UnmarshalJSON(b []byte) error {
+	trimmed := strings.Trim(string(b), "\"")
+	msInt, err := strconv.ParseInt(trimmed, 10, 64)
 	if err != nil {
-		return err
+		dt, err := time.Parse(defaultDateTimeFormat, trimmed)
+		if err != nil {
+			return err
+		}
+		rt.Time = dt
+		return nil
 	}
 
 	rt.Time = time.Unix(0, msInt*int64(time.Millisecond))

@@ -17,21 +17,24 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	$(if $(shell which dep 2>/dev/null),$(echo "Dep is already installed..."),$(shell go get -u github.com/golang/dep/cmd/dep))
-	$(GO) get github.com/alecthomas/gometalinter
-	gometalinter --install
+	# installs gometalinter
+#	curl -L https://git.io/vp6lP | sh
+#	gometalinter --install
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.15.0
 
-vendor:
-	dep ensure --vendor-only
+
+#vendor:
+#	dep ensure --vendor-only
 
 test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 checkstyle:
-	gometalinter --vendor ./... --fast --deadline 10m
+	bin/golangci-lint run --enable-all --deadline 10m ./...
 
 fmt:
 	gofmt -l -w -s ${GOFILES_NOVENDOR}
+#	goimports -l -w .
 
 #build: checkstyle test
 build:
@@ -51,3 +54,7 @@ tag:
 release:
 	rm -rf dist
 	goreleaser release
+
+grpc-gen:
+	#Learn here: https://jbrandhorst.com/post/go-protobuf-tips/
+	protoc -I=. -I=vendor -I=${GOPATH}/src model/*.proto --go_out=plugins=grpc:.
