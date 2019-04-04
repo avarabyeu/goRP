@@ -1,0 +1,2 @@
+#!/bin/sh
+docker build --build-arg dockerTag=$DOCKER_TAG -f $DOCKERFILE_PATH -t $IMAGE_NAME .
