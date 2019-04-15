@@ -3,11 +3,9 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/avarabyeu/goRP/gorp"
 	"gopkg.in/urfave/cli.v1"
+	"strings"
 )
 
 var (
@@ -85,8 +83,6 @@ func mergeLaunches(c *cli.Context) error {
 		Name:      c.String("name"),
 		MergeType: gorp.MergeType(c.String("type")),
 		Launches:  ids,
-		StartTime: gorp.Timestamp{Time: time.Now().Add(-10 * time.Hour)},
-		EndTime:   gorp.Timestamp{Time: time.Now().Add(-1 * time.Minute)},
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
 	if err != nil {

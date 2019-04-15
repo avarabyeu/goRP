@@ -101,15 +101,15 @@ type (
 
 	//MergeLaunchesRQ payload representation
 	MergeLaunchesRQ struct {
-		Description             string    `json:"description,omitempty"`
-		StartTime               Timestamp `json:"start_time,omitempty"`
-		EndTime                 Timestamp `json:"end_time,omitempty"`
-		ExtendSuitesDescription bool      `json:"extendSuitesDescription,omitempty"`
-		Launches                []string  `json:"launches"`
-		MergeType               MergeType `json:"merge_type,omitempty"`
-		Mode                    string    `json:"mode,omitempty"`
-		Tags                    []string  `json:"tags,omitempty"`
-		Name                    string    `json:"name,omitempty"`
+		Description             string     `json:"description,omitempty"`
+		StartTime               *Timestamp `json:"start_time,omitempty"`
+		EndTime                 *Timestamp `json:"end_time,omitempty"`
+		ExtendSuitesDescription bool       `json:"extendSuitesDescription,omitempty"`
+		Launches                []string   `json:"launches"`
+		MergeType               MergeType  `json:"merge_type,omitempty"`
+		Mode                    string     `json:"mode,omitempty"`
+		Tags                    []string   `json:"tags,omitempty"`
+		Name                    string     `json:"name,omitempty"`
 	}
 
 	//StartRQ payload representation
