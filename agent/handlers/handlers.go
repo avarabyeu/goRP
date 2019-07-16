@@ -100,20 +100,21 @@ func startTestItemHandler(kvStore store.KVStore, client *gorp.Client) http.Handl
 			return nil, NewStatusErr(http.StatusInternalServerError, errors.New("Cannot read request body"))
 		}
 
+		uidStr := uid.String()
 		go func() {
 			rs, err := client.StartChildTestRaw(realParentID, bytes.NewBuffer(body))
 			if err != nil {
-				if err := kvStore.Store("pending-item", uid.String(), body); err != nil {
+				if err := kvStore.Store("pending-item", uidStr, body); err != nil {
 					log.Error(err)
 				}
 			} else {
-				if err := kvStore.Store("uuids", uid.String(), rs.ID); err != nil {
+				if err := kvStore.Store("uuids", uidStr, rs.ID); err != nil {
 					log.Error(err)
 				}
 			}
 		}()
 
-		return &gorp.EntryCreatedRS{ID: uid.String()}, nil
+		return &gorp.EntryCreatedRS{UUID: uidStr}, nil
 	})
 }
 
@@ -129,20 +130,22 @@ func startRootItemHandler(client *gorp.Client, kvStore store.KVStore) http.Handl
 			return nil, NewStatusErr(http.StatusInternalServerError, errors.New("Cannot read request body"))
 		}
 
+		uidStr := uid.String()
 		go func() {
 			rs, err := client.StartTestRaw(bytes.NewBuffer(body))
 			if err != nil {
-				if err := kvStore.Store("pending-item", uid.String(), body); err != nil {
-					log.Error(err)
+				log.Errorf("Unable to start root test item: %v", err)
+				if storeErr := kvStore.Store("pending-item", uidStr, body); storeErr != nil {
+					log.Error(storeErr)
 				}
 			} else {
-				if err := kvStore.Store("uuids", uid.String(), rs.ID); err != nil {
-					log.Error(err)
+				if storeErr := kvStore.Store("uuids", uidStr, rs.ID); storeErr != nil {
+					log.Error(storeErr)
 				}
 			}
 		}()
 
-		return &gorp.EntryCreatedRS{ID: uid.String()}, nil
+		return &gorp.EntryCreatedRS{UUID: uidStr}, nil
 	})
 }
 
@@ -181,20 +184,21 @@ func startLaunchHandler(kvStore store.KVStore, client *gorp.Client) http.Handler
 			return nil, NewStatusErr(http.StatusInternalServerError, errors.New("Cannot read request body"))
 		}
 
+		uidStr := uid.String()
 		go func(b []byte) {
 			rs, err := client.StartLaunchRaw(bytes.NewBuffer(b))
 			if err != nil {
-				if err := kvStore.Store("pending-launch", uid.String(), b); err != nil {
+				if err := kvStore.Store("pending-launch", uidStr, b); err != nil {
 					log.Error(err)
 				}
 			} else {
-				if err := kvStore.Store("uuids", uid.String(), rs.ID); err != nil {
+				if err := kvStore.Store("uuids", uidStr, rs.ID); err != nil {
 					log.Error(err)
 				}
 			}
 
 		}(body)
 
-		return &gorp.EntryCreatedRS{ID: uid.String()}, nil
+		return &gorp.EntryCreatedRS{UUID: uidStr}, nil
 	})
 }

@@ -114,6 +114,7 @@ type (
 
 	//StartRQ payload representation
 	StartRQ struct {
+		UUID        string    `json:"uuid,omitempty"`
 		Name        string    `json:"name,omitempty"`
 		Description string    `json:"description,omitempty"`
 		Tags        []string  `json:"tags,omitempty"`
@@ -134,6 +135,7 @@ type (
 
 	//SaveLogRQ payload representation. Without attaches.
 	SaveLogRQ struct {
+		UUID    string    `json:"uuid,omitempty"`
 		ItemID  string    `json:"item_id,omitempty"`
 		LogTime Timestamp `json:"time,omitempty"`
 		Message string    `json:"message,omitempty"`
@@ -159,7 +161,8 @@ type (
 
 	//EntryCreatedRS payload
 	EntryCreatedRS struct {
-		ID string `json:"id,omitempty"`
+		ID   int32  `json:"id,omitempty"`
+		UUID string `json:"uuid,omitempty"`
 	}
 
 	//StartLaunchRS payload

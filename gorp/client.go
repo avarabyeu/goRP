@@ -55,7 +55,7 @@ func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/launch")
+		Post("/api/v1/{project}/async/launch")
 	return &rs, err
 }
 
@@ -79,7 +79,7 @@ func (c *Client) finishLaunch(id string, body interface{}) (*MsgRS, error) {
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Put("/api/v1/{project}/launch/{launchId}/finish")
+		Put("/api/v1/{project}/async/launch/{launchId}/finish")
 	return &rs, err
 }
 
@@ -96,7 +96,7 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 			Status:  StatusStopped,
 		}).
 		SetResult(&rs).
-		Put("/api/v1/{project}/launch/{launchId}/stop")
+		Put("/api/v1/{project}/async/launch/{launchId}/stop")
 	return &rs, err
 }
 
@@ -117,7 +117,7 @@ func (c *Client) startTest(body interface{}) (*EntryCreatedRS, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/item/")
+		Post("/api/v1/{project}/async/item/")
 	return &rs, err
 }
 
@@ -131,7 +131,7 @@ func (c *Client) startChildTest(parent string, body interface{}) (*EntryCreatedR
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/item/{itemId}")
+		Post("/api/v1/{project}/async/item/{itemId}")
 	return &rs, err
 }
 
@@ -165,7 +165,7 @@ func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Put("/api/v1/{project}/item/{itemId}")
+		Put("/api/v1/{project}/async/item/{itemId}")
 	return &rs, err
 }
 
@@ -200,7 +200,7 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string][]os.File) (*
 		})
 	_, err = rq.
 		SetResult(&rs).
-		Post("/api/v1/{project}/log")
+		Post("/api/v1/{project}/async/log")
 	return &rs, err
 }
 
@@ -221,7 +221,7 @@ func (c *Client) GetLaunchesByFilter(filter map[string]string) (*LaunchPage, err
 		SetPathParams(map[string]string{"project": c.project}).
 		SetResult(&launches).
 		SetQueryParams(filter).
-		Get("/api/v1/{project}/launch")
+		Get("/api/v1/{project}/async/launch")
 	return &launches, err
 }
 
@@ -232,7 +232,7 @@ func (c *Client) GetLaunchesByFilterString(filter string) (*LaunchPage, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetResult(&launches).
 		SetQueryString(filter).
-		Get("/api/v1/{project}/launch")
+		Get("/api/v1/{project}/async/launch")
 	return &launches, err
 }
 
@@ -253,7 +253,7 @@ func (c *Client) GetLaunchesByFilterName(name string) (*LaunchPage, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetResult(&launches).
 		SetQueryParams(params).
-		Get("/api/v1/{project}/launch")
+		Get("/api/v1/{project}/async/launch")
 	return &launches, err
 }
 
@@ -264,7 +264,7 @@ func (c *Client) GetFiltersByName(name string) (*FilterPage, error) {
 		SetPathParams(map[string]string{"project": c.project, "name": name}).
 		SetQueryParam("filter.eq.name", name).
 		SetResult(&filter).
-		Get("/api/v1/{project}/filter")
+		Get("/api/v1/{project}/async/filter")
 	return &filter, err
 }
 
@@ -275,6 +275,6 @@ func (c *Client) MergeLaunches(rq *MergeLaunchesRQ) (*LaunchResource, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetBody(rq).
 		SetResult(&rs).
-		Post("/api/v1/{project}/launch/merge")
+		Post("/api/v1/{project}/async/launch/merge")
 	return &rs, err
 }

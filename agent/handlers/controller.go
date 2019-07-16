@@ -19,22 +19,22 @@ func NewMux(basePath string, client *gorp.Client, kvStore store.KVStore) http.Ha
 	mux.Use(middleware.StripSlashes)
 
 	// creates launch
-	mux.Post(fmt.Sprintf("%s/{project}/launch", basePath), startLaunchHandler(kvStore, client))
+	mux.Post(fmt.Sprintf("%s/{project}/async/launch", basePath), startLaunchHandler(kvStore, client))
 
 	// finishes launch
-	mux.Put(fmt.Sprintf("%s/{project}/launch/{launchID}/finish", basePath), finishLaunchHandler(kvStore, client))
+	mux.Put(fmt.Sprintf("%s/{project}/async/launch/{launchID}/finish", basePath), finishLaunchHandler(kvStore, client))
 
 	// creates root test item
-	mux.Post(fmt.Sprintf("%s/{project}/item", basePath), startRootItemHandler(client, kvStore))
+	mux.Post(fmt.Sprintf("%s/{project}/async/item", basePath), startRootItemHandler(client, kvStore))
 
 	// creates child test item
-	mux.Post(fmt.Sprintf("%s/{project}/item/{parentID}", basePath), startTestItemHandler(kvStore, client))
+	mux.Post(fmt.Sprintf("%s/{project}/async/item/{parentID}", basePath), startTestItemHandler(kvStore, client))
 
 	// finishes test item
-	mux.Put(fmt.Sprintf("%s/{project}/item/{itemID}", basePath), finishItemHandler(kvStore, client))
+	mux.Put(fmt.Sprintf("%s/{project}/async/item/{itemID}", basePath), finishItemHandler(kvStore, client))
 
 	// creates log
-	mux.Post(fmt.Sprintf("%s/{project}/log", basePath), func(w http.ResponseWriter, rq *http.Request) {
+	mux.Post(fmt.Sprintf("%s/{project}/async/log", basePath), func(w http.ResponseWriter, rq *http.Request) {
 	})
 
 	return mux
