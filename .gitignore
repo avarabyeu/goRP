@@ -28,7 +28,8 @@ _testmain.go
 *.iml
 
 ## Binaries
-/bin/
+bin/
+dist/
 
 ##Vendor
 vendor/*/

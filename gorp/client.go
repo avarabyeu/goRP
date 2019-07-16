@@ -2,7 +2,10 @@ package gorp
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"mime/multipart"
+	"os"
 	"time"
 
 	"gopkg.in/resty.v1"
@@ -174,6 +177,28 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 			"project": c.project,
 		}).
 		SetBody(log).
+		SetResult(&rs).
+		Post("/api/v1/{project}/log")
+	return &rs, err
+}
+
+//SaveLog attaches log in RP
+func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string][]os.File) (*EntryCreatedRS, error) {
+	body := &bytes.Buffer{}
+
+	// JSON PART
+	mWriter := multipart.NewWriter(body)
+	jsonPart, _ := mWriter.CreatePart(map[string][]string{"Content-Type": {"application/json"}})
+	err := json.NewEncoder(jsonPart).Encode(log)
+
+	// BINARY PART
+
+	var rs EntryCreatedRS
+	rq := c.http.R().
+		SetPathParams(map[string]string{
+			"project": c.project,
+		})
+	_, err = rq.
 		SetResult(&rs).
 		Post("/api/v1/{project}/log")
 	return &rs, err
