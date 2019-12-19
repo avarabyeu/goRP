@@ -1,6 +1,7 @@
 package gorp
 
 import (
+	"github.com/gofrs/uuid"
 	"strconv"
 	"strings"
 	"time"
@@ -114,16 +115,29 @@ type (
 
 	//StartRQ payload representation
 	StartRQ struct {
-		Name        string    `json:"name,omitempty"`
-		Description string    `json:"description,omitempty"`
-		Tags        []string  `json:"tags,omitempty"`
-		StartTime   Timestamp `json:"start_time,omitempty"`
+		UUID        *uuid.UUID   `json:"uuid,omitempty"`
+		Name        string       `json:"name,omitempty"`
+		Description string       `json:"description,omitempty"`
+		Attributes  []*Attribute `json:"attributes,omitempty"`
+		StartTime   Timestamp    `json:"start_time,omitempty"`
+	}
+
+	Attribute struct {
+		Key    string `json:"key,omitempty"`
+		Value  string `json:"value,omitempty"`
+		System bool   `json:"system,omitempty"`
+	}
+	Parameter struct {
+		Key   string `json:"key,omitempty"`
+		Value string `json:"value,omitempty"`
 	}
 
 	//StartLaunchRQ payload representation
 	StartLaunchRQ struct {
 		StartRQ
-		Mode string `json:"mode"`
+		Mode    string     `json:"mode"`
+		Rerun   bool       `json:"mode,omitempty"`
+		RerunOf *uuid.UUID `json:"rerunOf,omitempty"`
 	}
 
 	//FinishTestRQ payload representation
@@ -143,10 +157,14 @@ type (
 	//StartTestRQ payload representation
 	StartTestRQ struct {
 		StartRQ
-		Parameters []string `json:"parameters,omitempty"`
-		UniqueID   string   `json:"unique_id,omitempty"`
-		LaunchID   string   `json:"launch_id,omitempty"`
-		Type       string   `json:"type,omitempty"`
+		CodeRef    string       `json:"codeRef,omitempty"`
+		Parameters []*Parameter `json:"parameters,omitempty"`
+		UniqueID   string       `json:"uniqueId,omitempty"`
+		TestCaseID string       `json:"testCaseId,omitempty"`
+		LaunchID   string       `json:"launchUuid,omitempty"`
+		Type       string       `json:"type,omitempty"`
+		Retry      bool         `json:"retry,omitempty"`
+		HasStats   string       `json:"hasStats,omitempty"`
 	}
 
 	//FinishExecutionRQ payload representation
@@ -172,6 +190,12 @@ type (
 		Msg string `json:"msg,omitempty"`
 	}
 
+	//FinishLaunchRS is finish execution payload
+	FinishLaunchRS struct {
+		EntryCreatedRS
+		Number int64  `json:"number,omitempty"`
+		Link   string `json:"link,omitempty"`
+	}
 	//Timestamp is a wrapper around Time to support
 	//Epoch milliseconds
 	Timestamp struct {

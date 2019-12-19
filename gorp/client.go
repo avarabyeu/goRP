@@ -60,18 +60,18 @@ func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 }
 
 //FinishLaunch finishes launch in RP
-func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*MsgRS, error) {
+func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*FinishLaunchRS, error) {
 	return c.finishLaunch(id, launch)
 }
 
 //FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
-func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
+func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*FinishLaunchRS, error) {
 	return c.finishLaunch(id, body)
 }
 
 //FinishLaunch finishes launch in RP
-func (c *Client) finishLaunch(id string, body interface{}) (*MsgRS, error) {
-	var rs MsgRS
+func (c *Client) finishLaunch(id string, body interface{}) (*FinishLaunchRS, error) {
+	var rs FinishLaunchRS
 	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project":  c.project,
