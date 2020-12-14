@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"mime/multipart"
+	"net/textproto"
 	"os"
 	"time"
 
@@ -55,7 +57,7 @@ func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/launch")
+		Post("/api/v2/{project}/launch")
 	return &rs, err
 }
 
@@ -79,7 +81,7 @@ func (c *Client) finishLaunch(id string, body interface{}) (*FinishLaunchRS, err
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Put("/api/v1/{project}/launch/{launchId}/finish")
+		Put("/api/v2/{project}/launch/{launchId}/finish")
 	return &rs, err
 }
 
@@ -96,7 +98,7 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 			Status:  StatusStopped,
 		}).
 		SetResult(&rs).
-		Put("/api/v1/{project}/launch/{launchId}/stop")
+		Put("/api/v2/{project}/launch/{launchId}/stop")
 	return &rs, err
 }
 
@@ -117,7 +119,7 @@ func (c *Client) startTest(body interface{}) (*EntryCreatedRS, error) {
 		SetPathParams(map[string]string{"project": c.project}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/item/")
+		Post("/api/v2/{project}/item/")
 	return &rs, err
 }
 
@@ -131,7 +133,7 @@ func (c *Client) startChildTest(parent string, body interface{}) (*EntryCreatedR
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Post("/api/v1/{project}/item/{itemId}")
+		Post("/api/v2/{project}/item/{itemId}")
 	return &rs, err
 }
 
@@ -146,8 +148,8 @@ func (c *Client) StartChildTestRaw(parent string, body *bytes.Buffer) (*EntryCre
 }
 
 //FinishTest finishes test in RP
-func (c *Client) FinishTest(id string, launch *FinishTestRQ) (*MsgRS, error) {
-	return c.finishTest(id, launch)
+func (c *Client) FinishTest(id string, rq *FinishTestRQ) (*MsgRS, error) {
+	return c.finishTest(id, rq)
 }
 
 //FinishTestRaw finishes test in RP accepting body as array of bytes
@@ -178,12 +180,12 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 		}).
 		SetBody(log).
 		SetResult(&rs).
-		Post("/api/v1/{project}/log")
+		Post("/api/v2/{project}/log")
 	return &rs, err
 }
 
 //SaveLog attaches log in RP
-func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string][]os.File) (*EntryCreatedRS, error) {
+func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
 	body := &bytes.Buffer{}
 
 	// JSON PART
@@ -192,6 +194,21 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string][]os.File) (*
 	err := json.NewEncoder(jsonPart).Encode(log)
 
 	// BINARY PART
+	for k, v := range files {
+		h := make(textproto.MIMEHeader)
+		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, k, k))
+		h.Set("Content-Type", k)
+
+		part, err := mWriter.CreatePart(h)
+		if err != nil {
+			return nil, err
+		}
+		_, err = io.Copy(part, v)
+		if err != nil {
+			return nil, err
+		}
+
+	}
 
 	var rs EntryCreatedRS
 	rq := c.http.R().
@@ -200,7 +217,8 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string][]os.File) (*
 		})
 	_, err = rq.
 		SetResult(&rs).
-		Post("/api/v1/{project}/log")
+		SetBody(body).
+		Post("/api/v2/{project}/log")
 	return &rs, err
 }
 

@@ -9,6 +9,23 @@ import (
 
 const defaultDateTimeFormat = "2006-01-02T15:04:05.999-0700"
 
+//Client constants
+const (
+	LaunchModeDefault = "DEFAULT"
+	LaunchModeDebug   = "DEBUG"
+	MergeTypeBasic    = "BASIC"
+	MergeTypeDeep     = "DEEP"
+
+	StatusStopped = "STOPPED"
+	StatusPassed  = "PASSED"
+	StatusFailed  = "FAILED"
+
+	TypeItemTest = "TEST"
+
+	LogLevelDebug = "DEBUG"
+	LogLevelInfo  = "INFO"
+)
+
 type (
 	//LaunchMode - DEFAULT/DEBUG
 	LaunchMode string
@@ -224,15 +241,3 @@ func (rt *Timestamp) UnmarshalJSON(b []byte) error {
 func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
 }
-
-//Client constants
-const (
-	LaunchModeDefault = "DEFAULT"
-	LaunchModeDebug   = "DEBUG"
-	MergeTypeBasic    = "BASIC"
-	MergeTypeDeep     = "DEEP"
-
-	StatusStopped = "STOPPED"
-	StatusPassed  = "PASSED"
-	StatusFailed  = "FAILED"
-)
