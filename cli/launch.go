@@ -3,9 +3,11 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"github.com/avarabyeu/goRP/gorp"
-	"gopkg.in/urfave/cli.v1"
 	"strings"
+
+	"gopkg.in/urfave/cli.v1"
+
+	"github.com/avarabyeu/goRP/gorp"
 )
 
 var (
@@ -86,9 +88,10 @@ func mergeLaunches(c *cli.Context) error {
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
 	if err != nil {
-		return fmt.Errorf("unable to merge launches: %s", err.Error())
+		return fmt.Errorf("unable to merge launches: %w", err)
 	}
 	fmt.Println(launchResource.ID)
+
 	return nil
 }
 
@@ -115,6 +118,7 @@ func listLaunches(c *cli.Context) error {
 	for _, launch := range launches.Content {
 		fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 	}
+
 	return nil
 }
 
@@ -144,5 +148,6 @@ func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
 	for i, l := range launches.Content {
 		ids[i] = l.ID
 	}
+
 	return ids, nil
 }

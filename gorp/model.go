@@ -1,15 +1,16 @@
 package gorp
 
 import (
-	"github.com/gofrs/uuid"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 const defaultDateTimeFormat = "2006-01-02T15:04:05.999-0700"
 
-//Client constants
+// Client constants
 const (
 	LaunchModeDefault = "DEFAULT"
 	LaunchModeDebug   = "DEBUG"
@@ -27,12 +28,12 @@ const (
 )
 
 type (
-	//LaunchMode - DEFAULT/DEBUG
+	// LaunchMode - DEFAULT/DEBUG
 	LaunchMode string
 
-	//Response is a representation of server response
+	// Response is a representation of server response
 	Response struct {
-		//Page is a slice of data returned by server
+		// Page is a slice of data returned by server
 		Page struct {
 			Number        int `json:"number,omitempty"`
 			Size          int `json:"size,omitempty"`
@@ -41,7 +42,7 @@ type (
 		} `json:"page,omitempty"`
 	}
 
-	//LaunchResource - GET Launch response model
+	// LaunchResource - GET Launch response model
 	LaunchResource struct {
 		ID                  string      `json:"id"`
 		Name                string      `json:"name,omitempty"`
@@ -57,7 +58,7 @@ type (
 		Statistics          *Statistics `json:"statistics,omitempty"`
 	}
 
-	//FilterResource - GET Filter response model
+	// FilterResource - GET Filter response model
 	FilterResource struct {
 		ID              string                `json:"id"`
 		Name            string                `json:"name"`
@@ -67,38 +68,38 @@ type (
 		SelectionParams *FilterSelectionParam `json:"selection_parameters,omitempty"`
 	}
 
-	//FilterEntity - One piece of filter
+	// FilterEntity - One piece of filter
 	FilterEntity struct {
 		Field     string `json:"filtering_field"`
 		Condition string `json:"condition"`
 		Value     string `json:"value"`
 	}
 
-	//FilterPage - GET Filter response model
+	// FilterPage - GET Filter response model
 	FilterPage struct {
 		Content []*FilterResource
 		Response
 	}
 
-	//FilterSelectionParam - Describes filter ordering
+	// FilterSelectionParam - Describes filter ordering
 	FilterSelectionParam struct {
 		PageNumber int            `json:"page_number"`
 		Orders     []*FilterOrder `json:"orders,omitempty"`
 	}
 
-	//FilterOrder - Describes ordering
+	// FilterOrder - Describes ordering
 	FilterOrder struct {
 		SortingColumn string `json:"sorting_column"`
 		Asc           bool   `json:"is_asc"`
 	}
 
-	//LaunchPage - GET Launch response model
+	// LaunchPage - GET Launch response model
 	LaunchPage struct {
 		Content []*LaunchResource
 		Response
 	}
 
-	//Statistics is a execution stat details
+	// Statistics is a execution stat details
 	Statistics struct {
 		Executions *struct {
 			Total  string `json:"total,omitempty"`
@@ -114,10 +115,10 @@ type (
 		} `json:"defects,omitempty"`
 	}
 
-	//MergeType is type of merge: BASIC or DEEP
+	// MergeType is type of merge: BASIC or DEEP
 	MergeType string
 
-	//MergeLaunchesRQ payload representation
+	// MergeLaunchesRQ payload representation
 	MergeLaunchesRQ struct {
 		Description             string     `json:"description,omitempty"`
 		StartTime               *Timestamp `json:"start_time,omitempty"`
@@ -130,7 +131,7 @@ type (
 		Name                    string     `json:"name,omitempty"`
 	}
 
-	//StartRQ payload representation
+	// StartRQ payload representation
 	StartRQ struct {
 		UUID        *uuid.UUID   `json:"uuid,omitempty"`
 		Name        string       `json:"name,omitempty"`
@@ -139,31 +140,34 @@ type (
 		StartTime   Timestamp    `json:"start_time,omitempty"`
 	}
 
+	// Attribute represents ReportPortal's attribute
 	Attribute struct {
 		Key    string `json:"key,omitempty"`
 		Value  string `json:"value,omitempty"`
 		System bool   `json:"system,omitempty"`
 	}
+
+	// Parameter represents key-value pair
 	Parameter struct {
 		Key   string `json:"key,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
 
-	//StartLaunchRQ payload representation
+	// StartLaunchRQ payload representation
 	StartLaunchRQ struct {
 		StartRQ
 		Mode    string     `json:"mode"`
-		Rerun   bool       `json:"mode,omitempty"`
+		Rerun   bool       `json:"rerun,omitempty"`
 		RerunOf *uuid.UUID `json:"rerunOf,omitempty"`
 	}
 
-	//FinishTestRQ payload representation
+	// FinishTestRQ payload representation
 	FinishTestRQ struct {
 		FinishExecutionRQ
 		Retry bool `json:"retry,omitempty"`
 	}
 
-	//SaveLogRQ payload representation. Without attaches.
+	// SaveLogRQ payload representation. Without attaches.
 	SaveLogRQ struct {
 		ItemID  string    `json:"item_id,omitempty"`
 		LogTime Timestamp `json:"time,omitempty"`
@@ -171,7 +175,7 @@ type (
 		Level   string    `json:"level,omitempty"`
 	}
 
-	//StartTestRQ payload representation
+	// StartTestRQ payload representation
 	StartTestRQ struct {
 		StartRQ
 		CodeRef    string       `json:"codeRef,omitempty"`
@@ -184,7 +188,7 @@ type (
 		HasStats   string       `json:"hasStats,omitempty"`
 	}
 
-	//FinishExecutionRQ payload representation
+	// FinishExecutionRQ payload representation
 	FinishExecutionRQ struct {
 		EndTime     Timestamp `json:"end_time,omitempty"`
 		Status      string    `json:"status,omitempty"`
@@ -192,35 +196,35 @@ type (
 		Tags        []string  `json:"tags,omitempty"`
 	}
 
-	//EntryCreatedRS payload
+	// EntryCreatedRS payload
 	EntryCreatedRS struct {
 		ID string `json:"id,omitempty"`
 	}
 
-	//StartLaunchRS payload
+	// StartLaunchRS payload
 	StartLaunchRS struct {
 		ID string `json:"id,omitempty"`
 	}
 
-	//MsgRS successful operation response payload
+	// MsgRS successful operation response payload
 	MsgRS struct {
 		Msg string `json:"msg,omitempty"`
 	}
 
-	//FinishLaunchRS is finish execution payload
+	// FinishLaunchRS is finish execution payload
 	FinishLaunchRS struct {
 		EntryCreatedRS
 		Number int64  `json:"number,omitempty"`
 		Link   string `json:"link,omitempty"`
 	}
-	//Timestamp is a wrapper around Time to support
-	//Epoch milliseconds
+	// Timestamp is a wrapper around Time to support
+	// Epoch milliseconds
 	Timestamp struct {
 		time.Time
 	}
 )
 
-//UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
+// UnmarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
 func (rt *Timestamp) UnmarshalJSON(b []byte) error {
 	trimmed := strings.Trim(string(b), "\"")
 	msInt, err := strconv.ParseInt(trimmed, 10, 64)
@@ -237,7 +241,7 @@ func (rt *Timestamp) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-//MarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
+// MarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
 func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
 }

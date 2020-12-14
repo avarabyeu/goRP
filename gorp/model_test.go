@@ -29,7 +29,7 @@ var _ = Describe("UnixTime", func() {
 		const expTime = "2017-12-01T07:42:59+00:00"
 
 		d, _ := time.Parse(time.RFC3339, expTime)
-		//d = d.In(time.Local).Truncate(1 * time.Minute)
+		// d = d.In(time.Local).Truncate(1 * time.Minute)
 		bytes, err := json.Marshal(&Timestamp{d})
 		Expect(err).ShouldNot(HaveOccurred())
 

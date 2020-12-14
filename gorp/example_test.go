@@ -2,10 +2,11 @@ package gorp
 
 import (
 	"fmt"
-	"github.com/gofrs/uuid"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 func ExampleClient() {

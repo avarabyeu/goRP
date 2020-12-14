@@ -10,47 +10,50 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/resty.v1"
+	"github.com/go-resty/resty/v2"
 )
 
-//Client is ReportPortal REST API Client
+// Client is ReportPortal REST API Client
 type Client struct {
 	project string
 	http    *resty.Client
 }
 
-//NewClient creates new instance of Client
-//host - server hostname
-//project - name of the project
-//uuid - User Token (see user profile page)
+// NewClient creates new instance of Client
+// host - server hostname
+// project - name of the project
+// uuid - User Token (see user profile page)
 func NewClient(host, project, uuid string) *Client {
 	http := resty.New().
-		//SetDebug(true).
+		// SetDebug(true).
 		SetHostURL(host).
 		SetAuthToken(uuid).
 		OnAfterResponse(func(client *resty.Client, rs *resty.Response) error {
+			// nolint:gomnd // 4xx errors
 			if (rs.StatusCode() / 100) >= 4 {
 				return fmt.Errorf("status code error: %d\n%s", rs.StatusCode(), rs.String())
 			}
+
 			return nil
 		})
+
 	return &Client{
 		project: project,
 		http:    http,
 	}
 }
 
-//StartLaunch starts new launch in RP
+// StartLaunch starts new launch in RP
 func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
 	return c.startLaunch(launch)
 }
 
-//StartLaunchRaw starts new launch in RP with body in form of bytes buffer
+// StartLaunchRaw starts new launch in RP with body in form of bytes buffer
 func (c *Client) StartLaunchRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
 	return c.startLaunch(body)
 }
 
-//StartLaunch starts new launch in RP
+// StartLaunch starts new launch in RP
 func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
@@ -58,20 +61,21 @@ func (c *Client) startLaunch(body interface{}) (*EntryCreatedRS, error) {
 		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v2/{project}/launch")
+
 	return &rs, err
 }
 
-//FinishLaunch finishes launch in RP
+// FinishLaunch finishes launch in RP
 func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*FinishLaunchRS, error) {
 	return c.finishLaunch(id, launch)
 }
 
-//FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
+// FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
 func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*FinishLaunchRS, error) {
 	return c.finishLaunch(id, body)
 }
 
-//FinishLaunch finishes launch in RP
+// FinishLaunch finishes launch in RP
 func (c *Client) finishLaunch(id string, body interface{}) (*FinishLaunchRS, error) {
 	var rs FinishLaunchRS
 	_, err := c.http.R().
@@ -82,10 +86,11 @@ func (c *Client) finishLaunch(id string, body interface{}) (*FinishLaunchRS, err
 		SetBody(body).
 		SetResult(&rs).
 		Put("/api/v2/{project}/launch/{launchId}/finish")
+
 	return &rs, err
 }
 
-//StopLaunch forces finishing launch
+// StopLaunch forces finishing launch
 func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 	var rs MsgRS
 	_, err := c.http.R().
@@ -99,20 +104,21 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 		}).
 		SetResult(&rs).
 		Put("/api/v2/{project}/launch/{launchId}/stop")
+
 	return &rs, err
 }
 
-//StartTest starts new test in RP
+// StartTest starts new test in RP
 func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
 	return c.startTest(item)
 }
 
-//StartTestRaw starts new test in RP accepting request body as array of bytes
+// StartTestRaw starts new test in RP accepting request body as array of bytes
 func (c *Client) StartTestRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
 	return c.startTest(body)
 }
 
-//startTest starts new test in RP
+// startTest starts new test in RP
 func (c *Client) startTest(body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
@@ -120,10 +126,11 @@ func (c *Client) startTest(body interface{}) (*EntryCreatedRS, error) {
 		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v2/{project}/item/")
+
 	return &rs, err
 }
 
-//startChildTest starts new test in RP
+// startChildTest starts new test in RP
 func (c *Client) startChildTest(parent string, body interface{}) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
@@ -134,30 +141,31 @@ func (c *Client) startChildTest(parent string, body interface{}) (*EntryCreatedR
 		SetBody(body).
 		SetResult(&rs).
 		Post("/api/v2/{project}/item/{itemId}")
+
 	return &rs, err
 }
 
-//StartChildTest starts new test in RP
+// StartChildTest starts new test in RP
 func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreatedRS, error) {
 	return c.startChildTest(parent, item)
 }
 
-//StartChildTestRaw starts new test in RP accepting request body as array of bytes
+// StartChildTestRaw starts new test in RP accepting request body as array of bytes
 func (c *Client) StartChildTestRaw(parent string, body *bytes.Buffer) (*EntryCreatedRS, error) {
 	return c.startChildTest(parent, body)
 }
 
-//FinishTest finishes test in RP
+// FinishTest finishes test in RP
 func (c *Client) FinishTest(id string, rq *FinishTestRQ) (*MsgRS, error) {
 	return c.finishTest(id, rq)
 }
 
-//FinishTestRaw finishes test in RP accepting body as array of bytes
+// FinishTestRaw finishes test in RP accepting body as array of bytes
 func (c *Client) FinishTestRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
 	return c.finishTest(id, body)
 }
 
-//finishTest finishes test in RP
+// finishTest finishes test in RP
 func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 	var rs MsgRS
 	_, err := c.http.R().
@@ -171,7 +179,7 @@ func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 	return &rs, err
 }
 
-//SaveLog attaches log in RP
+// SaveLog attaches log in RP
 func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
 	_, err := c.http.R().
@@ -184,7 +192,7 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 	return &rs, err
 }
 
-//SaveLog attaches log in RP
+// SaveLogMultipart attaches log in RP
 func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
 	body := &bytes.Buffer{}
 
@@ -192,6 +200,9 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*E
 	mWriter := multipart.NewWriter(body)
 	jsonPart, _ := mWriter.CreatePart(map[string][]string{"Content-Type": {"application/json"}})
 	err := json.NewEncoder(jsonPart).Encode(log)
+	if err != nil {
+		return nil, err
+	}
 
 	// BINARY PART
 	for k, v := range files {
@@ -199,15 +210,14 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*E
 		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, k, k))
 		h.Set("Content-Type", k)
 
-		part, err := mWriter.CreatePart(h)
-		if err != nil {
-			return nil, err
+		part, cErr := mWriter.CreatePart(h)
+		if cErr != nil {
+			return nil, cErr
 		}
 		_, err = io.Copy(part, v)
 		if err != nil {
 			return nil, err
 		}
-
 	}
 
 	var rs EntryCreatedRS
@@ -222,7 +232,7 @@ func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*E
 	return &rs, err
 }
 
-//GetLaunches retrieves latest launches
+// GetLaunches retrieves latest launches
 func (c *Client) GetLaunches() (*LaunchPage, error) {
 	var launches LaunchPage
 	_, err := c.http.R().
@@ -232,7 +242,7 @@ func (c *Client) GetLaunches() (*LaunchPage, error) {
 	return &launches, err
 }
 
-//GetLaunchesByFilter retrieves launches by filter
+// GetLaunchesByFilter retrieves launches by filter
 func (c *Client) GetLaunchesByFilter(filter map[string]string) (*LaunchPage, error) {
 	var launches LaunchPage
 	_, err := c.http.R().
@@ -243,7 +253,7 @@ func (c *Client) GetLaunchesByFilter(filter map[string]string) (*LaunchPage, err
 	return &launches, err
 }
 
-//GetLaunchesByFilterString retrieves launches by filter as string
+// GetLaunchesByFilterString retrieves launches by filter as string
 func (c *Client) GetLaunchesByFilterString(filter string) (*LaunchPage, error) {
 	var launches LaunchPage
 	_, err := c.http.R().
@@ -254,7 +264,7 @@ func (c *Client) GetLaunchesByFilterString(filter string) (*LaunchPage, error) {
 	return &launches, err
 }
 
-//GetLaunchesByFilterName retrieves launches by filter name
+// GetLaunchesByFilterName retrieves launches by filter name
 func (c *Client) GetLaunchesByFilterName(name string) (*LaunchPage, error) {
 	filter, err := c.GetFiltersByName(name)
 	if err != nil {
@@ -275,7 +285,7 @@ func (c *Client) GetLaunchesByFilterName(name string) (*LaunchPage, error) {
 	return &launches, err
 }
 
-//GetFiltersByName retrieves filter by its name
+// GetFiltersByName retrieves filter by its name
 func (c *Client) GetFiltersByName(name string) (*FilterPage, error) {
 	var filter FilterPage
 	_, err := c.http.R().
@@ -286,7 +296,7 @@ func (c *Client) GetFiltersByName(name string) (*FilterPage, error) {
 	return &filter, err
 }
 
-//MergeLaunches merge two launches
+// MergeLaunches merge two launches
 func (c *Client) MergeLaunches(rq *MergeLaunchesRQ) (*LaunchResource, error) {
 	var rs LaunchResource
 	_, err := c.http.R().

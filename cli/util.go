@@ -8,34 +8,44 @@ import (
 	"strings"
 )
 
+var (
+	errHostNotSet    = errors.New("host is not set")
+	errProjectNotSet = errors.New("project is not set")
+	errUUIDNotSet    = errors.New("uuid is not set")
+)
+
 func validateConfig(cfg *config) error {
 	if cfg.UUID == "" {
-		return errors.New("uuid is not set")
+		return errUUIDNotSet
 	}
 
 	if cfg.Project == "" {
-		return errors.New("project is not set")
+		return errProjectNotSet
 	}
 
 	if cfg.Host == "" {
-		return errors.New("host is not set")
+		return errHostNotSet
 	}
+
 	return nil
 }
 
 func answerYes(answer string) bool {
 	lower := strings.ToLower(answer)
+
 	return lower == "y" || lower == "yes"
 }
 
 func configFilePresent() bool {
 	_, err := os.Stat(getConfigFile())
+
 	return !os.IsNotExist(err)
 }
 
 func getConfigFile() string {
 	return filepath.Join(getHomeDir(), ".gorp")
 }
+
 func getHomeDir() string {
 	if h := os.Getenv("HOME"); h != "" {
 		return h

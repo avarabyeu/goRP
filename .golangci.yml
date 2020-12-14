@@ -18,7 +18,7 @@ linters-settings:
   lll:
     line-length: 140
   goimports:
-    local-prefixes: github.com/golangci/golangci-lint
+    local-prefixes: github.com/avarabyeu/goRP
   gocritic:
     enabled-tags:
       - performance
@@ -34,7 +34,13 @@ linters:
     - maligned
     - prealloc
     - gochecknoglobals
-    - goimports
+    - wsl
+    - goerr113
+    - godot
+    - funlen
+    - testpackage
+    - nlreturn
+    - stylecheck
 
 #run:
 #  skip-dirs:

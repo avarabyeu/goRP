@@ -29,12 +29,13 @@ init-deps:
 test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
-checkstyle:
-	bin/golangci-lint run --enable-all --deadline 10m ./...
+lint:
+	golangci-lint run --enable-all --deadline 10m ./...
 
 fmt:
-	gofmt -l -w -s ${GOFILES_NOVENDOR}
-#	goimports -l -w .
+	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}
+	gofumports -local github.com/avarabyeu/goRP -l -w ${GOFILES_NOVENDOR}
+	gci -local github.com/avarabyeu/goRP -w ${GOFILES_NOVENDOR}
 
 #build: checkstyle test
 build:

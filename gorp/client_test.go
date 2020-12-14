@@ -18,7 +18,6 @@ var _ = Describe("ReportPortal Client", func() {
 	})
 
 	It("Handles wrong status codes as errors", func() {
-
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 		}))

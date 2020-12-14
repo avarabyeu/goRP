@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	rp "github.com/avarabyeu/goRP/cli"
-	"gopkg.in/urfave/cli.v1"
 	"log"
 	"os"
+
+	"gopkg.in/urfave/cli.v1"
+
+	rp "github.com/avarabyeu/goRP/cli"
 )
 
 var (
@@ -52,5 +54,4 @@ func main() {
 		//nolint:gocritic
 		log.Fatal(err.Error())
 	}
-
 }

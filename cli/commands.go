@@ -6,9 +6,10 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/avarabyeu/goRP/gorp"
 	"github.com/manifoldco/promptui"
 	"gopkg.in/urfave/cli.v1"
+
+	"github.com/avarabyeu/goRP/gorp"
 )
 
 type config struct {
@@ -32,7 +33,6 @@ var (
 )
 
 func initConfiguration(c *cli.Context) error {
-
 	if configFilePresent() {
 		prompt := promptui.Prompt{
 			Label: "GoRP is already configured. Replace existing configuration?",
@@ -41,12 +41,12 @@ func initConfiguration(c *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		//do not replace. go away
+		// do not replace. go away
 		if !answerYes(answer) {
 			return nil
 		}
 	}
-	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
@@ -60,6 +60,7 @@ func initConfiguration(c *cli.Context) error {
 		Label: "Enter ReportPortal hostname",
 		Validate: func(host string) error {
 			_, parseErr := url.Parse(host)
+
 			return parseErr
 		},
 	}
@@ -94,6 +95,7 @@ func initConfiguration(c *cli.Context) error {
 	}
 
 	fmt.Println("Configuration has been successfully saved!")
+
 	return nil
 }
 
@@ -131,5 +133,6 @@ func buildClient(ctx *cli.Context) (*gorp.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return gorp.NewClient(cfg.Host, cfg.Project, cfg.UUID), nil
 }

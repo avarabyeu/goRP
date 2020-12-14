@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-//ConvertToFilterParams converts RP internal filter representation to query string
+// ConvertToFilterParams converts RP internal filter representation to query string
 func ConvertToFilterParams(filter *FilterResource) map[string]string {
 	params := map[string]string{}
 	for _, f := range filter.Entities {
@@ -21,7 +21,6 @@ func ConvertToFilterParams(filter *FilterResource) map[string]string {
 				params["page.sort"] = fmt.Sprintf("%s,%s", order.SortingColumn, directionToStr(order.Asc))
 			}
 		}
-
 	}
 
 	return params
@@ -32,5 +31,4 @@ func directionToStr(asc bool) string {
 		return "ASC"
 	}
 	return "DESC"
-
 }
