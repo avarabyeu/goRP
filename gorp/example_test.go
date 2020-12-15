@@ -5,13 +5,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 )
 
 func ExampleClient() {
 	client := NewClient("xxx", "xxx", "xxx")
 
-	launchUUID, _ := uuid.NewV4()
+	launchUUID := uuid.New()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
 		Mode: LaunchModes.Default,
 		StartRQ: StartRQ{
@@ -23,7 +23,7 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to start launch")
 
-	testUUID, _ := uuid.NewV4()
+	testUUID := uuid.New()
 	_, err = client.StartTest(&StartTestRQ{
 		LaunchID: launch.ID,
 		CodeRef:  "example_test.go",
@@ -74,6 +74,8 @@ func ExampleClient() {
 		EndTime: Timestamp{time.Now()},
 	})
 	checkErr(err, "unable to finish launch")
+
+	//Output:
 
 }
 
