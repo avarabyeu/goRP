@@ -5,67 +5,67 @@ import (
 	"fmt"
 	"strings"
 
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli/v2"
 
 	"github.com/avarabyeu/goRP/gorp"
 )
 
 var (
-	launchCommand = cli.Command{
+	launchCommand = &cli.Command{
 		Name:        "launch",
 		Usage:       "Operations over launches",
 		Subcommands: cli.Commands{listLaunchesCommand, mergeCommand},
 	}
 
-	listLaunchesCommand = cli.Command{
+	listLaunchesCommand = &cli.Command{
 		Name:  "list",
 		Usage: "List launches",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:   "fn, filter-name",
-				Usage:  "Filter Name",
-				EnvVar: "FILTER_NAME",
+			&cli.StringFlag{
+				Name:    "fn, filter-name",
+				Usage:   "Filter Name",
+				EnvVars: []string{"FILTER_NAME"},
 			},
-			cli.StringSliceFlag{
-				Name:   "f, filter",
-				Usage:  "Filter",
-				EnvVar: "Filter",
+			&cli.StringSliceFlag{
+				Name:    "f, filter",
+				Usage:   "Filter",
+				EnvVars: []string{"Filter"},
 			},
 		},
 		Action: listLaunches,
 	}
 
-	mergeCommand = cli.Command{
+	mergeCommand = &cli.Command{
 		Name:   "merge",
 		Usage:  "Merge Launches",
 		Action: mergeLaunches,
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:   "f, filter",
-				Usage:  "Launches Filter",
-				EnvVar: "MERGE_LAUNCH_FILTER",
+			&cli.StringFlag{
+				Name:    "f, filter",
+				Usage:   "Launches Filter",
+				EnvVars: []string{"MERGE_LAUNCH_FILTER"},
 			},
-			cli.StringFlag{
-				Name:   "fn, filter-name",
-				Usage:  "Filter Name",
-				EnvVar: "FILTER_NAME",
+			&cli.StringFlag{
+				Name:    "fn, filter-name",
+				Usage:   "Filter Name",
+				EnvVars: []string{"FILTER_NAME"},
 			},
-			cli.StringSliceFlag{
-				Name:   "ids",
-				Usage:  "Launch IDS to Merge",
-				EnvVar: "MERGE_LAUNCH_IDS",
+			&cli.StringSliceFlag{
+				Name:    "ids",
+				Usage:   "Launch IDS to Merge",
+				EnvVars: []string{"MERGE_LAUNCH_IDS"},
 			},
 
-			cli.StringFlag{
-				Name:   "n, name",
-				Usage:  "New Launch Name",
-				EnvVar: "MERGE_LAUNCH_NAME",
+			&cli.StringFlag{
+				Name:    "n, name",
+				Usage:   "New Launch Name",
+				EnvVars: []string{"MERGE_LAUNCH_NAME"},
 			},
-			cli.StringFlag{
-				Name:   "t, type",
-				Usage:  "Merge Type",
-				EnvVar: "MERGE_TYPE",
-				Value:  "DEEP",
+			&cli.StringFlag{
+				Name:    "t, type",
+				Usage:   "Merge Type",
+				EnvVars: []string{"MERGE_TYPE"},
+				Value:   "DEEP",
 			},
 		},
 	}

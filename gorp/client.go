@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"mime/multipart"
-	"net/textproto"
 	"os"
 	"time"
 
@@ -49,7 +46,7 @@ func (c *Client) StartLaunch(launch *StartLaunchRQ) (*EntryCreatedRS, error) {
 }
 
 // StartLaunchRaw starts new launch in RP with body in form of bytes buffer
-func (c *Client) StartLaunchRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
+func (c *Client) StartLaunchRaw(body json.RawMessage) (*EntryCreatedRS, error) {
 	return c.startLaunch(body)
 }
 
@@ -71,7 +68,7 @@ func (c *Client) FinishLaunch(id string, launch *FinishExecutionRQ) (*FinishLaun
 }
 
 // FinishLaunchRaw finishes launch in RP with body in form of bytes buffer
-func (c *Client) FinishLaunchRaw(id string, body *bytes.Buffer) (*FinishLaunchRS, error) {
+func (c *Client) FinishLaunchRaw(id string, body json.RawMessage) (*FinishLaunchRS, error) {
 	return c.finishLaunch(id, body)
 }
 
@@ -114,7 +111,7 @@ func (c *Client) StartTest(item *StartTestRQ) (*EntryCreatedRS, error) {
 }
 
 // StartTestRaw starts new test in RP accepting request body as array of bytes
-func (c *Client) StartTestRaw(body *bytes.Buffer) (*EntryCreatedRS, error) {
+func (c *Client) StartTestRaw(body json.RawMessage) (*EntryCreatedRS, error) {
 	return c.startTest(body)
 }
 
@@ -151,7 +148,7 @@ func (c *Client) StartChildTest(parent string, item *StartTestRQ) (*EntryCreated
 }
 
 // StartChildTestRaw starts new test in RP accepting request body as array of bytes
-func (c *Client) StartChildTestRaw(parent string, body *bytes.Buffer) (*EntryCreatedRS, error) {
+func (c *Client) StartChildTestRaw(parent string, body json.RawMessage) (*EntryCreatedRS, error) {
 	return c.startChildTest(parent, body)
 }
 
@@ -161,7 +158,7 @@ func (c *Client) FinishTest(id string, rq *FinishTestRQ) (*MsgRS, error) {
 }
 
 // FinishTestRaw finishes test in RP accepting body as array of bytes
-func (c *Client) FinishTestRaw(id string, body *bytes.Buffer) (*MsgRS, error) {
+func (c *Client) FinishTestRaw(id string, body json.RawMessage) (*MsgRS, error) {
 	return c.finishTest(id, body)
 }
 
@@ -188,47 +185,44 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 		}).
 		SetBody(log).
 		SetResult(&rs).
-		Post("/api/v2/{project}/log")
+		Post("/api/v1/{project}/log")
 	return &rs, err
 }
 
 // SaveLogMultipart attaches log in RP
 func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
-	body := &bytes.Buffer{}
-
-	// JSON PART
-	mWriter := multipart.NewWriter(body)
-	jsonPart, _ := mWriter.CreatePart(map[string][]string{"Content-Type": {"application/json"}})
-	err := json.NewEncoder(jsonPart).Encode(log)
+	var bodyBuf bytes.Buffer
+	err := json.NewEncoder(&bodyBuf).Encode([]*SaveLogRQ{log})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to encode log payload: %w", err)
 	}
 
-	// BINARY PART
-	for k, v := range files {
-		h := make(textproto.MIMEHeader)
-		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, k, k))
-		h.Set("Content-Type", k)
-
-		part, cErr := mWriter.CreatePart(h)
-		if cErr != nil {
-			return nil, cErr
-		}
-		_, err = io.Copy(part, v)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var rs EntryCreatedRS
 	rq := c.http.R().
 		SetPathParams(map[string]string{
 			"project": c.project,
 		})
+
+	// JSON PAYLOAD PART
+	rq.SetMultipartField("json_request_part", "", "application/json", &bodyBuf)
+
+	// BINARY PART
+	for k, v := range files {
+		if v == nil {
+			return nil, fmt.Errorf("no file for [%s] is provided", k)
+		}
+		if _, sErr := os.Stat(v.Name()); os.IsNotExist(sErr) {
+			return nil, fmt.Errorf("file %s does not exist", v.Name())
+		}
+		rq.SetMultipartField(k, k, "", v)
+	}
+
+	var rs EntryCreatedRS
 	_, err = rq.
 		SetResult(&rs).
-		SetBody(body).
 		Post("/api/v2/{project}/log")
+	if err != nil {
+		return nil, fmt.Errorf("unable to send log: %w", err)
+	}
 	return &rs, err
 }
 

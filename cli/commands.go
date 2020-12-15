@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli/v2"
 
 	"github.com/avarabyeu/goRP/gorp"
 )
@@ -20,12 +20,12 @@ type config struct {
 
 var (
 	// RootCommand is CLI entry point
-	RootCommand = []cli.Command{
+	RootCommand = []*cli.Command{
 		launchCommand,
 		initCommand,
 	}
 
-	initCommand = cli.Command{
+	initCommand = &cli.Command{
 		Name:   "init",
 		Usage:  "Initializes configuration cache",
 		Action: initConfiguration,
@@ -48,7 +48,7 @@ func initConfiguration(c *cli.Context) error {
 	}
 	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("Cannot open config file, %s", err), 1)
+		return cli.Exit(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
@@ -91,7 +91,7 @@ func initConfiguration(c *cli.Context) error {
 		UUID:    uuid,
 	})
 	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("Cannot read config file. %s", err), 1)
+		return cli.Exit(fmt.Sprintf("Cannot read config file. %s", err), 1)
 	}
 
 	fmt.Println("Configuration has been successfully saved!")
@@ -111,13 +111,13 @@ func getConfig(c *cli.Context) (*config, error) {
 			return nil, err
 		}
 	}
-	if v := c.GlobalString("uuid"); v != "" {
+	if v := c.String("uuid"); v != "" {
 		cfg.UUID = v
 	}
-	if v := c.GlobalString("project"); v != "" {
+	if v := c.String("project"); v != "" {
 		cfg.Project = v
 	}
-	if v := c.GlobalString("host"); v != "" {
+	if v := c.String("host"); v != "" {
 		cfg.Host = v
 	}
 
