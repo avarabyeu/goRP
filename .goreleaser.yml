@@ -1,6 +1,4 @@
 # .goreleaser.yml
-env_files:
-  github_token: ~/.config/goreleaser/github_token
 builds:
   - binary: gorp
     goos:
