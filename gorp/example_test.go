@@ -9,7 +9,7 @@ import (
 )
 
 func ExampleClient() {
-	client := NewClient("http://dev.epm-rpp.projects.epam.com:8080", "default_personal", "cf37d519-d79a-4064-8110-c51f219baeae")
+	client := NewClient("xxx", "xxx", "xxx")
 
 	launchUUID, _ := uuid.NewV4()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
@@ -75,7 +75,6 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to finish launch")
 
-	// Output:
 }
 
 func checkErr(err error, msg string) {
