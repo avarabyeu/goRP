@@ -172,20 +172,20 @@ func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 		}).
 		SetBody(body).
 		SetResult(&rs).
-		Put("/api/v1/{project}/item/{itemId}")
+		Put("/api/v2/{project}/item/{itemId}")
 	return &rs, err
 }
 
 // SaveLog attaches log in RP
 func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
-	_, err := c.http.R().
+	_, err := c.http.SetDebug(true).R().
 		SetPathParams(map[string]string{
 			"project": c.project,
 		}).
 		SetBody(log).
 		SetResult(&rs).
-		Post("/api/v1/{project}/log")
+		Post("/api/v2/{project}/log")
 	return &rs, err
 }
 

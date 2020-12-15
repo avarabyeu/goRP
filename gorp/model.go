@@ -169,10 +169,11 @@ type (
 
 	// SaveLogRQ payload representation. Without attaches.
 	SaveLogRQ struct {
-		ItemID  string    `json:"item_id,omitempty"`
-		LogTime Timestamp `json:"time,omitempty"`
-		Message string    `json:"message,omitempty"`
-		Level   string    `json:"level,omitempty"`
+		LaunchUUID string    `json:"launchUuid,omitempty"`
+		ItemID     string    `json:"itemUuid,omitempty"`
+		LogTime    Timestamp `json:"time,omitempty"`
+		Message    string    `json:"message,omitempty"`
+		Level      string    `json:"level,omitempty"`
 	}
 
 	// StartTestRQ payload representation
