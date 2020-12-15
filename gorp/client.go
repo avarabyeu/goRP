@@ -97,7 +97,7 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 		}).
 		SetBody(&FinishExecutionRQ{
 			EndTime: Timestamp{Time: time.Now()},
-			Status:  StatusStopped,
+			Status:  Statuses.Stopped,
 		}).
 		SetResult(&rs).
 		Put("/api/v2/{project}/launch/{launchId}/stop")

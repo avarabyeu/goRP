@@ -39,7 +39,7 @@ func initConfiguration(c *cli.Context) error {
 		}
 		answer, err := prompt.Run()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to run UI prompt: %w", err)
 		}
 		// do not replace. go away
 		if !answerYes(answer) {

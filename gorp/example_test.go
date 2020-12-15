@@ -9,11 +9,11 @@ import (
 )
 
 func ExampleClient() {
-	client := NewClient("https://reportportal.epam.com", "xxx", "xxx")
+	client := NewClient("http://dev.epm-rpp.projects.epam.com:8080", "default_personal", "cf37d519-d79a-4064-8110-c51f219baeae")
 
 	launchUUID, _ := uuid.NewV4()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
-		Mode: LaunchModeDefault,
+		Mode: LaunchModes.Default,
 		StartRQ: StartRQ{
 			Name:        "gorp-test",
 			UUID:        &launchUUID,
@@ -29,7 +29,7 @@ func ExampleClient() {
 		CodeRef:  "example_test.go",
 		UniqueID: "another one unique ID",
 		Retry:    false,
-		Type:     TypeItemTest,
+		Type:     TestItemTypes.Test,
 		StartRQ: StartRQ{
 			Name:      "Gorp Test",
 			StartTime: Timestamp{time.Now()},
@@ -38,11 +38,15 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to start test")
 
+	log.Println("LAUNCHXXX")
+	log.Println(launchUUID.String())
+
 	_, err = client.SaveLog(&SaveLogRQ{
-		ItemID:  testUUID.String(),
-		Level:   LogLevelInfo,
-		LogTime: Timestamp{time.Now()},
-		Message: "Log without binary",
+		LaunchUUID: launchUUID.String(),
+		ItemID:     testUUID.String(),
+		Level:      LogLevelInfo,
+		LogTime:    Timestamp{time.Now()},
+		Message:    "Log without binary",
 	})
 	checkErr(err, "unable to save log")
 
@@ -52,26 +56,26 @@ func ExampleClient() {
 		ItemID:     testUUID.String(),
 		Level:      LogLevelInfo,
 		Message:    "Log with binary",
-	}, map[string]*os.File{
-		"go.mod": file,
-	})
+	}, map[string]*os.File{"go.mod": file})
+
 	checkErr(err, "unable to save log multipart")
 
 	_, err = client.FinishTest(testUUID.String(), &FinishTestRQ{
+		LaunchUUID: launchUUID.String(),
 		FinishExecutionRQ: FinishExecutionRQ{
 			EndTime: Timestamp{time.Now()},
-			Status:  StatusPassed,
+			Status:  Statuses.Passed,
 		},
 	})
 	checkErr(err, "unable to finish test")
 
 	_, err = client.FinishLaunch(launchUUID.String(), &FinishExecutionRQ{
-		Status:  StatusPassed,
+		Status:  Statuses.Passed,
 		EndTime: Timestamp{time.Now()},
 	})
 	checkErr(err, "unable to finish launch")
 
-	//Output:
+	// Output:
 }
 
 func checkErr(err error, msg string) {

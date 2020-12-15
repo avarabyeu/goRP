@@ -16,7 +16,7 @@ func Retry(attempts int, timeout time.Duration, callback func() (interface{}, er
 		if err == nil {
 			return res, nil
 		}
-		log.Warnf("Retry failed with the following error: %s", err)
+		log.Warnf("Retry failed with the following error: %v", err)
 
 		<-time.After(timeout)
 		log.Infof("Retrying... Attempt: %d. Left: %d", i+1, attempts-1-i)
