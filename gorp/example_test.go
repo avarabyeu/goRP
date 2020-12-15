@@ -10,7 +10,7 @@ import (
 )
 
 func ExampleClient() {
-	client := NewClient("https://dev.reportportal.io", "default_personal", "xxxx")
+	client := NewClient("https://reportportal.epam.com", "xxx", "xxx")
 
 	launchUUID, _ := uuid.NewV4()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
@@ -22,10 +22,10 @@ func ExampleClient() {
 			Description: "Demo Launch",
 		},
 	})
-	checkErr(err)
+	checkErr(err, "unable to start launch")
 
 	testUUID, _ := uuid.NewV4()
-	test, err := client.StartTest(&StartTestRQ{
+	_, err = client.StartTest(&StartTestRQ{
 		LaunchID: launch.ID,
 		CodeRef:  "example_test.go",
 		UniqueID: "another one unique ID",
@@ -37,8 +37,7 @@ func ExampleClient() {
 			UUID:      &testUUID,
 		},
 	})
-	checkErr(err)
-	fmt.Println(test)
+	checkErr(err, "unable to start test")
 
 	_, err = client.SaveLog(&SaveLogRQ{
 		ItemID:  testUUID.String(),
@@ -46,42 +45,37 @@ func ExampleClient() {
 		LogTime: Timestamp{time.Now()},
 		Message: "Log without binary",
 	})
-	checkErr(err)
+	checkErr(err, "unable to save log")
 
-	file, _ := os.Open("/Users/avarabyeu/work/sources/own/goRP/go.mod")
+	file, _ := os.Open("../go.mod")
 	_, err = client.SaveLogMultipart(&SaveLogRQ{
 		ItemID:  testUUID.String(),
 		Level:   LogLevelInfo,
-		Message: "Log without binary",
+		Message: "Log with binary",
 	}, map[string]*os.File{
 		"go.mod": file,
 	})
-	checkErr(err)
+	checkErr(err, "unable to save log multipart")
 
-	finishTest, err := client.FinishTest(testUUID.String(), &FinishTestRQ{
+	_, err = client.FinishTest(testUUID.String(), &FinishTestRQ{
 		FinishExecutionRQ: FinishExecutionRQ{
 			EndTime: Timestamp{time.Now()},
 			Status:  StatusPassed,
 		},
 	})
-	checkErr(err)
+	checkErr(err, "unable to finish test")
 
-	fmt.Println(finishTest)
-
-	finishLaunch, err := client.FinishLaunch(launchUUID.String(), &FinishExecutionRQ{
+	_, err = client.FinishLaunch(launchUUID.String(), &FinishExecutionRQ{
 		Status:  StatusPassed,
 		EndTime: Timestamp{time.Now()},
 	})
-	checkErr(err)
+	checkErr(err, "unable to finish launch")
 
-	fmt.Println(finishLaunch)
 	fmt.Println("OK")
-
-	// Output: OK
 }
 
-func checkErr(err error) {
+func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(msg, err)
 	}
 }
