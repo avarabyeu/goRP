@@ -70,7 +70,7 @@ var Statuses = statusValuesType{
 	Stopped:     "STOPPED",
 	Skipped:     "SKIPPED",
 	Interrupted: "INTERRUPTED",
-	Canceled:    "CANCELLED",
+	Canceled:    "CANCELLED", // nolint:misspell // defined as described on server end
 	Info:        "INFO",
 	Warn:        "WARN",
 }
