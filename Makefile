@@ -20,7 +20,7 @@ init-deps:
 	# installs gometalinter
 #	curl -L https://git.io/vp6lP | sh
 #	gometalinter --install
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.15.0
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.31.0
 
 
 #vendor:
