@@ -75,8 +75,6 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to finish launch")
 
-	//Output:
-
 }
 
 func checkErr(err error, msg string) {
