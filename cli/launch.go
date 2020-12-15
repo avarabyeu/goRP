@@ -50,19 +50,22 @@ var (
 				Usage:   "Filter Name",
 				EnvVars: []string{"FILTER_NAME"},
 			},
-			&cli.StringSliceFlag{
+			&cli.IntSliceFlag{
 				Name:    "ids",
 				Usage:   "Launch IDS to Merge",
 				EnvVars: []string{"MERGE_LAUNCH_IDS"},
 			},
 
 			&cli.StringFlag{
-				Name:    "n, name",
-				Usage:   "New Launch Name",
-				EnvVars: []string{"MERGE_LAUNCH_NAME"},
+				Name:     "n",
+				Aliases:  []string{"name"},
+				Usage:    "New Launch Name",
+				EnvVars:  []string{"MERGE_LAUNCH_NAME"},
+				Required: true,
 			},
 			&cli.StringFlag{
-				Name:    "t, type",
+				Name:    "t",
+				Aliases: []string{"type"},
 				Usage:   "Merge Type",
 				EnvVars: []string{"MERGE_TYPE"},
 				Value:   "DEEP",
@@ -116,14 +119,14 @@ func listLaunches(c *cli.Context) error {
 	}
 
 	for _, launch := range launches.Content {
-		fmt.Printf("%s #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
+		fmt.Printf("%d #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 	}
 
 	return nil
 }
 
-func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
-	if ids := c.StringSlice("ids"); len(ids) > 0 {
+func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]int, error) {
+	if ids := c.IntSlice("ids"); len(ids) > 0 {
 		return ids, nil
 	}
 
@@ -144,7 +147,7 @@ func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]string, error) {
 		return nil, fmt.Errorf("unable to find launches by filter: %s", err.Error())
 	}
 
-	ids := make([]string, len(launches.Content))
+	ids := make([]int, len(launches.Content))
 	for i, l := range launches.Content {
 		ids[i] = l.ID
 	}

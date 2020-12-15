@@ -23,18 +23,20 @@ type (
 
 	// LaunchResource - GET Launch response model
 	LaunchResource struct {
-		ID                  string      `json:"id"`
-		Name                string      `json:"name,omitempty"`
-		Number              int64       `json:"number"`
-		Description         string      `json:"description,omitempty"`
-		StartTime           Timestamp   `json:"start_time,omitempty"`
-		EndTime             Timestamp   `json:"end_time,omitempty"`
-		Status              Status      `json:"status,omitempty"`
-		Tags                []string    `json:"tags,omitempty"`
-		Mode                LaunchMode  `json:"mode,omitempty"`
-		ApproximateDuration float32     `json:"approximateDuration,omitempty"`
-		HasRetries          bool        `json:"hasRetries,omitempty"`
-		Statistics          *Statistics `json:"statistics,omitempty"`
+		ID                  int          `json:"id"`
+		UUID                string       `json:"uuid"`
+		Name                string       `json:"name,omitempty"`
+		Number              int          `json:"number"`
+		Description         string       `json:"description,omitempty"`
+		StartTime           Timestamp    `json:"startTime,omitempty"`
+		EndTime             Timestamp    `json:"endTime,omitempty"`
+		Status              Status       `json:"status,omitempty"`
+		Attributes          []*Attribute `json:"attributes,omitempty"`
+		Mode                LaunchMode   `json:"mode,omitempty"`
+		ApproximateDuration float32      `json:"approximateDuration,omitempty"`
+		HasRetries          bool         `json:"hasRetries,omitempty"`
+		Statistics          *Statistics  `json:"statistics,omitempty"`
+		Analyzers           []string     `json:"analysing,omitempty"`
 	}
 
 	// FilterResource - GET Filter response model
@@ -80,28 +82,18 @@ type (
 
 	// Statistics is a execution stat details
 	Statistics struct {
-		Executions *struct {
-			Total  string `json:"total,omitempty"`
-			Passed string `json:"passed,omitempty"`
-			Failed string `json:"failed,omitempty"`
-		} `json:"executions,omitempty"`
-		Defects *struct {
-			Product       map[string]int `json:"product_bug,omitempty"`
-			Automation    map[string]int `json:"automation_bug,omitempty"`
-			System        map[string]int `json:"system_issue,omitempty"`
-			ToInvestigate map[string]int `json:"to_investigate,omitempty"`
-			NotDefect     map[string]int `json:"no_defect,omitempty"`
-		} `json:"defects,omitempty"`
+		Executions map[string]int            `json:"executions,omitempty"`
+		Defects    map[string]map[string]int `json:"defects,omitempty"`
 	}
 
 	// MergeLaunchesRQ payload representation
 	MergeLaunchesRQ struct {
 		Description             string     `json:"description,omitempty"`
-		StartTime               *Timestamp `json:"start_time,omitempty"`
-		EndTime                 *Timestamp `json:"end_time,omitempty"`
+		StartTime               *Timestamp `json:"startTime,omitempty"`
+		EndTime                 *Timestamp `json:"endTime,omitempty"`
 		ExtendSuitesDescription bool       `json:"extendSuitesDescription,omitempty"`
-		Launches                []string   `json:"launches"`
-		MergeType               MergeType  `json:"merge_type,omitempty"`
+		Launches                []int      `json:"launches"`
+		MergeType               MergeType  `json:"mergeType,omitempty"`
 		Mode                    string     `json:"mode,omitempty"`
 		Tags                    []string   `json:"tags,omitempty"`
 		Name                    string     `json:"name,omitempty"`
