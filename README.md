@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/avarabyeu/goRP.svg?branch=master)](https://travis-ci.org/avarabyeu/goRP)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/avarabyeu/goRP/Build)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/eBay/fabio/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/avarabyeu/goRP)](https://goreportcard.com/report/github.com/avarabyeu/goRP)
 
