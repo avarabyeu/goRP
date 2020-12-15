@@ -1,7 +1,6 @@
 package gorp
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -49,9 +48,10 @@ func ExampleClient() {
 
 	file, _ := os.Open("../go.mod")
 	_, err = client.SaveLogMultipart(&SaveLogRQ{
-		ItemID:  testUUID.String(),
-		Level:   LogLevelInfo,
-		Message: "Log with binary",
+		LaunchUUID: launchUUID.String(),
+		ItemID:     testUUID.String(),
+		Level:      LogLevelInfo,
+		Message:    "Log with binary",
 	}, map[string]*os.File{
 		"go.mod": file,
 	})
@@ -71,7 +71,7 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to finish launch")
 
-	fmt.Println("OK")
+	//Output:
 }
 
 func checkErr(err error, msg string) {
