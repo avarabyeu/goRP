@@ -12,3 +12,6 @@ archive:
   format_overrides:
     - goos: windows
       format: zip
+env_files:
+  # use only one or release will fail!
+  github_token: ~/.goreleaser/github
