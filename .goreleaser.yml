@@ -1,17 +1,27 @@
-# .goreleaser.yml
 builds:
-  - binary: gorp
+  - env:
+      - CGO_ENABLED=0
     goos:
+      - linux
       - windows
       - darwin
-      - linux
-    goarch:
-      - amd64
-archive:
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
 env_files:
   # use only one or release will fail!
   github_token: ~/.goreleaser/github
