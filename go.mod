@@ -1,4 +1,4 @@
-module github.com/avarabyeu/goRP
+module github.com/avarabyeu/goRP/v5
 
 go 1.13
 

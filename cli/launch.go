@@ -7,7 +7,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/avarabyeu/goRP/gorp"
+	"github.com/avarabyeu/goRP/v5/gorp"
 )
 
 var (
