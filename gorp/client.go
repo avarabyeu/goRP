@@ -23,7 +23,7 @@ type Client struct {
 func NewClient(host, project, uuid string) *Client {
 	http := resty.New().
 		// SetDebug(true).
-		SetHostURL(host).
+		SetBaseURL(host).
 		SetAuthToken(uuid).
 		OnAfterResponse(func(client *resty.Client, rs *resty.Response) error {
 			// nolint:gomnd // 4xx errors

@@ -22,6 +22,7 @@ var (
 	// RootCommand is CLI entry point
 	RootCommand = []*cli.Command{
 		launchCommand,
+		reportCommand,
 		initCommand,
 	}
 

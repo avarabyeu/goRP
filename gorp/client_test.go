@@ -3,29 +3,26 @@ package gorp
 import (
 	"net/http"
 	"net/http/httptest"
+	"testing"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("ReportPortal Client", func() {
-	It("Creates correctly", func() {
-		client := NewClient("http://host.com", "prj", "uuid")
+func TestCreateRPClient(t *testing.T) {
+	client := NewClient("http://host.com", "prj", "uuid")
 
-		Expect(client.project).To(Equal("prj"))
-		Expect(client.http.HostURL).To(Equal("http://host.com"))
-		Expect(client.http.Token).To(Equal("uuid"))
-	})
+	assert.Equal(t, "prj", client.project)
+	assert.Equal(t, "http://host.com", client.http.HostURL)
+	assert.Equal(t, "uuid", client.http.Token)
+}
 
-	It("Handles wrong status codes as errors", func() {
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusBadRequest)
-		}))
-		defer server.Close()
+func TestHandleErrors(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+	}))
+	defer server.Close()
 
-		client := NewClient(server.URL, "prj", "uuid")
-
-		_, err := client.GetLaunches()
-		Expect(err).Should(HaveOccurred())
-	})
-})
+	client := NewClient(server.URL, "prj", "uuid")
+	_, err := client.GetLaunches()
+	assert.Error(t, err)
+}
