@@ -45,7 +45,7 @@ type (
 		LaunchID   string       `json:"launchUuid,omitempty"`
 		Type       TestItemType `json:"type,omitempty"`
 		Retry      bool         `json:"retry,omitempty"`
-		HasStats   string       `json:"hasStats,omitempty"`
+		HasStats   bool         `json:"hasStats,omitempty"`
 	}
 
 	// FinishExecutionRQ payload representation
@@ -126,6 +126,7 @@ func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
 }
 
+// NewTimestamp creates Timestamp wrapper for time.Time
 func NewTimestamp(t time.Time) Timestamp {
 	return Timestamp{Time: t}
 }

@@ -189,7 +189,7 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 	return &rs, err
 }
 
-// SaveLogMultipart attaches log in RP
+// SaveLogs saves logs as batch request
 func (c *Client) SaveLogs(logs ...*SaveLogRQ) (*EntryCreatedRS, error) {
 	return c.SaveLogMultipart(logs, nil)
 }
