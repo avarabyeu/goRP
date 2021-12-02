@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
 	"github.com/avarabyeu/goRP/gorp"
@@ -53,7 +54,7 @@ func initConfiguration(c *cli.Context) error {
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
-			fmt.Println(closeErr)
+			logrus.Error(closeErr)
 		}
 	}()
 

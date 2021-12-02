@@ -96,7 +96,7 @@ func (c *Client) StopLaunch(id string) (*MsgRS, error) {
 			"launchId": id,
 		}).
 		SetBody(&FinishExecutionRQ{
-			EndTime: Timestamp{Time: time.Now()},
+			EndTime: NewTimestamp(time.Now()),
 			Status:  Statuses.Stopped,
 		}).
 		SetResult(&rs).
@@ -190,9 +190,14 @@ func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 }
 
 // SaveLogMultipart attaches log in RP
-func (c *Client) SaveLogMultipart(log *SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
+func (c *Client) SaveLogs(logs ...*SaveLogRQ) (*EntryCreatedRS, error) {
+	return c.SaveLogMultipart(logs, nil)
+}
+
+// SaveLogMultipart attaches log in RP
+func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
 	var bodyBuf bytes.Buffer
-	err := json.NewEncoder(&bodyBuf).Encode([]*SaveLogRQ{log})
+	err := json.NewEncoder(&bodyBuf).Encode(log)
 	if err != nil {
 		return nil, fmt.Errorf("unable to encode log payload: %w", err)
 	}

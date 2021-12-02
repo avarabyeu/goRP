@@ -95,8 +95,7 @@ type (
 	// FinishLaunchRS is finish execution payload
 	FinishLaunchRS struct {
 		EntryCreatedRS
-		Number int64  `json:"number,omitempty"`
-		Link   string `json:"link,omitempty"`
+		Number int64 `json:"number,omitempty"`
 	}
 	// Timestamp is a wrapper around Time to support
 	// Epoch milliseconds
@@ -125,4 +124,8 @@ func (rt *Timestamp) UnmarshalJSON(b []byte) error {
 // MarshalJSON converts Epoch milliseconds (timestamp) to appropriate object
 func (rt *Timestamp) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(rt.Time.In(time.UTC).UnixNano()/int64(time.Millisecond), 10)), nil
+}
+
+func NewTimestamp(t time.Time) Timestamp {
+	return Timestamp{Time: t}
 }

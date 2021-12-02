@@ -17,7 +17,7 @@ func ExampleClient() {
 		StartRQ: StartRQ{
 			Name:        "gorp-test",
 			UUID:        &launchUUID,
-			StartTime:   Timestamp{Time: time.Now()},
+			StartTime:   NewTimestamp(time.Now()),
 			Description: "Demo Launch",
 		},
 	})
@@ -38,9 +38,6 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to start test")
 
-	log.Println("LAUNCHXXX")
-	log.Println(launchUUID.String())
-
 	_, err = client.SaveLog(&SaveLogRQ{
 		LaunchUUID: launchUUID.String(),
 		ItemID:     testUUID.String(),
@@ -51,12 +48,12 @@ func ExampleClient() {
 	checkErr(err, "unable to save log")
 
 	file, _ := os.Open("../go.mod")
-	_, err = client.SaveLogMultipart(&SaveLogRQ{
+	_, err = client.SaveLogMultipart([]*SaveLogRQ{{
 		LaunchUUID: launchUUID.String(),
 		ItemID:     testUUID.String(),
 		Level:      LogLevelInfo,
 		Message:    "Log with binary",
-	}, map[string]*os.File{"go.mod": file})
+	}}, map[string]*os.File{"go.mod": file})
 
 	checkErr(err, "unable to save log multipart")
 

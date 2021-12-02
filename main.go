@@ -30,12 +30,14 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
-			Name:    "u, uuid",
+			Name:    "uuid",
+			Aliases: []string{"u"},
 			Usage:   "Access Token",
 			EnvVars: []string{"GORP_UUID"},
 		},
 		&cli.StringFlag{
-			Name:    "p, project",
+			Name:    "project",
+			Aliases: []string{"p"},
 			Usage:   "ReportPortal Project Name",
 			EnvVars: []string{"GORP_PROJECT"},
 		},
@@ -52,8 +54,7 @@ func main() {
 			log.Fatalf("error: %v", r)
 		}
 	}()
-	err := app.Run(os.Args)
-	if err != nil {
+	if err := app.Run(os.Args); err != nil {
 		//nolint:gocritic
 		log.Fatal(err.Error())
 	}
