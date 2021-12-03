@@ -34,8 +34,8 @@ lint:
 
 fmt:
 	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}
-	gofumports -local github.com/avarabyeu/goRP -l -w ${GOFILES_NOVENDOR}
-	gci -local github.com/avarabyeu/goRP -w ${GOFILES_NOVENDOR}
+	gofumports -local  -l -w ${GOFILES_NOVENDOR}
+	gci -local github.com/avarabyeu/goRP/v5 -w ${GOFILES_NOVENDOR}
 
 #build: checkstyle test
 build:
