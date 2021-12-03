@@ -6,6 +6,7 @@ const defaultDateTimeFormat = "2006-01-02T15:04:05.999-0700"
 const (
 	LogLevelDebug = "DEBUG"
 	LogLevelInfo  = "INFO"
+	LogLevelError = "ERROR"
 )
 
 // PAYLOADS

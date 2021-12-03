@@ -22,12 +22,14 @@ var (
 		Usage: "List launches",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "fn, filter-name",
+				Name:    "filter-name",
+				Aliases: []string{"fn"},
 				Usage:   "Filter Name",
 				EnvVars: []string{"FILTER_NAME"},
 			},
 			&cli.StringSliceFlag{
-				Name:    "f, filter",
+				Name:    "filter",
+				Aliases: []string{"f"},
 				Usage:   "Filter",
 				EnvVars: []string{"Filter"},
 			},
@@ -41,12 +43,14 @@ var (
 		Action: mergeLaunches,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "f, filter",
+				Name:    "filter",
+				Aliases: []string{"f"},
 				Usage:   "Launches Filter",
 				EnvVars: []string{"MERGE_LAUNCH_FILTER"},
 			},
 			&cli.StringFlag{
-				Name:    "fn, filter-name",
+				Name:    "filter-name",
+				Aliases: []string{"fn"},
 				Usage:   "Filter Name",
 				EnvVars: []string{"FILTER_NAME"},
 			},
@@ -57,8 +61,8 @@ var (
 			},
 
 			&cli.StringFlag{
-				Name:     "n",
-				Aliases:  []string{"name"},
+				Name:     "name",
+				Aliases:  []string{"n"},
 				Usage:    "New Launch Name",
 				EnvVars:  []string{"MERGE_LAUNCH_NAME"},
 				Required: true,
