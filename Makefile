@@ -1,7 +1,5 @@
 .DEFAULT_GOAL := build
-
 BUILD_DATE = `date +%FT%T%z`
-
 GO = go
 BINARY_DIR=bin
 
