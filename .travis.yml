@@ -13,4 +13,4 @@ script:
   - make checkstyle build
 
 after_success:
- - curl --request POST "https://goreportcard.com/checks" --data "repo=github.com/avarabyeu/goRP"
+ - curl --request POST "https://goreportcard.com/checks" --data "repo=github.com/reportportal/goRP"
