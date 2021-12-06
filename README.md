@@ -3,41 +3,72 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/reportportal/goRP)](https://goreportcard.com/report/github.com/reportportal/goRP)
 
 # goRP
+
 Golang Client and CLI Utility for [ReportPortal](https://reportportal.io)
 
 ## Installation
 
 ## Usage
+
 ```
 gorp [global options] command [command options] [arguments...]   
 
 COMMANDS:
-     launch   Operations over launches
-     help, h  Shows a list of commands or help for one command
+   launch   Operations over launches
+   report   Reports input to report portal
+   init     Initializes configuration cache
+   help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   -u value, --uuid value     Access Token [$GORP_UUID]
-   -p value, --project value  ReportPortal Project Name [$GORP_PROJECT]
+   --uuid value, -u value     Access Token [$GORP_UUID]
+   --project value, -p value  ReportPortal Project Name [$GORP_PROJECT]
    --host value               ReportPortal Server Name
-   --help, -h                 show help
-   --version, -v              print the version
+   --help, -h                 show help (default: false)
+   --version, -v              print the version (default: false)
 ```
 
+### Init command
+
+    NAME:
+        gorp init - Initializes configuration cache
+    USAGE:
+        gorp init [command options] [arguments...]
+    OPTIONS:
+        --help, -h  show help (default: false)
+
 ### Launch command
+
 ```
 USAGE:
    goRP launch command [command options] [arguments...]
 
 COMMANDS:
-     list  List launches
+   list     List launches
+   merge    Merge Launches
+   help, h  Shows a list of commands or help for one command
 ```
 
 #### List Launches
+
 ```
 USAGE:
    goRP launch list [command options] [arguments...]
 
 OPTIONS:
-   --fn value, --filter-name value  Filter Name [$FILTER_NAME]
-   -f value, --filter value         Filter [$Filter]
+   --filter-name value, --fn value  Filter Name [$FILTER_NAME]
+   --filter value, -f value         Filter [$Filter]
+   --help, -h                       show help (default: false)
 ```
+
+### Report command
+
+    NAME:
+        goRP report - Reports input to report portal
+    USAGE:
+        goRP report command [command options] [arguments...]
+    COMMANDS:
+        test2json  Input format: test2json
+        help, h    Shows a list of commands or help for one command
+    OPTIONS:
+        --help, -h  show help (default: false)
+   
