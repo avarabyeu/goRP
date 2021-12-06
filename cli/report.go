@@ -11,9 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/reportportal/goRP/gorp"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+
+	"github.com/reportportal/goRP/v5/gorp"
 )
 
 const logsBatchSize = 10
