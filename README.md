@@ -84,5 +84,5 @@ gorp report test2json -f results.txt
 ```
 Report directly from go test output
 ```
-go test -json ./... | bin/gorp report test2json
+go test -json ./... | gorp report test2json
 ```
