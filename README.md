@@ -72,3 +72,17 @@ OPTIONS:
     OPTIONS:
         --help, -h  show help (default: false)
    
+
+## Using as Golang Test Results Agent
+Run tests with JSON output
+```
+go test -json ./... > results.txt
+```
+Report The results
+```
+gorp report test2json -f results.txt
+```
+Report directly from go test output
+```
+go test -json ./... | bin/gorp report test2json
+```
