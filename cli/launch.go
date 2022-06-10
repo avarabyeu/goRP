@@ -97,6 +97,8 @@ func mergeLaunches(c *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("unable to merge launches: %w", err)
 	}
+
+	//nolint:forbidigo //expected output
 	fmt.Println(launchResource.ID)
 
 	return nil
@@ -122,6 +124,7 @@ func listLaunches(c *cli.Context) error {
 		return err
 	}
 
+	//nolint:forbidigo //expected output
 	for _, launch := range launches.Content {
 		fmt.Printf("%d #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 	}
@@ -148,7 +151,7 @@ func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]int, error) {
 		return nil, errors.New("no either IDs or filter provided")
 	}
 	if err != nil {
-		return nil, fmt.Errorf("unable to find launches by filter: %s", err.Error())
+		return nil, fmt.Errorf("unable to find launches by filter: %w", err)
 	}
 
 	ids := make([]int, len(launches.Content))

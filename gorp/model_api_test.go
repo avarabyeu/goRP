@@ -9,6 +9,7 @@ import (
 )
 
 func TestUnixTimeDeserialization(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `"1512114178671"`
 	const expTime = "2017-12-01T07:42:59+00:00"
 
@@ -25,6 +26,7 @@ func TestUnixTimeDeserialization(t *testing.T) {
 }
 
 func TestUnixTimeSerialization(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `1512114179000`
 	const expTime = "2017-12-01T07:42:59+00:00"
 
@@ -35,6 +37,7 @@ func TestUnixTimeSerialization(t *testing.T) {
 }
 
 func TestErrOnIncorrectTime(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `"hello-world"`
 
 	var unitTime Timestamp
@@ -43,11 +46,13 @@ func TestErrOnIncorrectTime(t *testing.T) {
 }
 
 func TestDirectionConverter(t *testing.T) {
+	t.Parallel()
 	assert.Equal(t, "ASC", directionToStr(true))
 	assert.Equal(t, "DESC", directionToStr(false))
 }
 
 func TestFiltersConverter(t *testing.T) {
+	t.Parallel()
 	fp := ConvertToFilterParams(&FilterResource{
 		Entities: []*FilterEntity{
 			{

@@ -96,6 +96,7 @@ func initConfiguration(c *cli.Context) error {
 		return cli.Exit(fmt.Sprintf("Cannot read config file. %s", err), 1)
 	}
 
+	//nolint:forbidigo //expected output
 	fmt.Println("Configuration has been successfully saved!")
 
 	return nil

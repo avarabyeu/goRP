@@ -22,5 +22,5 @@ func Retry(attempts int, timeout time.Duration, callback func() (interface{}, er
 		log.Infof("Retrying... Attempt: %d. Left: %d", i+1, attempts-1-i)
 	}
 
-	return nil, fmt.Errorf("after %d attempts, last error: %s", attempts, err)
+	return nil, fmt.Errorf("after %d attempts, last error: %w", attempts, err)
 }
