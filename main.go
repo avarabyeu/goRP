@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 
 	rp "github.com/reportportal/goRP/v5/cli"
 )
@@ -16,8 +17,9 @@ var (
 )
 
 func main() {
-	log.SetFlags(0)
-	log.SetOutput(os.Stdout)
+	logger, _ := zap.NewProduction()
+	zap.ReplaceGlobals(logger)
+	defer logger.Sync()
 
 	app := cli.NewApp()
 	app.Name = "goRP"

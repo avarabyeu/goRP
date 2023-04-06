@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 
 	"github.com/reportportal/goRP/v5/gorp"
 )
@@ -54,7 +54,7 @@ func initConfiguration(c *cli.Context) error {
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
-			logrus.Error(closeErr)
+			zap.S().Error(closeErr)
 		}
 	}()
 

@@ -32,8 +32,7 @@ lint:
 
 fmt:
 	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}
-	gofumports -local  -l -w ${GOFILES_NOVENDOR}
-	gci -local github.com/reportportal/goRP/v5 -w ${GOFILES_NOVENDOR}
+	gci write --section Standard --section Default --section "Prefix(github.com/reportportal/goRP/v5)" ${GOFILES_NOVENDOR}
 
 #build: checkstyle test
 build:

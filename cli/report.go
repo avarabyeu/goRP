@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 
 	"github.com/reportportal/goRP/v5/gorp"
 )
@@ -77,7 +77,7 @@ func reportTest2json(c *cli.Context) error {
 		}
 		defer func() {
 			if cErr := f.Close(); cErr != nil {
-				logrus.Error(cErr)
+				zap.S().Error(cErr)
 			}
 		}()
 		reader = f
@@ -91,7 +91,7 @@ func reportTest2json(c *cli.Context) error {
 
 		var ev testEvent
 		if err := json.Unmarshal([]byte(data), &ev); err != nil {
-			logrus.Error(err)
+			zap.S().Error(err)
 			return err
 		}
 		input <- &ev
@@ -139,7 +139,7 @@ func (r *reporter) receive() {
 		var err error
 		r.launchOnce.Do(func() {
 			if err = r.startLaunch(); err != nil {
-				logrus.Error(err)
+				zap.S().Error(err)
 			}
 		})
 
@@ -154,7 +154,7 @@ func (r *reporter) receive() {
 			err = r.finish(ev, gorp.Statuses.Failed)
 		}
 		if err != nil {
-			logrus.Fatal(err)
+			zap.S().Fatal(err)
 		}
 	}
 	// make sure we flush all logs that are left
@@ -164,7 +164,7 @@ func (r *reporter) receive() {
 
 	if r.launchID != "" {
 		if err := r.finishLaunch(gorp.Statuses.Passed); err != nil {
-			logrus.Fatal(err)
+			zap.S().Fatal(err)
 		}
 	}
 }
@@ -251,7 +251,7 @@ func (r *reporter) flushLogs(force bool) {
 			defer r.waitQueue.Done()
 
 			if _, err := r.client.SaveLogs(logs...); err != nil {
-				logrus.Errorf("unable to report logs: %v. Batch len: %d", err, len(logs))
+				zap.S().Errorf("unable to report logs: %v. Batch len: %d", err, len(logs))
 			}
 		}(batch)
 		r.logs = []*gorp.SaveLogRQ{}

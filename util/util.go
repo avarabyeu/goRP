@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 // Retry executes callback func until it executes successfully
@@ -16,10 +16,10 @@ func Retry(attempts int, timeout time.Duration, callback func() (interface{}, er
 		if err == nil {
 			return res, nil
 		}
-		log.Warnf("Retry failed with the following error: %v", err)
+		zap.S().Warnf("Retry failed with the following error: %v", err)
 
 		<-time.After(timeout)
-		log.Infof("Retrying... Attempt: %d. Left: %d", i+1, attempts-1-i)
+		zap.S().Infof("Retrying... Attempt: %d. Left: %d", i+1, attempts-1-i)
 	}
 
 	return nil, fmt.Errorf("after %d attempts, last error: %w", attempts, err)
