@@ -49,6 +49,7 @@ linters:
     - gomnd
     - gci
     - revive
+    - testableexamples
 
 #run:
 #  skip-dirs:
