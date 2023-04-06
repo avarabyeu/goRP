@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"mime"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -194,7 +196,29 @@ func (c *Client) SaveLogs(logs ...*SaveLogRQ) (*EntryCreatedRS, error) {
 	return c.SaveLogMultipart(logs, nil)
 }
 
-// SaveLogMultipart attaches log in RP
+// SaveLogMultipart saves a batch of logs in RP, along with any associated files (if any).
+//
+// Example usage:
+//
+// f, _ := os.Open("someFile.txt")
+//
+//	logs := []*SaveLogRQ{{
+//	    File: FileAttachment{
+//	        // note that this value must present in 'files' map as key (see below)
+//	        Name: "fileAttachment.txt",
+//	    },
+//	    LaunchUUID: launchID,
+//	    ItemID:     itemID,
+//	    Level:      gorp.LogLevelError,
+//	    LogTime:    NewTimestamp(time.Now()),
+//	    Message:    "Important message!",
+//		}}
+//
+//	files := map[string]*os.File{
+//			"fileAttachment.txt": f, // key must match the FileAttachment.Name field
+//		}
+//
+// resp, err := client.SaveLogMultipart(log, files)
 func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
 	var bodyBuf bytes.Buffer
 	err := json.NewEncoder(&bodyBuf).Encode(log)
@@ -218,7 +242,7 @@ func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (
 		if _, sErr := os.Stat(v.Name()); os.IsNotExist(sErr) {
 			return nil, fmt.Errorf("file %s does not exist", v.Name())
 		}
-		rq.SetMultipartField(k, k, "", v)
+		rq.SetMultipartField("file", k, mime.TypeByExtension(filepath.Ext(k)), v)
 	}
 
 	var rs EntryCreatedRS
