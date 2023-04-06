@@ -91,8 +91,6 @@ func ExampleClient() {
 		EndTime: Timestamp{time.Now()},
 	})
 	checkErr(err, "unable to finish launch")
-
-	// Output:
 }
 
 func checkErr(err error, msg string) {
