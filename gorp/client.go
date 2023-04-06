@@ -28,7 +28,7 @@ func NewClient(host, project, uuid string) *Client {
 		SetBaseURL(host).
 		SetAuthToken(uuid).
 		OnAfterResponse(func(client *resty.Client, rs *resty.Response) error {
-			// nolint:gomnd // 4xx errors
+			//nolint:gomnd // 4xx errors
 			if (rs.StatusCode() / 100) >= 4 {
 				return fmt.Errorf("status code error: %d\n%s", rs.StatusCode(), rs.String())
 			}
@@ -242,7 +242,11 @@ func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (
 		if _, sErr := os.Stat(v.Name()); os.IsNotExist(sErr) {
 			return nil, fmt.Errorf("file %s does not exist", v.Name())
 		}
-		rq.SetMultipartField("file", k, mime.TypeByExtension(filepath.Ext(k)), v)
+		mimeType := mime.TypeByExtension(filepath.Ext(k))
+		if mimeType == "" {
+			mimeType = "application/octet-stream"
+		}
+		rq.SetMultipartField("file", k, mimeType, v)
 	}
 
 	var rs EntryCreatedRS

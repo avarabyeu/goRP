@@ -42,11 +42,13 @@ linters:
     - nlreturn
     - stylecheck
     - exhaustivestruct
+    - exhaustruct
     - varnamelen
     - tagliatelle
     - wrapcheck
     - gomnd
     - gci
+    - revive
 
 #run:
 #  skip-dirs:

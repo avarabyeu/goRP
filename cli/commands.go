@@ -14,9 +14,9 @@ import (
 )
 
 type config struct {
-	UUID    string
-	Project string
-	Host    string
+	UUID    string `json:"uuid"`
+	Project string `json:"project"`
+	Host    string `json:"host"`
 }
 
 var (
@@ -48,6 +48,8 @@ func initConfiguration(c *cli.Context) error {
 			return nil
 		}
 	}
+
+	//nolint:nosnakecase // sdk uppercase constants
 	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("Cannot open config file, %s", err), 1)

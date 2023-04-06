@@ -37,7 +37,7 @@ type (
 		ApproximateDuration float32      `json:"approximateDuration,omitempty"`
 		HasRetries          bool         `json:"hasRetries,omitempty"`
 		Statistics          *Statistics  `json:"statistics,omitempty"`
-		Analyzers           []string     `json:"analysing,omitempty"` // nolint:misspell // defined as described on server end
+		Analyzers           []string     `json:"analysing,omitempty"` //nolint:misspell // defined as described on server end
 	}
 
 	// FilterResource - GET Filter response model

@@ -100,12 +100,12 @@ func reportTest2json(c *cli.Context) error {
 }
 
 type testEvent struct {
-	Time    time.Time // encodes as an RFC3339-format string
-	Action  string
-	Package string
-	Test    string
-	Elapsed float64 // seconds
-	Output  string
+	Time    time.Time `json:"time"` // encodes as an RFC3339-format string
+	Action  string    `json:"action"`
+	Package string    `json:"package"`
+	Test    string    `json:"test"`
+	Elapsed float64   `json:"elapsed"` // seconds
+	Output  string    `json:"output"`
 }
 
 type reporter struct {

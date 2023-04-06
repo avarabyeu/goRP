@@ -3,13 +3,15 @@ package gorp
 import (
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 func ExampleClient() {
-	client := NewClient("xxx", "xxx", "xxx")
+	client := NewClient("",
+		"", "")
 
 	launchUUID := uuid.New()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
@@ -47,13 +49,31 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to save log")
 
-	file, _ := os.Open("../go.mod")
-	_, err = client.SaveLogMultipart([]*SaveLogRQ{{
-		LaunchUUID: launchUUID.String(),
-		ItemID:     testUUID.String(),
-		Level:      LogLevelInfo,
-		Message:    "Log with binary",
-	}}, map[string]*os.File{"go.mod": file})
+	file1, _ := os.Open("../go.mod")
+	file2, _ := os.Open("../go.sum")
+	_, err = client.SaveLogMultipart([]*SaveLogRQ{
+		{
+			LaunchUUID: launchUUID.String(),
+			ItemID:     testUUID.String(),
+			Level:      LogLevelInfo,
+			Message:    "Log with binary one",
+			Attachment: FileAttachment{
+				Name: "go.mod",
+			},
+		},
+		{
+			LaunchUUID: launchUUID.String(),
+			ItemID:     testUUID.String(),
+			Level:      LogLevelInfo,
+			Message:    "Log with binary two",
+			Attachment: FileAttachment{
+				Name: "go.sum",
+			},
+		},
+	}, map[string]*os.File{
+		filepath.Base(file1.Name()): file1,
+		filepath.Base(file2.Name()): file2,
+	})
 
 	checkErr(err, "unable to save log multipart")
 
@@ -71,6 +91,8 @@ func ExampleClient() {
 		EndTime: Timestamp{time.Now()},
 	})
 	checkErr(err, "unable to finish launch")
+
+	// Output:
 }
 
 func checkErr(err error, msg string) {

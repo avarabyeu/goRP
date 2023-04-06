@@ -15,11 +15,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	# installs gometalinter
-#	curl -L https://git.io/vp6lP | sh
-#	gometalinter --install
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.31.0
-
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
 
 #vendor:
 #	dep ensure --vendor-only
@@ -28,7 +24,7 @@ test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 lint:
-	golangci-lint run --enable-all --deadline 10m ./...
+	bin/golangci-lint run --enable-all --deadline 10m ./...
 
 fmt:
 	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}

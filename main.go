@@ -19,7 +19,9 @@ var (
 func main() {
 	logger, _ := zap.NewProduction()
 	zap.ReplaceGlobals(logger)
-	defer logger.Sync()
+	defer func() {
+		_ = logger.Sync()
+	}()
 
 	app := cli.NewApp()
 	app.Name = "goRP"
