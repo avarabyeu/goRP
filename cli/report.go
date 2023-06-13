@@ -43,6 +43,11 @@ var (
 				EnvVars: []string{"LAUNCH_NAME"},
 				Value:   "gorp launch",
 			},
+			&cli.StringSliceFlag{
+				Name:    "attr",
+				Aliases: []string{"a"},
+				Usage:   "Launch attribute with format key:value",
+			},
 		},
 		Action: reportTest2json,
 	}
@@ -57,7 +62,8 @@ func reportTest2json(c *cli.Context) error {
 
 	// run in separate goroutine
 	launchNameArg := c.String("launchName")
-	rep := newReporter(rpClient, launchNameArg, input)
+	attrArgs := c.StringSlice("attr")
+	rep := newReporter(rpClient, launchNameArg, input, attrArgs...)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -109,28 +115,44 @@ type testEvent struct {
 }
 
 type reporter struct {
-	input         <-chan *testEvent
-	client        *gorp.Client
-	launchName    string
-	launchID      string
-	launchOnce    sync.Once
-	tests         map[string]string
-	suites        map[string]string
-	logs          []*gorp.SaveLogRQ
-	logsBatchSize int
-	waitQueue     sync.WaitGroup
+	input            <-chan *testEvent
+	client           *gorp.Client
+	launchName       string
+	launchID         string
+	launchOnce       sync.Once
+	launchAttributes []*gorp.Attribute
+	tests            map[string]string
+	suites           map[string]string
+	logs             []*gorp.SaveLogRQ
+	logsBatchSize    int
+	waitQueue        sync.WaitGroup
 }
 
-func newReporter(client *gorp.Client, launchName string, input <-chan *testEvent) *reporter {
+func newReporter(client *gorp.Client, launchName string, input <-chan *testEvent, launchAttrArgs ...string) *reporter {
+	launchAttributes := make([]*gorp.Attribute, 0, len(launchAttrArgs))
+	for _, attr := range launchAttrArgs {
+		key, value, valid := strings.Cut(attr, ":")
+		if valid {
+			launchAttributes = append(launchAttributes, &gorp.Attribute{
+				Parameter: gorp.Parameter{
+					Key:   key,
+					Value: value,
+				},
+				System: false,
+			})
+		}
+	}
+
 	return &reporter{
-		input:         input,
-		launchName:    launchName,
-		client:        client,
-		launchOnce:    sync.Once{},
-		tests:         map[string]string{},
-		suites:        map[string]string{},
-		logs:          []*gorp.SaveLogRQ{},
-		logsBatchSize: logsBatchSize,
+		input:            input,
+		launchName:       launchName,
+		launchAttributes: launchAttributes,
+		client:           client,
+		launchOnce:       sync.Once{},
+		tests:            map[string]string{},
+		suites:           map[string]string{},
+		logs:             []*gorp.SaveLogRQ{},
+		logsBatchSize:    logsBatchSize,
 	}
 }
 
@@ -266,8 +288,9 @@ func (r *reporter) startLaunch() error {
 	var launch *gorp.EntryCreatedRS
 	launch, err := r.client.StartLaunch(&gorp.StartLaunchRQ{
 		StartRQ: gorp.StartRQ{
-			Name:      r.launchName,
-			StartTime: gorp.NewTimestamp(time.Now()),
+			Name:       r.launchName,
+			StartTime:  gorp.NewTimestamp(time.Now()),
+			Attributes: r.launchAttributes,
 		},
 		Mode: gorp.LaunchModes.Default,
 	})
