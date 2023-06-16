@@ -46,7 +46,7 @@ var (
 			&cli.StringSliceFlag{
 				Name:    "attr",
 				Aliases: []string{"a"},
-				Usage:   "Launch attribute with format key:value",
+				Usage:   "Launch attribute with format 'key:value'. Omitting a ':' separator will tag the launch with the value.",
 			},
 		},
 		Action: reportTest2json,
@@ -131,16 +131,18 @@ type reporter struct {
 func newReporter(client *gorp.Client, launchName string, input <-chan *testEvent, launchAttrArgs ...string) *reporter {
 	launchAttributes := make([]*gorp.Attribute, 0, len(launchAttrArgs))
 	for _, attr := range launchAttrArgs {
-		key, value, valid := strings.Cut(attr, ":")
-		if valid {
-			launchAttributes = append(launchAttributes, &gorp.Attribute{
-				Parameter: gorp.Parameter{
-					Key:   key,
-					Value: value,
-				},
-				System: false,
-			})
+		// Separate the key:value pair. If `:` is not present, the entire string is considered the value and an empty key is used
+		var p gorp.Parameter
+		if key, value, ok := strings.Cut(attr, ":"); ok {
+			p.Key = key
+			p.Value = value
+		} else {
+			p.Value = attr
 		}
+		launchAttributes = append(launchAttributes, &gorp.Attribute{
+			Parameter: p,
+			System:    false,
+		})
 	}
 
 	return &reporter{
