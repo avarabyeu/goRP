@@ -162,8 +162,9 @@ func (r *reporter) receive() {
 	prevEventTime := time.Now()
 	for ev := range r.input {
 		var err error
+		startTime := ev.Time
 		r.launchOnce.Do(func() {
-			if err = r.startLaunch(ev.Time); err != nil {
+			if err = r.startLaunch(startTime); err != nil {
 				zap.S().Error(err)
 			}
 		})
