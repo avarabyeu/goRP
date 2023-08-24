@@ -1,4 +1,4 @@
-package cli
+package commands
 
 import (
 	"bufio"
@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
-	"github.com/reportportal/goRP/v5/gorp"
+	gorp2 "github.com/reportportal/goRP/v5/pkg/gorp"
 )
 
 const logsBatchSize = 10
@@ -116,30 +116,30 @@ type testEvent struct {
 
 type reporter struct {
 	input            <-chan *testEvent
-	client           *gorp.Client
+	client           *gorp2.Client
 	launchName       string
 	launchID         string
 	launchOnce       sync.Once
-	launchAttributes []*gorp.Attribute
+	launchAttributes []*gorp2.Attribute
 	tests            map[string]string
 	suites           map[string]string
-	logs             []*gorp.SaveLogRQ
+	logs             []*gorp2.SaveLogRQ
 	logsBatchSize    int
 	waitQueue        sync.WaitGroup
 }
 
-func newReporter(client *gorp.Client, launchName string, input <-chan *testEvent, launchAttrArgs ...string) *reporter {
-	launchAttributes := make([]*gorp.Attribute, 0, len(launchAttrArgs))
+func newReporter(client *gorp2.Client, launchName string, input <-chan *testEvent, launchAttrArgs ...string) *reporter {
+	launchAttributes := make([]*gorp2.Attribute, 0, len(launchAttrArgs))
 	for _, attr := range launchAttrArgs {
 		// Separate the key:value pair. If `:` is not present, the entire string is considered the value and an empty key is used
-		var p gorp.Parameter
+		var p gorp2.Parameter
 		if key, value, ok := strings.Cut(attr, ":"); ok {
 			p.Key = key
 			p.Value = value
 		} else {
 			p.Value = attr
 		}
-		launchAttributes = append(launchAttributes, &gorp.Attribute{
+		launchAttributes = append(launchAttributes, &gorp2.Attribute{
 			Parameter: p,
 			System:    false,
 		})
@@ -153,7 +153,7 @@ func newReporter(client *gorp.Client, launchName string, input <-chan *testEvent
 		launchOnce:       sync.Once{},
 		tests:            map[string]string{},
 		suites:           map[string]string{},
-		logs:             []*gorp.SaveLogRQ{},
+		logs:             []*gorp2.SaveLogRQ{},
 		logsBatchSize:    logsBatchSize,
 	}
 }
@@ -175,9 +175,9 @@ func (r *reporter) receive() {
 		case "output":
 			r.log(ev)
 		case "pass":
-			err = r.finish(ev, gorp.Statuses.Passed)
+			err = r.finish(ev, gorp2.Statuses.Passed)
 		case "fail":
-			err = r.finish(ev, gorp.Statuses.Failed)
+			err = r.finish(ev, gorp2.Statuses.Failed)
 		}
 		if err != nil {
 			zap.S().Fatal(err)
@@ -190,21 +190,21 @@ func (r *reporter) receive() {
 	r.waitQueue.Wait()
 
 	if r.launchID != "" {
-		if err := r.finishLaunch(gorp.Statuses.Passed, prevEventTime); err != nil {
+		if err := r.finishLaunch(gorp2.Statuses.Passed, prevEventTime); err != nil {
 			zap.S().Fatal(err)
 		}
 	}
 }
 
 func (r *reporter) startSuite(ev *testEvent) (string, error) {
-	rs, err := r.client.StartTest(&gorp.StartTestRQ{
-		StartRQ: gorp.StartRQ{
+	rs, err := r.client.StartTest(&gorp2.StartTestRQ{
+		StartRQ: gorp2.StartRQ{
 			Name:      ev.Package,
-			StartTime: gorp.NewTimestamp(ev.Time),
+			StartTime: gorp2.NewTimestamp(ev.Time),
 		},
 		LaunchID: r.launchID,
 		HasStats: false,
-		Type:     gorp.TestItemTypes.Suite,
+		Type:     gorp2.TestItemTypes.Suite,
 		Retry:    false,
 	})
 	if err != nil {
@@ -224,17 +224,17 @@ func (r *reporter) startTest(ev *testEvent) (string, error) {
 			return "", err
 		}
 	}
-	rs, err := r.client.StartChildTest(parentID, &gorp.StartTestRQ{
-		StartRQ: gorp.StartRQ{
+	rs, err := r.client.StartChildTest(parentID, &gorp2.StartTestRQ{
+		StartRQ: gorp2.StartRQ{
 			Name:      ev.Test,
-			StartTime: gorp.NewTimestamp(ev.Time),
+			StartTime: gorp2.NewTimestamp(ev.Time),
 		},
 		LaunchID:   r.launchID,
 		HasStats:   true,
 		UniqueID:   testID,
 		CodeRef:    testID,
 		TestCaseID: testID,
-		Type:       gorp.TestItemTypes.Test,
+		Type:       gorp2.TestItemTypes.Test,
 		Retry:      false,
 	})
 	if err != nil {
@@ -255,15 +255,15 @@ func (r *reporter) log(ev *testEvent) {
 	if strings.HasPrefix(strings.TrimLeft(ev.Output, " "), "\t") && len(r.logs) > 0 {
 		lastLog := r.logs[len(r.logs)-1]
 		lastLog.Message = lastLog.Message + "\n" + ev.Output
-		lastLog.Level = gorp.LogLevelError
+		lastLog.Level = gorp2.LogLevelError
 		return
 	}
 
-	rq := &gorp.SaveLogRQ{
+	rq := &gorp2.SaveLogRQ{
 		ItemID:     testID,
 		LaunchUUID: r.launchID,
-		Level:      gorp.LogLevelInfo,
-		LogTime:    gorp.NewTimestamp(ev.Time),
+		Level:      gorp2.LogLevelInfo,
+		LogTime:    gorp2.NewTimestamp(ev.Time),
 		Message:    ev.Output,
 	}
 	r.logs = append(r.logs, rq)
@@ -274,14 +274,14 @@ func (r *reporter) flushLogs(force bool) {
 	if force || (len(r.logs) >= r.logsBatchSize) {
 		batch := r.logs
 		r.waitQueue.Add(1)
-		go func(logs []*gorp.SaveLogRQ) {
+		go func(logs []*gorp2.SaveLogRQ) {
 			defer r.waitQueue.Done()
 
 			if _, err := r.client.SaveLogs(logs...); err != nil {
 				zap.S().Errorf("unable to report logs: %v. Batch len: %d", err, len(logs))
 			}
 		}(batch)
-		r.logs = []*gorp.SaveLogRQ{}
+		r.logs = []*gorp2.SaveLogRQ{}
 	}
 }
 
@@ -290,14 +290,14 @@ func (r *reporter) getTestName(ev *testEvent) string {
 }
 
 func (r *reporter) startLaunch(startTime time.Time) error {
-	var launch *gorp.EntryCreatedRS
-	launch, err := r.client.StartLaunch(&gorp.StartLaunchRQ{
-		StartRQ: gorp.StartRQ{
+	var launch *gorp2.EntryCreatedRS
+	launch, err := r.client.StartLaunch(&gorp2.StartLaunchRQ{
+		StartRQ: gorp2.StartRQ{
 			Name:       r.launchName,
-			StartTime:  gorp.NewTimestamp(startTime),
+			StartTime:  gorp2.NewTimestamp(startTime),
 			Attributes: r.launchAttributes,
 		},
-		Mode: gorp.LaunchModes.Default,
+		Mode: gorp2.LaunchModes.Default,
 	})
 	if err != nil {
 		return err
@@ -306,21 +306,21 @@ func (r *reporter) startLaunch(startTime time.Time) error {
 	return err
 }
 
-func (r *reporter) finishLaunch(status gorp.Status, endTime time.Time) error {
-	_, err := r.client.FinishLaunch(r.launchID, &gorp.FinishExecutionRQ{
+func (r *reporter) finishLaunch(status gorp2.Status, endTime time.Time) error {
+	_, err := r.client.FinishLaunch(r.launchID, &gorp2.FinishExecutionRQ{
 		Status:  status,
-		EndTime: gorp.NewTimestamp(endTime),
+		EndTime: gorp2.NewTimestamp(endTime),
 	})
 	return err
 }
 
-func (r *reporter) finishTest(ev *testEvent, status gorp.Status) error {
+func (r *reporter) finishTest(ev *testEvent, status gorp2.Status) error {
 	testName := r.getTestName(ev)
 	testID := r.tests[testName]
 
-	_, err := r.client.FinishTest(testID, &gorp.FinishTestRQ{
-		FinishExecutionRQ: gorp.FinishExecutionRQ{
-			EndTime: gorp.NewTimestamp(ev.Time),
+	_, err := r.client.FinishTest(testID, &gorp2.FinishTestRQ{
+		FinishExecutionRQ: gorp2.FinishExecutionRQ{
+			EndTime: gorp2.NewTimestamp(ev.Time),
 			Status:  status,
 		},
 		LaunchUUID: r.launchID,
@@ -328,7 +328,7 @@ func (r *reporter) finishTest(ev *testEvent, status gorp.Status) error {
 	return err
 }
 
-func (r *reporter) finish(ev *testEvent, status gorp.Status) error {
+func (r *reporter) finish(ev *testEvent, status gorp2.Status) error {
 	var err error
 	if ev.Test == "" {
 		err = r.finishSuite(ev, status)
@@ -338,12 +338,12 @@ func (r *reporter) finish(ev *testEvent, status gorp.Status) error {
 	return err
 }
 
-func (r *reporter) finishSuite(ev *testEvent, status gorp.Status) error {
+func (r *reporter) finishSuite(ev *testEvent, status gorp2.Status) error {
 	suiteID := r.suites[ev.Package]
 
-	_, err := r.client.FinishTest(suiteID, &gorp.FinishTestRQ{
-		FinishExecutionRQ: gorp.FinishExecutionRQ{
-			EndTime: gorp.NewTimestamp(ev.Time),
+	_, err := r.client.FinishTest(suiteID, &gorp2.FinishTestRQ{
+		FinishExecutionRQ: gorp2.FinishExecutionRQ{
+			EndTime: gorp2.NewTimestamp(ev.Time),
 			Status:  status,
 		},
 		LaunchUUID: r.launchID,

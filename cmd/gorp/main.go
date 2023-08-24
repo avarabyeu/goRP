@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
-	rp "github.com/reportportal/goRP/v5/cli"
+	rp "github.com/reportportal/goRP/v5/internal/commands"
 )
 
 var (

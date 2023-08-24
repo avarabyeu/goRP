@@ -1,4 +1,4 @@
-package cli
+package commands
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
-	"github.com/reportportal/goRP/v5/gorp"
+	"github.com/reportportal/goRP/v5/pkg/gorp"
 )
 
 type config struct {

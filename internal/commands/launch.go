@@ -1,4 +1,4 @@
-package cli
+package commands
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/reportportal/goRP/v5/gorp"
+	gorp2 "github.com/reportportal/goRP/v5/pkg/gorp"
 )
 
 var (
@@ -88,9 +88,9 @@ func mergeLaunches(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	rq := &gorp.MergeLaunchesRQ{
+	rq := &gorp2.MergeLaunchesRQ{
 		Name:      c.String("name"),
-		MergeType: gorp.MergeType(c.String("type")),
+		MergeType: gorp2.MergeType(c.String("type")),
 		Launches:  ids,
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
@@ -110,7 +110,7 @@ func listLaunches(c *cli.Context) error {
 		return err
 	}
 
-	var launches *gorp.LaunchPage
+	var launches *gorp2.LaunchPage
 
 	if filters := c.StringSlice("filter"); len(filters) > 0 {
 		filter := strings.Join(filters, "&")
@@ -132,12 +132,12 @@ func listLaunches(c *cli.Context) error {
 	return nil
 }
 
-func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]int, error) {
+func getMergeIDs(c *cli.Context, rpClient *gorp2.Client) ([]int, error) {
 	if ids := c.IntSlice("ids"); len(ids) > 0 {
 		return ids, nil
 	}
 
-	var launches *gorp.LaunchPage
+	var launches *gorp2.LaunchPage
 	var err error
 
 	filter := c.String("filter")
