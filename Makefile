@@ -27,7 +27,7 @@ lint:
 	bin/golangci-lint run --enable-all --deadline 10m ./...
 
 fmt:
-	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}
+	gofumpt -extra -l -w ${GOFILES_NOVENDOR}
 	gci write --section Standard --section Default --section "Prefix(github.com/reportportal/goRP/v5)" ${GOFILES_NOVENDOR}
 
 #build: checkstyle test
