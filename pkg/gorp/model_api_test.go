@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnixTimeDeserialization(t *testing.T) {
@@ -15,7 +16,7 @@ func TestUnixTimeDeserialization(t *testing.T) {
 
 	var unitTime Timestamp
 	err := json.Unmarshal([]byte(jsonStr), &unitTime)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	unitTime = Timestamp{unitTime.Truncate(1 * time.Minute)}
 
@@ -32,7 +33,7 @@ func TestUnixTimeSerialization(t *testing.T) {
 
 	d, _ := time.Parse(time.RFC3339, expTime)
 	bytes, err := json.Marshal(&Timestamp{d})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, jsonStr, string(bytes))
 }
 

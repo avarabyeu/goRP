@@ -50,6 +50,7 @@ linters:
     - gci
     - revive
     - testableexamples
+    - depguard
 
 #run:
 #  skip-dirs:
