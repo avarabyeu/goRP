@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	version   = ""
-	buildDate = ""
+	version = "dev"
+	date    = "unknown"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "goRP"
 	app.Usage = "ReportPortal CLI Client"
-	app.Version = fmt.Sprintf("%s (%s)", version, buildDate)
+	app.Version = fmt.Sprintf("%s (%s)", version, date)
 	app.Authors = []*cli.Author{{
 		Name:  "Andrei Varabyeu",
 		Email: "andrei.varabyeu@gmail.com",
