@@ -1,7 +1,5 @@
 .DEFAULT_GOAL := build
-
 BUILD_DATE = `date +%FT%T%z`
-
 GO = go
 BINARY_DIR=bin
 
@@ -17,11 +15,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	# installs gometalinter
-#	curl -L https://git.io/vp6lP | sh
-#	gometalinter --install
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.31.0
-
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.57.2
 
 #vendor:
 #	dep ensure --vendor-only
@@ -30,19 +24,18 @@ test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 lint:
-	golangci-lint run --enable-all --deadline 10m ./...
+	bin/golangci-lint run ./...
 
 fmt:
-	gofumpt -extra -l -w -s ${GOFILES_NOVENDOR}
-	gofumports -local  -l -w ${GOFILES_NOVENDOR}
-	gci -local github.com/avarabyeu/goRP/v5 -w ${GOFILES_NOVENDOR}
+	gofumpt -extra -l -w ${GOFILES_NOVENDOR}
+	gci write --section Standard --section Default --section "Prefix(github.com/reportportal/goRP/v5)" ${GOFILES_NOVENDOR}
 
 #build: checkstyle test
 build:
 	$(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorp ./
 
 cross-build:
-	gox ${BUILD_INFO_LDFLAGS} -arch="amd64 386" -os="linux windows darwin" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}"
+	gox ${BUILD_INFO_LDFLAGS} -arch="amd64 arm64" -os="linux windows darwin" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/gorp
 
 clean:
 	if [ -d ${BINARY_DIR} ] ; then rm -r ${BINARY_DIR} ; fi

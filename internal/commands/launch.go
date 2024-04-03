@@ -1,4 +1,4 @@
-package cli
+package commands
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/avarabyeu/goRP/v5/gorp"
+	gorp2 "github.com/reportportal/goRP/v5/pkg/gorp"
 )
 
 var (
@@ -88,15 +88,17 @@ func mergeLaunches(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	rq := &gorp.MergeLaunchesRQ{
+	rq := &gorp2.MergeLaunchesRQ{
 		Name:      c.String("name"),
-		MergeType: gorp.MergeType(c.String("type")),
+		MergeType: gorp2.MergeType(c.String("type")),
 		Launches:  ids,
 	}
 	launchResource, err := rpClient.MergeLaunches(rq)
 	if err != nil {
 		return fmt.Errorf("unable to merge launches: %w", err)
 	}
+
+	//nolint:forbidigo //expected output
 	fmt.Println(launchResource.ID)
 
 	return nil
@@ -108,7 +110,7 @@ func listLaunches(c *cli.Context) error {
 		return err
 	}
 
-	var launches *gorp.LaunchPage
+	var launches *gorp2.LaunchPage
 
 	if filters := c.StringSlice("filter"); len(filters) > 0 {
 		filter := strings.Join(filters, "&")
@@ -122,6 +124,7 @@ func listLaunches(c *cli.Context) error {
 		return err
 	}
 
+	//nolint:forbidigo //expected output
 	for _, launch := range launches.Content {
 		fmt.Printf("%d #%d \"%s\"\n", launch.ID, launch.Number, launch.Name)
 	}
@@ -129,12 +132,12 @@ func listLaunches(c *cli.Context) error {
 	return nil
 }
 
-func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]int, error) {
+func getMergeIDs(c *cli.Context, rpClient *gorp2.Client) ([]int, error) {
 	if ids := c.IntSlice("ids"); len(ids) > 0 {
 		return ids, nil
 	}
 
-	var launches *gorp.LaunchPage
+	var launches *gorp2.LaunchPage
 	var err error
 
 	filter := c.String("filter")
@@ -148,7 +151,7 @@ func getMergeIDs(c *cli.Context, rpClient *gorp.Client) ([]int, error) {
 		return nil, errors.New("no either IDs or filter provided")
 	}
 	if err != nil {
-		return nil, fmt.Errorf("unable to find launches by filter: %s", err.Error())
+		return nil, fmt.Errorf("unable to find launches by filter: %w", err)
 	}
 
 	ids := make([]int, len(launches.Content))

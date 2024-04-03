@@ -6,15 +6,17 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnixTimeDeserialization(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `"1512114178671"`
 	const expTime = "2017-12-01T07:42:59+00:00"
 
 	var unitTime Timestamp
 	err := json.Unmarshal([]byte(jsonStr), &unitTime)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	unitTime = Timestamp{unitTime.Truncate(1 * time.Minute)}
 
@@ -25,16 +27,18 @@ func TestUnixTimeDeserialization(t *testing.T) {
 }
 
 func TestUnixTimeSerialization(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `1512114179000`
 	const expTime = "2017-12-01T07:42:59+00:00"
 
 	d, _ := time.Parse(time.RFC3339, expTime)
 	bytes, err := json.Marshal(&Timestamp{d})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, jsonStr, string(bytes))
 }
 
 func TestErrOnIncorrectTime(t *testing.T) {
+	t.Parallel()
 	const jsonStr = `"hello-world"`
 
 	var unitTime Timestamp
@@ -43,11 +47,13 @@ func TestErrOnIncorrectTime(t *testing.T) {
 }
 
 func TestDirectionConverter(t *testing.T) {
+	t.Parallel()
 	assert.Equal(t, "ASC", directionToStr(true))
 	assert.Equal(t, "DESC", directionToStr(false))
 }
 
 func TestFiltersConverter(t *testing.T) {
+	t.Parallel()
 	fp := ConvertToFilterParams(&FilterResource{
 		Entities: []*FilterEntity{
 			{

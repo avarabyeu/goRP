@@ -3,26 +3,31 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/urfave/cli/v2"
 
-	rp "github.com/avarabyeu/goRP/v5/cli"
+	rp "github.com/reportportal/goRP/v5/internal/commands"
 )
 
 var (
-	version   = ""
-	buildDate = ""
+	version = "dev"
+	date    = "unknown"
 )
 
 func main() {
-	log.SetFlags(0)
-	log.SetOutput(os.Stdout)
+	slog.SetDefault(slog.New(
+		slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+			Level:     slog.LevelError,
+			AddSource: true,
+		}),
+	))
 
 	app := cli.NewApp()
 	app.Name = "goRP"
 	app.Usage = "ReportPortal CLI Client"
-	app.Version = fmt.Sprintf("%s (%s)", version, buildDate)
+	app.Version = fmt.Sprintf("%s (%s)", version, date)
 	app.Authors = []*cli.Author{{
 		Name:  "Andrei Varabyeu",
 		Email: "andrei.varabyeu@gmail.com",

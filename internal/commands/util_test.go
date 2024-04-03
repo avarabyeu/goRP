@@ -1,4 +1,4 @@
-package cli
+package commands
 
 import (
 	"testing"
@@ -7,17 +7,21 @@ import (
 )
 
 func TestUnderstandsYes(t *testing.T) {
-	assert.Equal(t, true, answerYes("yes"))
+	t.Parallel()
+	assert.True(t, answerYes("yes"))
 }
 
 func TestUnderstandsYesUpper(t *testing.T) {
-	assert.Equal(t, true, answerYes("YES"))
+	t.Parallel()
+	assert.True(t, answerYes("YES"))
 }
 
 func TestEmptyAnswer(t *testing.T) {
-	assert.Equal(t, false, answerYes(""))
+	t.Parallel()
+	assert.False(t, answerYes(""))
 }
 
 func TestUnderstandsNo(t *testing.T) {
-	assert.Equal(t, false, answerYes("no"))
+	t.Parallel()
+	assert.False(t, answerYes("no"))
 }

@@ -26,13 +26,14 @@ type (
 		RetryOf    string `json:"retryOf,omitempty"`
 	}
 
-	// SaveLogRQ payload representation. Without attaches.
+	// SaveLogRQ payload representation.
 	SaveLogRQ struct {
-		LaunchUUID string    `json:"launchUuid,omitempty"`
-		ItemID     string    `json:"itemUuid,omitempty"`
-		LogTime    Timestamp `json:"time,omitempty"`
-		Message    string    `json:"message,omitempty"`
-		Level      string    `json:"level,omitempty"`
+		LaunchUUID string     `json:"launchUuid,omitempty"`
+		ItemID     string     `json:"itemUuid,omitempty"`
+		LogTime    Timestamp  `json:"time,omitempty"`
+		Message    string     `json:"message,omitempty"`
+		Level      string     `json:"level,omitempty"`
+		Attachment Attachment `json:"file,omitempty"`
 	}
 
 	// StartTestRQ payload representation
@@ -101,6 +102,11 @@ type (
 	// Epoch milliseconds
 	Timestamp struct {
 		time.Time
+	}
+
+	// Attachment represents file attachment in log entries
+	Attachment struct {
+		Name string `json:"name,omitempty"`
 	}
 )
 

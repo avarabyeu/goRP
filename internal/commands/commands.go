@@ -1,22 +1,22 @@
-package cli
+package commands
 
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"os"
 
 	"github.com/manifoldco/promptui"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
-	"github.com/avarabyeu/goRP/v5/gorp"
+	"github.com/reportportal/goRP/v5/pkg/gorp"
 )
 
 type config struct {
-	UUID    string
-	Project string
-	Host    string
+	UUID    string `json:"uuid"`
+	Project string `json:"project"`
+	Host    string `json:"host"`
 }
 
 var (
@@ -48,13 +48,14 @@ func initConfiguration(c *cli.Context) error {
 			return nil
 		}
 	}
+
 	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
-			logrus.Error(closeErr)
+			slog.Default().Error(closeErr.Error())
 		}
 	}()
 
@@ -96,6 +97,7 @@ func initConfiguration(c *cli.Context) error {
 		return cli.Exit(fmt.Sprintf("Cannot read config file. %s", err), 1)
 	}
 
+	//nolint:forbidigo //expected output
 	fmt.Println("Configuration has been successfully saved!")
 
 	return nil

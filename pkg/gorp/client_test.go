@@ -9,6 +9,7 @@ import (
 )
 
 func TestCreateRPClient(t *testing.T) {
+	t.Parallel()
 	client := NewClient("http://host.com", "prj", "uuid")
 
 	assert.Equal(t, "prj", client.project)
@@ -17,6 +18,7 @@ func TestCreateRPClient(t *testing.T) {
 }
 
 func TestHandleErrors(t *testing.T) {
+	t.Parallel()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}))
