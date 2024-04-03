@@ -1,7 +1,6 @@
-![Build Status](https://github.com/golangci/golangci-lint/workflows/CI/badge.svg)
+![Build Status](https://github.com/reportportal/goRP/workflows/Build/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reportportal/goRP)](https://goreportcard.com/report/github.com/reportportal/goRP)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/reportportal/goRP/master/LICENSE)
-[![License](https://img.shields.io/github/license/golangci/golangci-lint)](/LICENSE)
 [![Release](https://img.shields.io/github/release/reportportal/goRP.svg)](https://github.com/reportportal/goRP/releases/latest)
 [![GitHub Releases Stats of goRP](https://img.shields.io/github/downloads/reportportal/goRP/total.svg?logo=github)](https://somsubhra.github.io/github-release-stats/?username=reportportal&repository=gorP)
 
