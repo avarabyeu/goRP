@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 
 	rp "github.com/reportportal/goRP/v5/internal/commands"
 )
@@ -17,11 +17,12 @@ var (
 )
 
 func main() {
-	logger, _ := zap.NewProduction()
-	zap.ReplaceGlobals(logger)
-	defer func() {
-		_ = logger.Sync()
-	}()
+	slog.SetDefault(slog.New(
+		slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+			Level:     slog.LevelError,
+			AddSource: true,
+		}),
+	))
 
 	app := cli.NewApp()
 	app.Name = "goRP"

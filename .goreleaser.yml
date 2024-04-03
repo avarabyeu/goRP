@@ -1,6 +1,6 @@
 builds:
   - id: gorp
-    main: ./cmd/gorp
+    main: ./
     binary: gorp
     env:
       - CGO_ENABLED=0

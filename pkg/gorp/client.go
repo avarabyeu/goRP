@@ -3,10 +3,8 @@ package gorp
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"mime"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -21,12 +19,12 @@ type Client struct {
 // NewClient creates new instance of Client
 // host - server hostname
 // project - name of the project
-// uuid - User Token (see user profile page)
-func NewClient(host, project, uuid string) *Client {
+// apiKey - User Token (see user profile page)
+func NewClient(host, project, apiKey string) *Client {
 	http := resty.New().
 		// SetDebug(true).
 		SetBaseURL(host).
-		SetAuthToken(uuid).
+		SetAuthToken(apiKey).
 		OnAfterResponse(func(client *resty.Client, rs *resty.Response) error {
 			//nolint:gomnd // 4xx errors
 			if (rs.StatusCode() / 100) >= 4 {
@@ -181,7 +179,7 @@ func (c *Client) finishTest(id string, body interface{}) (*MsgRS, error) {
 // SaveLog attaches log in RP
 func (c *Client) SaveLog(log *SaveLogRQ) (*EntryCreatedRS, error) {
 	var rs EntryCreatedRS
-	_, err := c.http.SetDebug(true).R().
+	_, err := c.http.R().
 		SetPathParams(map[string]string{
 			"project": c.project,
 		}).
@@ -219,7 +217,7 @@ func (c *Client) SaveLogs(logs ...*SaveLogRQ) (*EntryCreatedRS, error) {
 //			}
 //
 // resp, err := client.SaveLogMultipart(log, files)
-func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (*EntryCreatedRS, error) {
+func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files []Multipart) (*EntryCreatedRS, error) {
 	var bodyBuf bytes.Buffer
 	err := json.NewEncoder(&bodyBuf).Encode(log)
 	if err != nil {
@@ -235,18 +233,16 @@ func (c *Client) SaveLogMultipart(log []*SaveLogRQ, files map[string]*os.File) (
 	rq.SetMultipartField("json_request_part", "", "application/json", &bodyBuf)
 
 	// BINARY PART
-	for k, v := range files {
-		if v == nil {
-			return nil, fmt.Errorf("no file for [%s] is provided", k)
+	for _, v := range files {
+		fileName, contentType, reader, lErr := v.Load()
+		if lErr != nil {
+			return nil, fmt.Errorf("unable to read multipart: %w", lErr)
 		}
-		if _, sErr := os.Stat(v.Name()); os.IsNotExist(sErr) {
-			return nil, fmt.Errorf("file %s does not exist", v.Name())
+		if fileName == "" {
+			return nil, errors.New("no file name is provided")
 		}
-		mimeType := mime.TypeByExtension(filepath.Ext(k))
-		if mimeType == "" {
-			mimeType = "application/octet-stream"
-		}
-		rq.SetMultipartField("file", k, mimeType, v)
+
+		rq.SetMultipartField("file", fileName, contentType, reader)
 	}
 
 	var rs EntryCreatedRS

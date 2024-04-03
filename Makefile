@@ -15,7 +15,7 @@ help:
 	@echo "checkstyle - gofmt+golint+misspell"
 
 init-deps:
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.56.0
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.57.2
 
 #vendor:
 #	dep ensure --vendor-only
@@ -24,7 +24,7 @@ test:
 	$(GO) test -cover ${GODIRS_NOVENDOR}
 
 lint:
-	bin/golangci-lint run --deadline 10m ./...
+	bin/golangci-lint run ./...
 
 fmt:
 	gofumpt -extra -l -w ${GOFILES_NOVENDOR}
@@ -32,7 +32,7 @@ fmt:
 
 #build: checkstyle test
 build:
-	$(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorp ./cmd/gorp
+	$(GO) build ${BUILD_INFO_LDFLAGS} -o ${BINARY_DIR}/gorp ./
 
 cross-build:
 	gox ${BUILD_INFO_LDFLAGS} -arch="amd64 arm64" -os="linux windows darwin" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/gorp

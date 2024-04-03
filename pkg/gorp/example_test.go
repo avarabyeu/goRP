@@ -3,15 +3,14 @@ package gorp
 import (
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 func ExampleClient() {
-	client := NewClient("",
-		"", "")
+	client := NewClient("https://reportportal.epam.com",
+		"andrei_varabyeu_personal", "gorp-test_MCQZajD8S_ClBSGo-Q6X7KtzBKjFGiw0PPf6oB0-nexU1MSRMMcO_4_Sn4YGTBtk")
 
 	launchUUID := uuid.New()
 	launch, err := client.StartLaunch(&StartLaunchRQ{
@@ -49,15 +48,18 @@ func ExampleClient() {
 	})
 	checkErr(err, "unable to save log")
 
-	file1, _ := os.Open("../go.mod")
-	file2, _ := os.Open("../go.sum")
+	file1, err := os.Open("../../go.mod")
+	checkErr(err, "unable to read file")
+	file2, err := os.Open("../../go.sum")
+	checkErr(err, "unable to read file")
+
 	_, err = client.SaveLogMultipart([]*SaveLogRQ{
 		{
 			LaunchUUID: launchUUID.String(),
 			ItemID:     testUUID.String(),
 			Level:      LogLevelInfo,
 			Message:    "Log with binary one",
-			Attachment: FileAttachment{
+			Attachment: Attachment{
 				Name: "go.mod",
 			},
 		},
@@ -66,13 +68,13 @@ func ExampleClient() {
 			ItemID:     testUUID.String(),
 			Level:      LogLevelInfo,
 			Message:    "Log with binary two",
-			Attachment: FileAttachment{
+			Attachment: Attachment{
 				Name: "go.sum",
 			},
 		},
-	}, map[string]*os.File{
-		filepath.Base(file1.Name()): file1,
-		filepath.Base(file2.Name()): file2,
+	}, []Multipart{
+		&FileMultipart{File: file1},
+		&ReaderMultipart{ContentType: "text/plain", FileName: file2.Name(), Reader: file2},
 	})
 
 	checkErr(err, "unable to save log multipart")
@@ -91,6 +93,8 @@ func ExampleClient() {
 		EndTime: Timestamp{time.Now()},
 	})
 	checkErr(err, "unable to finish launch")
+
+	// Output:
 }
 
 func checkErr(err error, msg string) {

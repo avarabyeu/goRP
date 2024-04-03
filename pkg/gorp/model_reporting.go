@@ -28,12 +28,12 @@ type (
 
 	// SaveLogRQ payload representation.
 	SaveLogRQ struct {
-		LaunchUUID string         `json:"launchUuid,omitempty"`
-		ItemID     string         `json:"itemUuid,omitempty"`
-		LogTime    Timestamp      `json:"time,omitempty"`
-		Message    string         `json:"message,omitempty"`
-		Level      string         `json:"level,omitempty"`
-		Attachment FileAttachment `json:"file,omitempty"`
+		LaunchUUID string     `json:"launchUuid,omitempty"`
+		ItemID     string     `json:"itemUuid,omitempty"`
+		LogTime    Timestamp  `json:"time,omitempty"`
+		Message    string     `json:"message,omitempty"`
+		Level      string     `json:"level,omitempty"`
+		Attachment Attachment `json:"file,omitempty"`
 	}
 
 	// StartTestRQ payload representation
@@ -104,8 +104,8 @@ type (
 		time.Time
 	}
 
-	// FileAttachment represents file attachment in log entries
-	FileAttachment struct {
+	// Attachment represents file attachment in log entries
+	Attachment struct {
 		Name string `json:"name,omitempty"`
 	}
 )

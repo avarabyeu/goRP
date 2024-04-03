@@ -3,12 +3,12 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"os"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 
 	"github.com/reportportal/goRP/v5/pkg/gorp"
 )
@@ -49,14 +49,13 @@ func initConfiguration(c *cli.Context) error {
 		}
 	}
 
-	//nolint:nosnakecase // sdk uppercase constants
 	f, err := os.OpenFile(getConfigFile(), os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("Cannot open config file, %s", err), 1)
 	}
 	defer func() {
 		if closeErr := f.Close(); closeErr != nil {
-			zap.S().Error(closeErr)
+			slog.Default().Error(closeErr.Error())
 		}
 	}()
 

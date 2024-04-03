@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +13,6 @@ import (
 	"time"
 
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 
 	gorp2 "github.com/reportportal/goRP/v5/pkg/gorp"
 )
@@ -53,7 +53,8 @@ var (
 	}
 )
 
-func reportTest2json(c *cli.Context) error {
+//nolint:nonamedreturns // for readability
+func reportTest2json(c *cli.Context) (err error) {
 	rpClient, err := buildClient(c)
 	if err != nil {
 		return err
@@ -69,8 +70,9 @@ func reportTest2json(c *cli.Context) error {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		rep.receive()
+		err = rep.receive()
 	}()
+	// wait for report to complete
 	defer wg.Wait()
 
 	defer close(input)
@@ -83,7 +85,7 @@ func reportTest2json(c *cli.Context) error {
 		}
 		defer func() {
 			if cErr := f.Close(); cErr != nil {
-				zap.S().Error(cErr)
+				slog.Error(cErr.Error())
 			}
 		}()
 		reader = f
@@ -97,7 +99,7 @@ func reportTest2json(c *cli.Context) error {
 
 		var ev testEvent
 		if err := json.Unmarshal([]byte(data), &ev); err != nil {
-			zap.S().Error(err)
+			slog.Default().Error(err.Error())
 			return err
 		}
 		input <- &ev
@@ -158,42 +160,61 @@ func newReporter(client *gorp2.Client, launchName string, input <-chan *testEven
 	}
 }
 
-func (r *reporter) receive() {
+func (r *reporter) reportEvent(ev *testEvent) error {
+	var err error
+	switch ev.Action {
+	case "run":
+		_, err = r.startTest(ev)
+	case "output":
+		r.log(ev)
+	case "pass":
+		err = r.finish(ev, gorp2.Statuses.Passed)
+	case "fail":
+		err = r.finish(ev, gorp2.Statuses.Failed)
+	}
+	return err
+}
+
+func (r *reporter) receive() error {
 	prevEventTime := time.Now()
 	for ev := range r.input {
 		var err error
 		startTime := ev.Time
+
+		// start launch once
+		// when first event comes
 		r.launchOnce.Do(func() {
 			if err = r.startLaunch(startTime); err != nil {
-				zap.S().Error(err)
+				slog.Error(err.Error())
 			}
 		})
-
-		switch ev.Action {
-		case "run":
-			_, err = r.startTest(ev)
-		case "output":
-			r.log(ev)
-		case "pass":
-			err = r.finish(ev, gorp2.Statuses.Passed)
-		case "fail":
-			err = r.finish(ev, gorp2.Statuses.Failed)
-		}
 		if err != nil {
-			zap.S().Fatal(err)
+			return err
 		}
+
+		// report event to ReportPortal
+		err = r.reportEvent(ev)
+		if err != nil {
+			return err
+		}
+
+		// remember last's event time
+		// for RP's finishLaunch
 		prevEventTime = ev.Time
 	}
+
 	// make sure we flush all logs that are left
 	r.flushLogs(true)
 	// wait for requests to get sent
 	r.waitQueue.Wait()
 
+	// finish launch of started
 	if r.launchID != "" {
 		if err := r.finishLaunch(gorp2.Statuses.Passed, prevEventTime); err != nil {
-			zap.S().Fatal(err)
+			return err
 		}
 	}
+	return nil
 }
 
 func (r *reporter) startSuite(ev *testEvent) (string, error) {
@@ -278,7 +299,7 @@ func (r *reporter) flushLogs(force bool) {
 			defer r.waitQueue.Done()
 
 			if _, err := r.client.SaveLogs(logs...); err != nil {
-				zap.S().Errorf("unable to report logs: %v. Batch len: %d", err, len(logs))
+				slog.Error("unable to report logs", "error", err, "batch_length", len(logs))
 			}
 		}(batch)
 		r.logs = []*gorp2.SaveLogRQ{}
