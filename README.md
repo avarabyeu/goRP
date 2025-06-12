@@ -1,5 +1,9 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/avarabyeu/goRP/Build)
-[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/eBay/fabio/master/LICENSE)
+# [DEPRECATION NOTICE]
+The project has been forked to the official ReportPortal's ogranization and maintained [there](https://github.com/reportportal/goRP)
+
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/avarabyeu/goRP/build.yaml?branch=main)
+[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/avarabyeu/goRP/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/avarabyeu/goRP)](https://goreportcard.com/report/github.com/avarabyeu/goRP)
 
 # goRP
