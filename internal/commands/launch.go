@@ -115,7 +115,7 @@ func listLaunches(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	var launches *openapi.PageLaunchResource
+	var launches *openapi.PageLaunchViewModel
 
 	if filters := cmd.StringSlice("filter"); len(filters) > 0 {
 		filter := strings.Join(filters, "&")
@@ -146,7 +146,7 @@ func getMergeIDs(
 		return ids, nil
 	}
 
-	var launches *openapi.PageLaunchResource
+	var launches *openapi.PageLaunchViewModel
 	var err error
 
 	filter := cmd.String("filter")

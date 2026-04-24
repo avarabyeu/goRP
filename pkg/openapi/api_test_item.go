@@ -3,7 +3,7 @@ ReportPortal
 
 ReportPortal API documentation
 
-API version: 5.15.1
+API version: 5.15.2
 Contact: support@reportportal.io
 */
 
@@ -1776,7 +1776,7 @@ type ApiGetItemsHistoryRequest struct {
 	filterEqStatisticsexecutionsskipped         *int32
 	filterEqType                                *string
 	filterEqStatisticsdefectsautomationBugab001 *int32
-	filterEqAttributeValue                      *[]interface{}
+	filterEqAttributeValue                      *[]string
 	filterEqPath                                *int32
 	filterHasCompositeSystemAttribute           *string
 	filterEqIssueGroupId                        *string
@@ -1790,9 +1790,9 @@ type ApiGetItemsHistoryRequest struct {
 	filterEqValue                               *string
 	filterEqIssueTypeId                         *int32
 	filterEqName                                *string
-	filterEqPatternName                         *[]interface{}
+	filterEqPatternName                         *[]string
 	filterEqLaunchId                            *int32
-	filterEqAttributeKey                        *[]interface{}
+	filterEqAttributeKey                        *[]string
 	filterEqHasChildren                         *bool
 	filterEqRetryParentId                       *int32
 	filterEqStatisticsexecutionstotal           *int32
@@ -1803,7 +1803,7 @@ type ApiGetItemsHistoryRequest struct {
 	filterEqTestCaseId                          *string
 	filterEqKey                                 *string
 	filterEqAutoAnalyzed                        *bool
-	filterEqLevelAttribute                      *[]interface{}
+	filterEqLevelAttribute                      *[]string
 	filterEqMode                                *string
 	filterEqClusterId                           *int32
 	filterEqIssueId                             *int32
@@ -1936,7 +1936,7 @@ func (r ApiGetItemsHistoryRequest) FilterEqStatisticsdefectsautomationBugab001(f
 }
 
 // Filters by &#39;attributeValue&#39;
-func (r ApiGetItemsHistoryRequest) FilterEqAttributeValue(filterEqAttributeValue []interface{}) ApiGetItemsHistoryRequest {
+func (r ApiGetItemsHistoryRequest) FilterEqAttributeValue(filterEqAttributeValue []string) ApiGetItemsHistoryRequest {
 	r.filterEqAttributeValue = &filterEqAttributeValue
 	return r
 }
@@ -2020,7 +2020,7 @@ func (r ApiGetItemsHistoryRequest) FilterEqName(filterEqName string) ApiGetItems
 }
 
 // Filters by &#39;patternName&#39;
-func (r ApiGetItemsHistoryRequest) FilterEqPatternName(filterEqPatternName []interface{}) ApiGetItemsHistoryRequest {
+func (r ApiGetItemsHistoryRequest) FilterEqPatternName(filterEqPatternName []string) ApiGetItemsHistoryRequest {
 	r.filterEqPatternName = &filterEqPatternName
 	return r
 }
@@ -2032,7 +2032,7 @@ func (r ApiGetItemsHistoryRequest) FilterEqLaunchId(filterEqLaunchId int32) ApiG
 }
 
 // Filters by &#39;attributeKey&#39;
-func (r ApiGetItemsHistoryRequest) FilterEqAttributeKey(filterEqAttributeKey []interface{}) ApiGetItemsHistoryRequest {
+func (r ApiGetItemsHistoryRequest) FilterEqAttributeKey(filterEqAttributeKey []string) ApiGetItemsHistoryRequest {
 	r.filterEqAttributeKey = &filterEqAttributeKey
 	return r
 }
@@ -2098,7 +2098,7 @@ func (r ApiGetItemsHistoryRequest) FilterEqAutoAnalyzed(filterEqAutoAnalyzed boo
 }
 
 // Filters by &#39;levelAttribute&#39;
-func (r ApiGetItemsHistoryRequest) FilterEqLevelAttribute(filterEqLevelAttribute []interface{}) ApiGetItemsHistoryRequest {
+func (r ApiGetItemsHistoryRequest) FilterEqLevelAttribute(filterEqLevelAttribute []string) ApiGetItemsHistoryRequest {
 	r.filterEqLevelAttribute = &filterEqLevelAttribute
 	return r
 }
@@ -3164,7 +3164,7 @@ type ApiGetTestItemsRequest struct {
 	filterEqStatisticsexecutionsskipped         *int32
 	filterEqType                                *string
 	filterEqStatisticsdefectsautomationBugab001 *int32
-	filterEqAttributeValue                      *[]interface{}
+	filterEqAttributeValue                      *[]string
 	filterEqPath                                *int32
 	filterHasCompositeSystemAttribute           *string
 	filterEqIssueGroupId                        *string
@@ -3178,9 +3178,9 @@ type ApiGetTestItemsRequest struct {
 	filterEqValue                               *string
 	filterEqIssueTypeId                         *int32
 	filterEqName                                *string
-	filterEqPatternName                         *[]interface{}
+	filterEqPatternName                         *[]string
 	filterEqLaunchId                            *int32
-	filterEqAttributeKey                        *[]interface{}
+	filterEqAttributeKey                        *[]string
 	filterEqHasChildren                         *bool
 	filterEqRetryParentId                       *int32
 	filterEqStatisticsexecutionstotal           *int32
@@ -3191,7 +3191,7 @@ type ApiGetTestItemsRequest struct {
 	filterEqTestCaseId                          *string
 	filterEqKey                                 *string
 	filterEqAutoAnalyzed                        *bool
-	filterEqLevelAttribute                      *[]interface{}
+	filterEqLevelAttribute                      *[]string
 	filterEqMode                                *string
 	filterEqClusterId                           *int32
 	filterEqIssueId                             *int32
@@ -3314,7 +3314,7 @@ func (r ApiGetTestItemsRequest) FilterEqStatisticsdefectsautomationBugab001(filt
 }
 
 // Filters by &#39;attributeValue&#39;
-func (r ApiGetTestItemsRequest) FilterEqAttributeValue(filterEqAttributeValue []interface{}) ApiGetTestItemsRequest {
+func (r ApiGetTestItemsRequest) FilterEqAttributeValue(filterEqAttributeValue []string) ApiGetTestItemsRequest {
 	r.filterEqAttributeValue = &filterEqAttributeValue
 	return r
 }
@@ -3398,7 +3398,7 @@ func (r ApiGetTestItemsRequest) FilterEqName(filterEqName string) ApiGetTestItem
 }
 
 // Filters by &#39;patternName&#39;
-func (r ApiGetTestItemsRequest) FilterEqPatternName(filterEqPatternName []interface{}) ApiGetTestItemsRequest {
+func (r ApiGetTestItemsRequest) FilterEqPatternName(filterEqPatternName []string) ApiGetTestItemsRequest {
 	r.filterEqPatternName = &filterEqPatternName
 	return r
 }
@@ -3410,7 +3410,7 @@ func (r ApiGetTestItemsRequest) FilterEqLaunchId(filterEqLaunchId int32) ApiGetT
 }
 
 // Filters by &#39;attributeKey&#39;
-func (r ApiGetTestItemsRequest) FilterEqAttributeKey(filterEqAttributeKey []interface{}) ApiGetTestItemsRequest {
+func (r ApiGetTestItemsRequest) FilterEqAttributeKey(filterEqAttributeKey []string) ApiGetTestItemsRequest {
 	r.filterEqAttributeKey = &filterEqAttributeKey
 	return r
 }
@@ -3476,7 +3476,7 @@ func (r ApiGetTestItemsRequest) FilterEqAutoAnalyzed(filterEqAutoAnalyzed bool) 
 }
 
 // Filters by &#39;levelAttribute&#39;
-func (r ApiGetTestItemsRequest) FilterEqLevelAttribute(filterEqLevelAttribute []interface{}) ApiGetTestItemsRequest {
+func (r ApiGetTestItemsRequest) FilterEqLevelAttribute(filterEqLevelAttribute []string) ApiGetTestItemsRequest {
 	r.filterEqLevelAttribute = &filterEqLevelAttribute
 	return r
 }
@@ -3902,7 +3902,7 @@ type ApiGetTestItems1Request struct {
 	filterEqStatisticsexecutionsskipped         *int32
 	filterEqType                                *string
 	filterEqStatisticsdefectsautomationBugab001 *int32
-	filterEqAttributeValue                      *[]interface{}
+	filterEqAttributeValue                      *[]string
 	filterEqPath                                *int32
 	filterHasCompositeSystemAttribute           *string
 	filterEqIssueGroupId                        *string
@@ -3916,9 +3916,9 @@ type ApiGetTestItems1Request struct {
 	filterEqValue                               *string
 	filterEqIssueTypeId                         *int32
 	filterEqName                                *string
-	filterEqPatternName                         *[]interface{}
+	filterEqPatternName                         *[]string
 	filterEqLaunchId                            *int32
-	filterEqAttributeKey                        *[]interface{}
+	filterEqAttributeKey                        *[]string
 	filterEqHasChildren                         *bool
 	filterEqRetryParentId                       *int32
 	filterEqStatisticsexecutionstotal           *int32
@@ -3929,7 +3929,7 @@ type ApiGetTestItems1Request struct {
 	filterEqTestCaseId                          *string
 	filterEqKey                                 *string
 	filterEqAutoAnalyzed                        *bool
-	filterEqLevelAttribute                      *[]interface{}
+	filterEqLevelAttribute                      *[]string
 	filterEqMode                                *string
 	filterEqClusterId                           *int32
 	filterEqIssueId                             *int32
@@ -4039,7 +4039,7 @@ func (r ApiGetTestItems1Request) FilterEqStatisticsdefectsautomationBugab001(fil
 }
 
 // Filters by &#39;attributeValue&#39;
-func (r ApiGetTestItems1Request) FilterEqAttributeValue(filterEqAttributeValue []interface{}) ApiGetTestItems1Request {
+func (r ApiGetTestItems1Request) FilterEqAttributeValue(filterEqAttributeValue []string) ApiGetTestItems1Request {
 	r.filterEqAttributeValue = &filterEqAttributeValue
 	return r
 }
@@ -4123,7 +4123,7 @@ func (r ApiGetTestItems1Request) FilterEqName(filterEqName string) ApiGetTestIte
 }
 
 // Filters by &#39;patternName&#39;
-func (r ApiGetTestItems1Request) FilterEqPatternName(filterEqPatternName []interface{}) ApiGetTestItems1Request {
+func (r ApiGetTestItems1Request) FilterEqPatternName(filterEqPatternName []string) ApiGetTestItems1Request {
 	r.filterEqPatternName = &filterEqPatternName
 	return r
 }
@@ -4135,7 +4135,7 @@ func (r ApiGetTestItems1Request) FilterEqLaunchId(filterEqLaunchId int32) ApiGet
 }
 
 // Filters by &#39;attributeKey&#39;
-func (r ApiGetTestItems1Request) FilterEqAttributeKey(filterEqAttributeKey []interface{}) ApiGetTestItems1Request {
+func (r ApiGetTestItems1Request) FilterEqAttributeKey(filterEqAttributeKey []string) ApiGetTestItems1Request {
 	r.filterEqAttributeKey = &filterEqAttributeKey
 	return r
 }
@@ -4201,7 +4201,7 @@ func (r ApiGetTestItems1Request) FilterEqAutoAnalyzed(filterEqAutoAnalyzed bool)
 }
 
 // Filters by &#39;levelAttribute&#39;
-func (r ApiGetTestItems1Request) FilterEqLevelAttribute(filterEqLevelAttribute []interface{}) ApiGetTestItems1Request {
+func (r ApiGetTestItems1Request) FilterEqLevelAttribute(filterEqLevelAttribute []string) ApiGetTestItems1Request {
 	r.filterEqLevelAttribute = &filterEqLevelAttribute
 	return r
 }
@@ -4570,17 +4570,12 @@ type ApiGetTestItems2Request struct {
 	ctx                         context.Context
 	ApiService                  *TestItemAPIService
 	projectName                 string
-	filterCntName               *string
 	filterHasCompositeAttribute *string
 	filterInStatus              *string
+	filterSwtName               *string
 	pagePage                    *int32
 	pageSize                    *int32
 	pageSort                    *string
-}
-
-func (r ApiGetTestItems2Request) FilterCntName(filterCntName string) ApiGetTestItems2Request {
-	r.filterCntName = &filterCntName
-	return r
 }
 
 func (r ApiGetTestItems2Request) FilterHasCompositeAttribute(filterHasCompositeAttribute string) ApiGetTestItems2Request {
@@ -4590,6 +4585,11 @@ func (r ApiGetTestItems2Request) FilterHasCompositeAttribute(filterHasCompositeA
 
 func (r ApiGetTestItems2Request) FilterInStatus(filterInStatus string) ApiGetTestItems2Request {
 	r.filterInStatus = &filterInStatus
+	return r
+}
+
+func (r ApiGetTestItems2Request) FilterSwtName(filterSwtName string) ApiGetTestItems2Request {
+	r.filterSwtName = &filterSwtName
 	return r
 }
 
@@ -4653,14 +4653,14 @@ func (a *TestItemAPIService) GetTestItems2Execute(r ApiGetTestItems2Request) (*P
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.filterCntName != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.cnt.name", r.filterCntName, "form", "")
-	}
 	if r.filterHasCompositeAttribute != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.has.compositeAttribute", r.filterHasCompositeAttribute, "form", "")
 	}
 	if r.filterInStatus != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.in.status", r.filterInStatus, "form", "")
+	}
+	if r.filterSwtName != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.swt.name", r.filterSwtName, "form", "")
 	}
 	if r.pagePage != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "page.page", r.pagePage, "form", "")
@@ -5138,7 +5138,7 @@ type ApiGetTestItemsV2Request struct {
 	filterEqStatisticsexecutionsskipped         *int32
 	filterEqType                                *string
 	filterEqStatisticsdefectsautomationBugab001 *int32
-	filterEqAttributeValue                      *[]interface{}
+	filterEqAttributeValue                      *[]string
 	filterEqPath                                *int32
 	filterHasCompositeSystemAttribute           *string
 	filterEqIssueGroupId                        *string
@@ -5152,9 +5152,9 @@ type ApiGetTestItemsV2Request struct {
 	filterEqValue                               *string
 	filterEqIssueTypeId                         *int32
 	filterEqName                                *string
-	filterEqPatternName                         *[]interface{}
+	filterEqPatternName                         *[]string
 	filterEqLaunchId                            *int32
-	filterEqAttributeKey                        *[]interface{}
+	filterEqAttributeKey                        *[]string
 	filterEqHasChildren                         *bool
 	filterEqRetryParentId                       *int32
 	filterEqStatisticsexecutionstotal           *int32
@@ -5165,7 +5165,7 @@ type ApiGetTestItemsV2Request struct {
 	filterEqTestCaseId                          *string
 	filterEqKey                                 *string
 	filterEqAutoAnalyzed                        *bool
-	filterEqLevelAttribute                      *[]interface{}
+	filterEqLevelAttribute                      *[]string
 	filterEqMode                                *string
 	filterEqClusterId                           *int32
 	filterEqIssueId                             *int32
@@ -5278,7 +5278,7 @@ func (r ApiGetTestItemsV2Request) FilterEqStatisticsdefectsautomationBugab001(fi
 }
 
 // Filters by &#39;attributeValue&#39;
-func (r ApiGetTestItemsV2Request) FilterEqAttributeValue(filterEqAttributeValue []interface{}) ApiGetTestItemsV2Request {
+func (r ApiGetTestItemsV2Request) FilterEqAttributeValue(filterEqAttributeValue []string) ApiGetTestItemsV2Request {
 	r.filterEqAttributeValue = &filterEqAttributeValue
 	return r
 }
@@ -5362,7 +5362,7 @@ func (r ApiGetTestItemsV2Request) FilterEqName(filterEqName string) ApiGetTestIt
 }
 
 // Filters by &#39;patternName&#39;
-func (r ApiGetTestItemsV2Request) FilterEqPatternName(filterEqPatternName []interface{}) ApiGetTestItemsV2Request {
+func (r ApiGetTestItemsV2Request) FilterEqPatternName(filterEqPatternName []string) ApiGetTestItemsV2Request {
 	r.filterEqPatternName = &filterEqPatternName
 	return r
 }
@@ -5374,7 +5374,7 @@ func (r ApiGetTestItemsV2Request) FilterEqLaunchId(filterEqLaunchId int32) ApiGe
 }
 
 // Filters by &#39;attributeKey&#39;
-func (r ApiGetTestItemsV2Request) FilterEqAttributeKey(filterEqAttributeKey []interface{}) ApiGetTestItemsV2Request {
+func (r ApiGetTestItemsV2Request) FilterEqAttributeKey(filterEqAttributeKey []string) ApiGetTestItemsV2Request {
 	r.filterEqAttributeKey = &filterEqAttributeKey
 	return r
 }
@@ -5440,7 +5440,7 @@ func (r ApiGetTestItemsV2Request) FilterEqAutoAnalyzed(filterEqAutoAnalyzed bool
 }
 
 // Filters by &#39;levelAttribute&#39;
-func (r ApiGetTestItemsV2Request) FilterEqLevelAttribute(filterEqLevelAttribute []interface{}) ApiGetTestItemsV2Request {
+func (r ApiGetTestItemsV2Request) FilterEqLevelAttribute(filterEqLevelAttribute []string) ApiGetTestItemsV2Request {
 	r.filterEqLevelAttribute = &filterEqLevelAttribute
 	return r
 }

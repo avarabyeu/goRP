@@ -3,7 +3,7 @@ ReportPortal
 
 ReportPortal API documentation
 
-API version: 5.15.1
+API version: 5.15.2
 Contact: support@reportportal.io
 */
 
@@ -1498,7 +1498,7 @@ type ApiExportRequest struct {
 	filterEqSynchronizationDate *int32
 	filterEqExternalId          *string
 	filterEqActive              *bool
-	filterEqProject             *[]interface{}
+	filterEqProject             *[]string
 	filterEqEmail               *string
 	filterEqFullName            *string
 	filterEqProjectId           *int32
@@ -1565,7 +1565,7 @@ func (r ApiExportRequest) FilterEqActive(filterEqActive bool) ApiExportRequest {
 }
 
 // Filters by &#39;project&#39;
-func (r ApiExportRequest) FilterEqProject(filterEqProject []interface{}) ApiExportRequest {
+func (r ApiExportRequest) FilterEqProject(filterEqProject []string) ApiExportRequest {
 	r.filterEqProject = &filterEqProject
 	return r
 }
@@ -2747,7 +2747,7 @@ type ApiGetUsersRequest struct {
 	filterEqSynchronizationDate *int32
 	filterEqExternalId          *string
 	filterEqActive              *bool
-	filterEqProject             *[]interface{}
+	filterEqProject             *[]string
 	filterEqEmail               *string
 	filterEqFullName            *string
 	filterEqProjectId           *int32
@@ -2812,7 +2812,7 @@ func (r ApiGetUsersRequest) FilterEqActive(filterEqActive bool) ApiGetUsersReque
 }
 
 // Filters by &#39;project&#39;
-func (r ApiGetUsersRequest) FilterEqProject(filterEqProject []interface{}) ApiGetUsersRequest {
+func (r ApiGetUsersRequest) FilterEqProject(filterEqProject []string) ApiGetUsersRequest {
 	r.filterEqProject = &filterEqProject
 	return r
 }

@@ -1,16 +1,19 @@
 version: '3'
 
 vars:
+  # Use Go instead of Unix `date` so Task works on Windows (see scripts/builddate.go).
   BUILD_DATE:
-    sh: date +%FT%T%z
+    sh: go run "{{.TASKFILE_DIR}}/scripts/builddate.go"
   GO: go
   BINARY_DIR: bin
-  BUILD_INFO_LDFLAGS: -ldflags "-w -extldflags '"-static"' -X main.buildDate={{.BUILD_DATE}} -X main.version={{.VERSION}}"
-  GOLANG_CI: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.11.4 golangci-lint
+  BUILD_INFO_LDFLAGS: -ldflags "-w -extldflags '"-static"' -X main.date={{.BUILD_DATE}} -X main.version={{.VERSION}}"
+  GOLANG_CI: docker run --rm -v "{{.TASKFILE_DIR}}:/app" -w /app golangci/golangci-lint:v2.11.4 golangci-lint
   OUTPUT_DIR: "pkg/openapi"
   CLIENT_FILE: "{{.OUTPUT_DIR}}/client.go"
-  SPEC_PATH: "openapi.json"
+  # Canonical spec: JSON from https://demo.reportportal.io/api/v1/api-docs (OpenAPI 3.1; matches RP ~5.15.x)
+  SPEC_PATH: "reportportal-api-docs.json"
   MODIFIED_SPEC_PATH: "openapi-modified.json"
+  OPENAPI_GENERATOR_IMAGE: "openapitools/openapi-generator-cli:v7.23.0"
 
 tasks:
   test:
@@ -31,7 +34,6 @@ tasks:
 
   build:
     desc: Build the Go binary
-    # deps: [checkstyle, test]  # Uncomment if you want to run these before build
     cmds:
       - "{{.GO}} build {{.BUILD_INFO_LDFLAGS}} -o {{.BINARY_DIR}}/gorp ./"
 
@@ -46,36 +48,36 @@ tasks:
   release:
     desc: Run goreleaser to create a release
     cmds:
-      - rm -rf dist
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" remove dist
       - goreleaser release
 
   create-output-dir:
     desc: "Create output directory if it doesn't exist"
     cmds:
-      - mkdir -p {{.OUTPUT_DIR}}
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" mkdir "{{.OUTPUT_DIR}}"
     status:
-      - test -d {{.OUTPUT_DIR}}
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" exists "{{.OUTPUT_DIR}}"
 
   clean:
-    desc: "Remove binary,build,generated Remove binary and build directories/files"
+    desc: "Remove binary, build, and generated OpenAPI client output"
     cmds:
-      - rm -rf {{.OUTPUT_DIR}}
-      - rm -rf {{.BINARY_DIR}} || true
-      - rm -rf build || true
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" remove "{{.OUTPUT_DIR}}"
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" remove "{{.BINARY_DIR}}"
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" remove build
 
  # Generate OpenAPI client code from the ReportPortal's OpenAPI schema
  # Note that not all additional properties are properly documented in the OpenAPI generator documentation
  # For instance, the `withCustomMiddlewareFunction` property is not documented, but can be found here:
  # https://github.com/OpenAPITools/openapi-generator/blob/v7.21.0/modules/openapi-generator/src/main/resources/go/configuration.mustache#L106C4-L106C32
-  
+
   generate-openapi-client:
-    depends: [ clean, create-output-dir ]
-    desc: "Generate client code"
+    deps: [ clean, create-output-dir ]
+    desc: "Generate Go client from {{.MODIFIED_SPEC_PATH}} (refresh that file from {{.SPEC_PATH}} via task preprocess:schema)"
     cmds:
       - >-
-        docker run --rm -v $(pwd)/{{.OUTPUT_DIR}}:/generated 
-        -v $(pwd)/{{.MODIFIED_SPEC_PATH}}:/local/openapi.json openapitools/openapi-generator-cli:v7.21.0 generate 
-        -i /local/openapi.json -g go -o /generated --package-name openapi 
+        docker run --rm -v "{{.TASKFILE_DIR}}/{{.OUTPUT_DIR}}:/generated"
+        -v "{{.TASKFILE_DIR}}/{{.MODIFIED_SPEC_PATH}}:/local/openapi.json" {{.OPENAPI_GENERATOR_IMAGE}} generate
+        -i /local/openapi.json -g go -o /generated --package-name openapi
         --additional-properties=withGoCodegenComment=true,enumClassPrefix=true,onlyGenerateClient=true,withGoMod=false,withCustomMiddlewareFunction=true,useOneOfDiscriminatorLookup=true
         --git-repo-id gorp/v5/pkg/openapi --git-user-id reportportal
         --global-property modelDocs=false,apiDocs=false,apiTests=false
@@ -105,15 +107,7 @@ tasks:
   #  }
   # This allows the Go OpenAPI generator to create a map[string]interface{} type which accepts any JSON object
   preprocess:schema:
-    desc: Preprocess OpenAPI schema using JQ to fix Map<String,Object> / Dictionary field type
+    desc: Normalize spec to JSON (yq), then JQ walk to fix Map<String,Object> types for Go codegen
     cmds:
-      - |
-        echo "Preprocessing OpenAPI schema with JQ..."
-        # Create a temporary modified schema using JQ in Docker
-        docker run --rm \
-          -v ${PWD}:/workdir \
-          -w /workdir \
-          ghcr.io/jqlang/jq \
-          'walk(if type == "object" and .additionalProperties and .additionalProperties.type == "object" and (.additionalProperties.additionalProperties | not) then .additionalProperties = true else . end)' \
-          {{.SPEC_PATH}} > {{.MODIFIED_SPEC_PATH}}
-        echo "Modified schema saved to {{.MODIFIED_SPEC_PATH}}"
+      - go run "{{.TASKFILE_DIR}}/scripts/taskfs" nonempty "{{.TASKFILE_DIR}}/{{.SPEC_PATH}}"
+      - go run "{{.TASKFILE_DIR}}/scripts/preprocess" "{{.TASKFILE_DIR}}" "{{.SPEC_PATH}}" "{{.TASKFILE_DIR}}/{{.MODIFIED_SPEC_PATH}}"

@@ -17,7 +17,10 @@ A Go CLI tool (`gorp`) and library (`pkg/gorp`) for [ReportPortal](https://repor
 | Run tests | `task test` |
 | Lint (Docker) | `task lint` |
 | Format (Docker) | `task fmt` |
-| Regenerate OpenAPI client | `task preprocess:schema && task generate-openapi-client` |
+| Regenerate OpenAPI client | `task generate-openapi-client` (reads `openapi-modified.json`) |
+| Refresh spec from upstream, then regenerate | Replace `reportportal-api-docs.json`, then `task preprocess:schema && task generate-openapi-client` |
+
+Upstream snapshot: `reportportal-api-docs.json` (from [https://demo.reportportal.io/api/v1/api-docs](https://demo.reportportal.io/api/v1/api-docs)). `task preprocess:schema` writes the normalized, jq-fixed spec to `openapi-modified.json`, which is the input for codegen.
 
 `task` is the task runner ([Taskfile.yml](Taskfile.yml)). Install it with `go install github.com/go-task/task/v3/cmd/task@latest` or via your package manager.
 
@@ -37,7 +40,7 @@ A Go CLI tool (`gorp`) and library (`pkg/gorp`) for [ReportPortal](https://repor
 - `pkg/openapi/` uses **`net/http`**; `pkg/gorp/` uses **Resty v3**. Both share the same `*http.Client` built from an OAuth2 transport.
 - Quality gate polling uses a ticker (`time.NewTicker`) — the channel must be selected on, never `default`. The caller's `ctx` must be forwarded into each poll iteration.
 - Log batch goroutines are managed with `errgroup.Group` (no `sync.WaitGroup`). Errors surface at `errGroup.Wait()` in `receive()`.
-- `pkg/openapi/` is regenerated from `openapi-modified.json` (preprocessed with `jq` to convert `Map<String,Object>` fields to `map[string]interface{}`). Run `preprocess:schema` before `generate-openapi-client`.
+- `pkg/openapi/` is regenerated from `openapi-modified.json`. Run `preprocess:schema` only when refreshing from `reportportal-api-docs.json` (it overwrites `openapi-modified.json`). Otherwise edit or keep `openapi-modified.json` and run `generate-openapi-client`.
 
 ## What NOT to do
 

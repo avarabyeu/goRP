@@ -19,8 +19,8 @@ type launchClient struct {
 func (c *launchClient) GetLaunchesByFilterString(
 	ctx context.Context,
 	project, filter string,
-) (*openapi.PageLaunchResource, error) {
-	var launches openapi.PageLaunchResource
+) (*openapi.PageLaunchViewModel, error) {
+	var launches openapi.PageLaunchViewModel
 	_, err := c.http.R().SetContext(ctx).
 		SetPathParam("project", project).
 		SetResult(&launches).
@@ -35,8 +35,8 @@ func (c *launchClient) GetLaunchesByFilterString(
 func (c *launchClient) GetAllLaunchesByFilterString(
 	ctx context.Context,
 	project, filter string,
-) ([]openapi.LaunchResource, error) {
-	var all []openapi.LaunchResource
+) ([]openapi.LaunchViewModel, error) {
+	var all []openapi.LaunchViewModel
 	for page := int64(1); ; page++ {
 		pageFilter := fmt.Sprintf("page.page=%d&%s", page, filter)
 		result, err := c.GetLaunchesByFilterString(ctx, project, pageFilter)
@@ -55,7 +55,7 @@ func (c *launchClient) GetAllLaunchesByFilterString(
 func (c *launchClient) GetLaunchesByFilterName(
 	ctx context.Context,
 	project, name string,
-) (*openapi.PageLaunchResource, error) {
+) (*openapi.PageLaunchViewModel, error) {
 	filter, err := (&filterClient{http: c.http}).GetFiltersByName(ctx, project, name)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (c *launchClient) GetLaunchesByFilterName(
 		) //nolint:err113 //dynamic error is intentional
 	}
 
-	var launches openapi.PageLaunchResource
+	var launches openapi.PageLaunchViewModel
 	params := ConvertToFilterParams(filter.Content[0])
 	_, err = c.http.R().
 		SetContext(ctx).

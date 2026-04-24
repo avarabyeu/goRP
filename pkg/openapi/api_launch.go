@@ -3,7 +3,7 @@ ReportPortal
 
 ReportPortal API documentation
 
-API version: 5.15.1
+API version: 5.15.2
 Contact: support@reportportal.io
 */
 
@@ -2225,6 +2225,7 @@ type ApiGetDebugLaunchesRequest struct {
 	projectName                                 string
 	filterEqHasRetries                          *bool
 	filterEqEndTime                             *string
+	filterEqLaunchType                          *string
 	filterEqUser                                *string
 	filterEqAttributeValue                      *string
 	filterEqStatisticsdefectsnoDefectnd001      *int32
@@ -2263,6 +2264,12 @@ func (r ApiGetDebugLaunchesRequest) FilterEqHasRetries(filterEqHasRetries bool) 
 // Filters by &#39;endTime&#39;
 func (r ApiGetDebugLaunchesRequest) FilterEqEndTime(filterEqEndTime string) ApiGetDebugLaunchesRequest {
 	r.filterEqEndTime = &filterEqEndTime
+	return r
+}
+
+// Filters by &#39;launchType&#39;
+func (r ApiGetDebugLaunchesRequest) FilterEqLaunchType(filterEqLaunchType string) ApiGetDebugLaunchesRequest {
+	r.filterEqLaunchType = &filterEqLaunchType
 	return r
 }
 
@@ -2428,7 +2435,7 @@ func (r ApiGetDebugLaunchesRequest) PageSort(pageSort string) ApiGetDebugLaunche
 	return r
 }
 
-func (r ApiGetDebugLaunchesRequest) Execute() (*PageLaunchResource, *http.Response, error) {
+func (r ApiGetDebugLaunchesRequest) Execute() (*PageLaunchViewModel, *http.Response, error) {
 	return r.ApiService.GetDebugLaunchesExecute(r)
 }
 
@@ -2449,13 +2456,13 @@ func (a *LaunchAPIService) GetDebugLaunches(ctx context.Context, projectName str
 
 // Execute executes the request
 //
-//	@return PageLaunchResource
-func (a *LaunchAPIService) GetDebugLaunchesExecute(r ApiGetDebugLaunchesRequest) (*PageLaunchResource, *http.Response, error) {
+//	@return PageLaunchViewModel
+func (a *LaunchAPIService) GetDebugLaunchesExecute(r ApiGetDebugLaunchesRequest) (*PageLaunchViewModel, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PageLaunchResource
+		localVarReturnValue *PageLaunchViewModel
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LaunchAPIService.GetDebugLaunches")
@@ -2475,6 +2482,9 @@ func (a *LaunchAPIService) GetDebugLaunchesExecute(r ApiGetDebugLaunchesRequest)
 	}
 	if r.filterEqEndTime != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.endTime", r.filterEqEndTime, "form", "")
+	}
+	if r.filterEqLaunchType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.launchType", r.filterEqLaunchType, "form", "")
 	}
 	if r.filterEqUser != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.user", r.filterEqUser, "form", "")
@@ -2668,6 +2678,7 @@ type ApiGetLatestLaunchesRequest struct {
 	projectName                                 string
 	filterEqHasRetries                          *bool
 	filterEqEndTime                             *string
+	filterEqLaunchType                          *string
 	filterEqUser                                *string
 	filterEqAttributeValue                      *string
 	filterEqStatisticsdefectsnoDefectnd001      *int32
@@ -2706,6 +2717,12 @@ func (r ApiGetLatestLaunchesRequest) FilterEqHasRetries(filterEqHasRetries bool)
 // Filters by &#39;endTime&#39;
 func (r ApiGetLatestLaunchesRequest) FilterEqEndTime(filterEqEndTime string) ApiGetLatestLaunchesRequest {
 	r.filterEqEndTime = &filterEqEndTime
+	return r
+}
+
+// Filters by &#39;launchType&#39;
+func (r ApiGetLatestLaunchesRequest) FilterEqLaunchType(filterEqLaunchType string) ApiGetLatestLaunchesRequest {
+	r.filterEqLaunchType = &filterEqLaunchType
 	return r
 }
 
@@ -2871,7 +2888,7 @@ func (r ApiGetLatestLaunchesRequest) PageSort(pageSort string) ApiGetLatestLaunc
 	return r
 }
 
-func (r ApiGetLatestLaunchesRequest) Execute() (*PageLaunchResource, *http.Response, error) {
+func (r ApiGetLatestLaunchesRequest) Execute() (*PageLaunchViewModel, *http.Response, error) {
 	return r.ApiService.GetLatestLaunchesExecute(r)
 }
 
@@ -2892,13 +2909,13 @@ func (a *LaunchAPIService) GetLatestLaunches(ctx context.Context, projectName st
 
 // Execute executes the request
 //
-//	@return PageLaunchResource
-func (a *LaunchAPIService) GetLatestLaunchesExecute(r ApiGetLatestLaunchesRequest) (*PageLaunchResource, *http.Response, error) {
+//	@return PageLaunchViewModel
+func (a *LaunchAPIService) GetLatestLaunchesExecute(r ApiGetLatestLaunchesRequest) (*PageLaunchViewModel, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PageLaunchResource
+		localVarReturnValue *PageLaunchViewModel
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LaunchAPIService.GetLatestLaunches")
@@ -2918,6 +2935,9 @@ func (a *LaunchAPIService) GetLatestLaunchesExecute(r ApiGetLatestLaunchesReques
 	}
 	if r.filterEqEndTime != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.endTime", r.filterEqEndTime, "form", "")
+	}
+	if r.filterEqLaunchType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.launchType", r.filterEqLaunchType, "form", "")
 	}
 	if r.filterEqUser != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.user", r.filterEqUser, "form", "")
@@ -3112,7 +3132,7 @@ type ApiGetLaunchRequest struct {
 	projectName string
 }
 
-func (r ApiGetLaunchRequest) Execute() (*LaunchResource, *http.Response, error) {
+func (r ApiGetLaunchRequest) Execute() (*LaunchViewModel, *http.Response, error) {
 	return r.ApiService.GetLaunchExecute(r)
 }
 
@@ -3135,13 +3155,13 @@ func (a *LaunchAPIService) GetLaunch(ctx context.Context, launchId string, proje
 
 // Execute executes the request
 //
-//	@return LaunchResource
-func (a *LaunchAPIService) GetLaunchExecute(r ApiGetLaunchRequest) (*LaunchResource, *http.Response, error) {
+//	@return LaunchViewModel
+func (a *LaunchAPIService) GetLaunchExecute(r ApiGetLaunchRequest) (*LaunchViewModel, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *LaunchResource
+		localVarReturnValue *LaunchViewModel
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LaunchAPIService.GetLaunch")
@@ -3424,8 +3444,14 @@ type ApiGetLaunchReportRequest struct {
 	ApiService         *LaunchAPIService
 	launchId           int64
 	projectName        string
+	flatAttachments    *bool
 	includeAttachments *bool
 	view               *string
+}
+
+func (r ApiGetLaunchReportRequest) FlatAttachments(flatAttachments bool) ApiGetLaunchReportRequest {
+	r.flatAttachments = &flatAttachments
+	return r
 }
 
 func (r ApiGetLaunchReportRequest) IncludeAttachments(includeAttachments bool) ApiGetLaunchReportRequest {
@@ -3482,6 +3508,13 @@ func (a *LaunchAPIService) GetLaunchReportExecute(r ApiGetLaunchReportRequest) (
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.flatAttachments != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "flatAttachments", r.flatAttachments, "form", "")
+	} else {
+		var defaultValue bool = false
+		parameterAddToHeaderOrQuery(localVarQueryParams, "flatAttachments", defaultValue, "form", "")
+		r.flatAttachments = &defaultValue
+	}
 	if r.includeAttachments != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "includeAttachments", r.includeAttachments, "form", "")
 	} else {
@@ -3594,6 +3627,7 @@ type ApiGetProjectLaunchesRequest struct {
 	projectName                                 string
 	filterEqHasRetries                          *bool
 	filterEqEndTime                             *string
+	filterEqLaunchType                          *string
 	filterEqUser                                *string
 	filterEqAttributeValue                      *string
 	filterEqStatisticsdefectsnoDefectnd001      *int32
@@ -3632,6 +3666,12 @@ func (r ApiGetProjectLaunchesRequest) FilterEqHasRetries(filterEqHasRetries bool
 // Filters by &#39;endTime&#39;
 func (r ApiGetProjectLaunchesRequest) FilterEqEndTime(filterEqEndTime string) ApiGetProjectLaunchesRequest {
 	r.filterEqEndTime = &filterEqEndTime
+	return r
+}
+
+// Filters by &#39;launchType&#39;
+func (r ApiGetProjectLaunchesRequest) FilterEqLaunchType(filterEqLaunchType string) ApiGetProjectLaunchesRequest {
+	r.filterEqLaunchType = &filterEqLaunchType
 	return r
 }
 
@@ -3797,7 +3837,7 @@ func (r ApiGetProjectLaunchesRequest) PageSort(pageSort string) ApiGetProjectLau
 	return r
 }
 
-func (r ApiGetProjectLaunchesRequest) Execute() (*PageLaunchResource, *http.Response, error) {
+func (r ApiGetProjectLaunchesRequest) Execute() (*PageLaunchViewModel, *http.Response, error) {
 	return r.ApiService.GetProjectLaunchesExecute(r)
 }
 
@@ -3818,13 +3858,13 @@ func (a *LaunchAPIService) GetProjectLaunches(ctx context.Context, projectName s
 
 // Execute executes the request
 //
-//	@return PageLaunchResource
-func (a *LaunchAPIService) GetProjectLaunchesExecute(r ApiGetProjectLaunchesRequest) (*PageLaunchResource, *http.Response, error) {
+//	@return PageLaunchViewModel
+func (a *LaunchAPIService) GetProjectLaunchesExecute(r ApiGetProjectLaunchesRequest) (*PageLaunchViewModel, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PageLaunchResource
+		localVarReturnValue *PageLaunchViewModel
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LaunchAPIService.GetProjectLaunches")
@@ -3844,6 +3884,9 @@ func (a *LaunchAPIService) GetProjectLaunchesExecute(r ApiGetProjectLaunchesRequ
 	}
 	if r.filterEqEndTime != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.endTime", r.filterEqEndTime, "form", "")
+	}
+	if r.filterEqLaunchType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.launchType", r.filterEqLaunchType, "form", "")
 	}
 	if r.filterEqUser != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "filter.eq.user", r.filterEqUser, "form", "")

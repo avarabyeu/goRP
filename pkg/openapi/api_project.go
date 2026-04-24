@@ -3,7 +3,7 @@ ReportPortal
 
 ReportPortal API documentation
 
-API version: 5.15.1
+API version: 5.15.2
 Contact: support@reportportal.io
 */
 
@@ -2105,7 +2105,7 @@ type ApiGetProjectUsersRequest struct {
 	filterEqSynchronizationDate *int32
 	filterEqExternalId          *string
 	filterEqActive              *bool
-	filterEqProject             *[]interface{}
+	filterEqProject             *[]string
 	filterEqEmail               *string
 	filterEqFullName            *string
 	filterEqProjectId           *int32
@@ -2170,7 +2170,7 @@ func (r ApiGetProjectUsersRequest) FilterEqActive(filterEqActive bool) ApiGetPro
 }
 
 // Filters by &#39;project&#39;
-func (r ApiGetProjectUsersRequest) FilterEqProject(filterEqProject []interface{}) ApiGetProjectUsersRequest {
+func (r ApiGetProjectUsersRequest) FilterEqProject(filterEqProject []string) ApiGetProjectUsersRequest {
 	r.filterEqProject = &filterEqProject
 	return r
 }
@@ -2913,161 +2913,6 @@ func (a *ProjectAPIService) GetUserPreferenceExecute(r ApiGetUserPreferenceReque
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetUserPreference1Request struct {
-	ctx         context.Context
-	ApiService  *ProjectAPIService
-	projectName string
-}
-
-func (r ApiGetUserPreference1Request) Execute() (*PreferenceResource, *http.Response, error) {
-	return r.ApiService.GetUserPreference1Execute(r)
-}
-
-/*
-GetUserPreference1 Load logged-in user preferences
-
-Only for logged-in user
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param projectName
-	@return ApiGetUserPreference1Request
-*/
-func (a *ProjectAPIService) GetUserPreference1(ctx context.Context, projectName string) ApiGetUserPreference1Request {
-	return ApiGetUserPreference1Request{
-		ApiService:  a,
-		ctx:         ctx,
-		projectName: projectName,
-	}
-}
-
-// Execute executes the request
-//
-//	@return PreferenceResource
-func (a *ProjectAPIService) GetUserPreference1Execute(r ApiGetUserPreference1Request) (*PreferenceResource, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *PreferenceResource
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ProjectAPIService.GetUserPreference1")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/v1/project/{projectName}/preference/"
-	localVarPath = strings.Replace(localVarPath, "{"+"projectName"+"}", url.PathEscape(parameterValueToString(r.projectName, "projectName")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if a.client.cfg.ResponseMiddleware != nil {
-		err = a.client.cfg.ResponseMiddleware(localVarHTTPResponse, localVarBody)
-		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
-		}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v SaveAnalyticsSettings1401Response
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v ErrorRS
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorRS
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ErrorRS
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiGetUsersForAssignRequest struct {
 	ctx                         context.Context
 	ApiService                  *ProjectAPIService
@@ -3081,7 +2926,7 @@ type ApiGetUsersForAssignRequest struct {
 	filterEqSynchronizationDate *int32
 	filterEqExternalId          *string
 	filterEqActive              *bool
-	filterEqProject             *[]interface{}
+	filterEqProject             *[]string
 	filterEqEmail               *string
 	filterEqFullName            *string
 	filterEqProjectId           *int32
@@ -3146,7 +2991,7 @@ func (r ApiGetUsersForAssignRequest) FilterEqActive(filterEqActive bool) ApiGetU
 }
 
 // Filters by &#39;project&#39;
-func (r ApiGetUsersForAssignRequest) FilterEqProject(filterEqProject []interface{}) ApiGetUsersForAssignRequest {
+func (r ApiGetUsersForAssignRequest) FilterEqProject(filterEqProject []string) ApiGetUsersForAssignRequest {
 	r.filterEqProject = &filterEqProject
 	return r
 }

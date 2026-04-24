@@ -107,6 +107,7 @@ model_launch_import_rq.go
 model_launch_path_name.go
 model_launch_resource.go
 model_launch_resource_old.go
+model_launch_view_model.go
 model_launches_per_user.go
 model_link_external_issue_rq.go
 model_log_entry.go
@@ -123,7 +124,7 @@ model_owned_entity_resource.go
 model_page.go
 model_page_cluster_info_resource.go
 model_page_dashboard_resource.go
-model_page_launch_resource.go
+model_page_launch_view_model.go
 model_page_log_resource.go
 model_page_metadata.go
 model_page_object.go

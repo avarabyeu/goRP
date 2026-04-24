@@ -3,7 +3,7 @@ ReportPortal
 
 ReportPortal API documentation
 
-API version: 5.15.1
+API version: 5.15.2
 Contact: support@reportportal.io
 */
 
@@ -15,36 +15,36 @@ import (
 	"encoding/json"
 )
 
-// checks if the PageLaunchResource type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PageLaunchResource{}
+// checks if the PageLaunchViewModel type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &PageLaunchViewModel{}
 
-// PageLaunchResource struct for PageLaunchResource
-type PageLaunchResource struct {
-	Content []LaunchResource `json:"content,omitempty"`
-	Page    *PageMetadata    `json:"page,omitempty"`
+// PageLaunchViewModel struct for PageLaunchViewModel
+type PageLaunchViewModel struct {
+	Content []LaunchViewModel `json:"content,omitempty"`
+	Page    *PageMetadata     `json:"page,omitempty"`
 }
 
-// NewPageLaunchResource instantiates a new PageLaunchResource object
+// NewPageLaunchViewModel instantiates a new PageLaunchViewModel object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPageLaunchResource() *PageLaunchResource {
-	this := PageLaunchResource{}
+func NewPageLaunchViewModel() *PageLaunchViewModel {
+	this := PageLaunchViewModel{}
 	return &this
 }
 
-// NewPageLaunchResourceWithDefaults instantiates a new PageLaunchResource object
+// NewPageLaunchViewModelWithDefaults instantiates a new PageLaunchViewModel object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPageLaunchResourceWithDefaults() *PageLaunchResource {
-	this := PageLaunchResource{}
+func NewPageLaunchViewModelWithDefaults() *PageLaunchViewModel {
+	this := PageLaunchViewModel{}
 	return &this
 }
 
 // GetContent returns the Content field value if set, zero value otherwise.
-func (o *PageLaunchResource) GetContent() []LaunchResource {
+func (o *PageLaunchViewModel) GetContent() []LaunchViewModel {
 	if o == nil || IsNil(o.Content) {
-		var ret []LaunchResource
+		var ret []LaunchViewModel
 		return ret
 	}
 	return o.Content
@@ -52,7 +52,7 @@ func (o *PageLaunchResource) GetContent() []LaunchResource {
 
 // GetContentOk returns a tuple with the Content field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PageLaunchResource) GetContentOk() ([]LaunchResource, bool) {
+func (o *PageLaunchViewModel) GetContentOk() ([]LaunchViewModel, bool) {
 	if o == nil || IsNil(o.Content) {
 		return nil, false
 	}
@@ -60,7 +60,7 @@ func (o *PageLaunchResource) GetContentOk() ([]LaunchResource, bool) {
 }
 
 // HasContent returns a boolean if a field has been set.
-func (o *PageLaunchResource) HasContent() bool {
+func (o *PageLaunchViewModel) HasContent() bool {
 	if o != nil && !IsNil(o.Content) {
 		return true
 	}
@@ -68,13 +68,13 @@ func (o *PageLaunchResource) HasContent() bool {
 	return false
 }
 
-// SetContent gets a reference to the given []LaunchResource and assigns it to the Content field.
-func (o *PageLaunchResource) SetContent(v []LaunchResource) {
+// SetContent gets a reference to the given []LaunchViewModel and assigns it to the Content field.
+func (o *PageLaunchViewModel) SetContent(v []LaunchViewModel) {
 	o.Content = v
 }
 
 // GetPage returns the Page field value if set, zero value otherwise.
-func (o *PageLaunchResource) GetPage() PageMetadata {
+func (o *PageLaunchViewModel) GetPage() PageMetadata {
 	if o == nil || IsNil(o.Page) {
 		var ret PageMetadata
 		return ret
@@ -84,7 +84,7 @@ func (o *PageLaunchResource) GetPage() PageMetadata {
 
 // GetPageOk returns a tuple with the Page field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PageLaunchResource) GetPageOk() (*PageMetadata, bool) {
+func (o *PageLaunchViewModel) GetPageOk() (*PageMetadata, bool) {
 	if o == nil || IsNil(o.Page) {
 		return nil, false
 	}
@@ -92,7 +92,7 @@ func (o *PageLaunchResource) GetPageOk() (*PageMetadata, bool) {
 }
 
 // HasPage returns a boolean if a field has been set.
-func (o *PageLaunchResource) HasPage() bool {
+func (o *PageLaunchViewModel) HasPage() bool {
 	if o != nil && !IsNil(o.Page) {
 		return true
 	}
@@ -101,11 +101,11 @@ func (o *PageLaunchResource) HasPage() bool {
 }
 
 // SetPage gets a reference to the given PageMetadata and assigns it to the Page field.
-func (o *PageLaunchResource) SetPage(v PageMetadata) {
+func (o *PageLaunchViewModel) SetPage(v PageMetadata) {
 	o.Page = &v
 }
 
-func (o PageLaunchResource) MarshalJSON() ([]byte, error) {
+func (o PageLaunchViewModel) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -113,7 +113,7 @@ func (o PageLaunchResource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PageLaunchResource) ToMap() (map[string]interface{}, error) {
+func (o PageLaunchViewModel) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.Content) {
 		toSerialize["content"] = o.Content
@@ -124,38 +124,38 @@ func (o PageLaunchResource) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-type NullablePageLaunchResource struct {
-	value *PageLaunchResource
+type NullablePageLaunchViewModel struct {
+	value *PageLaunchViewModel
 	isSet bool
 }
 
-func (v NullablePageLaunchResource) Get() *PageLaunchResource {
+func (v NullablePageLaunchViewModel) Get() *PageLaunchViewModel {
 	return v.value
 }
 
-func (v *NullablePageLaunchResource) Set(val *PageLaunchResource) {
+func (v *NullablePageLaunchViewModel) Set(val *PageLaunchViewModel) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePageLaunchResource) IsSet() bool {
+func (v NullablePageLaunchViewModel) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePageLaunchResource) Unset() {
+func (v *NullablePageLaunchViewModel) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePageLaunchResource(val *PageLaunchResource) *NullablePageLaunchResource {
-	return &NullablePageLaunchResource{value: val, isSet: true}
+func NewNullablePageLaunchViewModel(val *PageLaunchViewModel) *NullablePageLaunchViewModel {
+	return &NullablePageLaunchViewModel{value: val, isSet: true}
 }
 
-func (v NullablePageLaunchResource) MarshalJSON() ([]byte, error) {
+func (v NullablePageLaunchViewModel) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePageLaunchResource) UnmarshalJSON(src []byte) error {
+func (v *NullablePageLaunchViewModel) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
